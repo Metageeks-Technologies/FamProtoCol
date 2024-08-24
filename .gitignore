@@ -33,3 +33,5 @@ quest_frontend/.env*.local
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+quest_backend/src/utils/data.json
