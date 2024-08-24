@@ -1,0 +1,124 @@
+{
+    "feed": [
+        {
+            "id": 0,
+            "title": "The Art of Coffee Brewing",
+            "description": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae doloremque deserunt dignissimos vero eius quas hic? Tempore porro ullam perspiciatis iste aliquam provident praesentium deleniti cupiditate rerum pariatur aspernatur recusandae, amet dolore officia nulla aut debitis natus dicta, excepturi sequi? Explicabo quisquam, nihil doloremque provident totam unde corrupti saepe nulla rerum amet ex, ipsam dolores placeat recusandae animi eius inventore in quaerat illo sint itaque incidunt omnis. Rerum, nobis dicta. Accusantium euequi consequuntur delectus atque aliquam, qui veniam, adipisci libero quidem assumenda cumque iste itaque ad. Vitae, inventore esse! Officia illo officiis in laboriosam sequi odio corporis aliquam repudiandae? ",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Coffee+Brewing"
+        },
+        {
+            "id": 1,
+            "title": "10 Must-Visit European Destinations",
+            "description": "Explore the charm and beauty of Europe with our curated list of top destinations. From the romantic streets of Paris to the historic ruins of Rome, plan your next adventure here.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=European+Travel"
+        },
+        {
+            "id": 2,
+            "title": "Mastering the Art of Bonsai",
+            "description": "Learn the ancient Japanese art of growing and training miniature trees. This comprehensive guide covers everything from selecting the right tree to pruning techniques.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Bonsai+Art"
+        },
+        {
+            "id": 3,
+            "title": "The Future of Artificial Intelligence",
+            "description": "Explore the latest developments in AI and how they're shaping our world. From machine learning to neural networks, understand the technology that's changing everything.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=AI+Future"
+        },
+        {
+            "id": 4,
+            "title": "Healthy Eating on a Budget",
+            "description": "Discover how to eat nutritious meals without breaking the bank. This guide offers tips on meal planning, smart shopping, and budget-friendly recipes.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Budget+Meals"
+        },
+        {
+            "id": 5,
+            "title": "The Rise of Sustainable Fashion",
+            "description": "Learn about the growing trend of eco-friendly fashion and how it's changing the industry. From recycled materials to ethical production, discover how to dress with a conscience.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Eco+Fashion"
+        },
+        {
+            "id": 6,
+            "title": "Beginner's Guide to Stargazing",
+            "description": "Embark on a journey through the night sky. This guide introduces you to constellations, planets, and the equipment you need to start your astronomy adventure.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Stargazing"
+        },
+        {
+            "id": 7,
+            "title": "The Psychology of Color in Marketing",
+            "description": "Understand how colors influence consumer behavior and brand perception. This article explores the psychological impact of different colors in marketing and advertising.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Color+Psychology"
+        },
+        {
+            "id": 8,
+            "title": "Urban Gardening for Beginners",
+            "description": "Transform your city living space into a green oasis. Learn about container gardening, vertical gardens, and how to grow your own food in small spaces.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Urban+Gardening"
+        },
+        {
+            "id": 9,
+            "title": "The Evolution of Electric Vehicles",
+            "description": "Explore the rapid advancements in electric car technology. From increased range to faster charging, discover how EVs are revolutionizing transportation.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Electric+Cars"
+        },
+        {
+            "id": 10,
+            "title": "Mindfulness Meditation Techniques",
+            "description": "Learn how to incorporate mindfulness into your daily life. This guide offers simple meditation techniques to reduce stress and improve overall well-being.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Mindfulness"
+        },
+        {
+            "id": 11,
+            "title": "The Science of Sourdough Bread",
+            "description": "Delve into the chemistry behind perfect sourdough bread. From cultivating your starter to achieving that perfect crust, become a master baker with this guide.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Sourdough+Bread"
+        },
+        {
+            "id": 12,
+            "title": "Exploring the Wonders of Deep Sea Life",
+            "description": "Journey to the depths of the ocean and discover the strange and fascinating creatures that inhabit the darkest parts of our planet.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Deep+Sea+Life"
+        },
+        {
+            "id": 13,
+            "title": "The Art of Calligraphy",
+            "description": "Learn the beautiful art of handwriting. This guide covers different calligraphy styles, tools, and techniques to help you create stunning lettering.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Calligraphy"
+        },
+        {
+            "id": 14,
+            "title": "Understanding Blockchain Technology",
+            "description": "Demystify the world of blockchain. From cryptocurrencies to smart contracts, learn how this technology is changing finance and beyond.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Blockchain"
+        },
+        {
+            "id": 15,
+            "title": "The Benefits of Yoga for Mental Health",
+            "description": "Explore how yoga can improve not just physical, but also mental well-being. Learn about different yoga styles and their impact on stress, anxiety, and depression.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Yoga+Mental+Health"
+        },
+        {
+            "id": 16,
+            "title": "The History of Video Game Design",
+            "description": "Take a journey through the evolution of video games. From Pong to virtual reality, see how technology has shaped the gaming industry over the decades.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Video+Game+History"
+        },
+        {
+            "id": 17,
+            "title": "Sustainable Living: Reducing Your Carbon Footprint",
+            "description": "Learn practical ways to live a more eco-friendly lifestyle. This guide offers tips on reducing waste, conserving energy, and making sustainable choices.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Sustainable+Living"
+        },
+        {
+            "id": 18,
+            "title": "The Science of Sleep",
+            "description": "Understand the importance of good sleep and how it affects your health. Discover tips for better sleep hygiene and the latest research in sleep science.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=Sleep+Science"
+        },
+        {
+            "id": 19,
+            "title": "Introduction to 3D Printing",
+            "description": "Explore the world of 3D printing and its applications. Learn about different printing technologies, materials, and how to get started with your own 3D printing projects.",
+            "imageUrl": "https://dummyimage.com/600x400/000/fff&text=3D+Printing"
+        }
+    ]
+}
