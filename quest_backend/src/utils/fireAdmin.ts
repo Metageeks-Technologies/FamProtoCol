@@ -1,5 +1,8 @@
 import * as admin from 'firebase-admin';
-import * as serviceAccount from '../utils/data.json';
+
+const serviceAccountStr=process.env.GOOGLE_SERVICE_ACCOUNT_KEY as string;
+const serviceAccount = JSON.parse(serviceAccountStr);
+
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
