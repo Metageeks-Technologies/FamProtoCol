@@ -1,6 +1,3 @@
-
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -27,8 +24,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env
-.env*.local
+quest_backend/.env
+quest_frontend/.env*.local
 
 # vercel
 .vercel
@@ -36,5 +33,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-/src/utils/data.json
