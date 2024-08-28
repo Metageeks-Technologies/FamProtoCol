@@ -46,19 +46,19 @@ const Sidebar = () =>
 
   return (
     <>
-      <div className='w-[4rem] flex flex-row  md:flex-col justify-center items-center border-r-gray-600/45 md:border-r bg-[#15151557] z-50 fixed md:h-screen glass_effect top-0'>
-        < Link href="/" className='hidden md:flex'><div className='border-b-gray-600/45 flex justify-center items-center md:border-b border-b w-[4rem] h-[5rem]'><img src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png" alt="logo" /></div></Link>
-        {/* <button className="justify-center border-none text-white text-2xl cursor-pointer" onClick={ handleNav }> */ }
+      <div className='w-[4rem] flex flex-row  md:flex-col justify-start items-center border-r-gray-600/45 md:border-r bg-[#15151557] z-50 fixed md:h-screen glass_effect top-0'>
+        <Link href="/" className='hidden md:flex'><div className='border-b-gray-600/45 flex justify-center items-center md:border-b border-b w-[4rem] h-[5rem]'><img src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png" alt="logo" /></div></Link>
+        <button className="flex items-center justify-center border-none text-white text-2xl cursor-pointer" onClick={ handleNav }>
         { nav ? (
-          <div className='p-2 items-center justify-center m-auto'>
-            {/* <button onClick={ handleNav } ><RiMenu2Fill size={ 40 } className="text-[#e2dcdcb3] cursor-pointer" /></button> */}
+          <div className='p-2 flex items-center justify-center m-auto'>
+           {/* <button onClick={ handleNav } ><RiMenu2Fill size={ 40 } className="text-[#e2dcdcb3] cursor-pointer" /></button>  */}
           </div>
         ) : (
-          <div className='p-2 items-center justify-center m-auto'>
-            <button onClick={ handleNav } ><GiCrossMark size={ 40 } className="text-[#e2dcdcb3] cursor-pointer" /></button>
+          <div className='p-2 flex items-center justify-center m-auto'>
+            {/* <button onClick={ handleNav } ><GiCrossMark size={ 40 } className="text-[#e2dcdcb3] cursor-pointer" /></button> */}
           </div>
         ) }
-        {/* </button> */ }
+       </button> 
       </div>
       <div className={ `top-0 flex flex-col w-screen md:w-full bg-[#5638ce40] z-40 h-screen glass_effect fixed ${ nav ? 'transform -translate-x-full' : '' } transition-transform duration-500 ease-in-out` }>
         <button className="block md:hidden border-none text-white text-2xl cursor-pointer" onClick={ handleNav }>

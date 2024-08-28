@@ -389,17 +389,22 @@ const LandingPage = () => {
         </div>
              ):(
                <div className="z-10 text-center max-w-3xl">
-                <p className="text-sm tracking-widest text-neutral-400">
+                {/* <p className="text-sm tracking-widest text-neutral-400">
                   FAM PROTOCOL PRESENTS...
-                </p>
-                <h1 className="mt-4 text-2xl font-bold sm:text-5xl lg:text-4xl">
+                </p> */}
+                {/* <h1 className="mt-4 text-2xl font-bold sm:text-5xl lg:text-4xl">
                   EMBRACE THE ALMIGHTY REWARDS OF BLOCKCHAIN NETWORK!
-                </h1>
+                </h1> */}
+                <div className="flex justify-center items-center gap-3 flex-wrap mb-2">
+                <div className="w-8 h-8">
+                <img className="w-full h-full" src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png" alt="fam protocol" />
+                </div>
+                <div className="font-bold text-4xl text-white">FAM PROTOCOL</div>
+                
+                </div>
+                <div className="text-center text-xl">Fams Gonna Make It</div>
                 <p className="mt-6 text-neutral-300 leading-relaxed ">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
+                  Community Owned Internet Protocol
                 </p>
                 <div className="mt-8 flex justify-center gap-4">
                   <Button
