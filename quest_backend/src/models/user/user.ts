@@ -4,6 +4,7 @@ dotenv.config();
 
 import jwt from 'jsonwebtoken';
 
+
 const JWT_SECRET_Token=process.env.JWT_SECRET as string;
 
 // Define interfaces for the sub-schemas
@@ -11,8 +12,8 @@ export interface ITwitterInfo {
   twitterId?: string;
   username?: string;
   profileImageUrl?: string;
-  oauthToken?: string;
-  oauthTokenSecret?: string;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 export interface ITeleInfo {
@@ -97,8 +98,8 @@ const userSchema: Schema = new mongoose.Schema(
       twitterId: { type: String },
       username: { type: String },
       profileImageUrl: { type: String },
-      oauthToken: { type: String },
-      oauthTokenSecret: { type: String },
+      accessToken: { type: String },
+      refreshToken: { type: String },
     },
     discordInfo: {
       discordId: { type: String },

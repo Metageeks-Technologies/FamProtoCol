@@ -167,4 +167,3 @@ export const getAllUser = async ( req: Request, res: Response ) =>
   }
 }
 
-  

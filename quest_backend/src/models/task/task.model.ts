@@ -55,6 +55,16 @@ export type TaskOrPoll = ITaskBase & {
   walletsToConnect?:number
   connectedWallets?: string[];
   opinionQuestion?: string;
+  tweet?: {
+    tweetUrl?: string;
+    tweetAction?: string;
+    tweetUsername?: string;
+    tweetWords?: string[];
+    defaultTweet?: string;
+  };
+  telegram?:{
+    telegramLink?:string;
+  }
 };
 
 const TaskSchema: Schema = new mongoose.Schema(
@@ -112,7 +122,16 @@ const TaskSchema: Schema = new mongoose.Schema(
      },
     walletsToConnect: { type: Number, default: 0 },
     connectedWallets: [ { type: String } ],
-
+    tweet:{
+      tweetUrl: { type: String },
+      tweetAction: { type: String },
+      tweetUsername: { type: String},
+      tweetWords:[{type:String}],
+      defaultTweet:{type:String}, 
+    },
+    telegram:{
+      telegramLink:{type:String}
+    }
   },
   { timestamps: true }
 );

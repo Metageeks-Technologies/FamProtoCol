@@ -51,11 +51,11 @@ const Sidebar = () =>
         <button className="flex items-center justify-center border-none text-white text-2xl cursor-pointer" onClick={ handleNav }>
         { nav ? (
           <div className='p-2 flex items-center justify-center m-auto'>
-           {/* <button onClick={ handleNav } ><RiMenu2Fill size={ 40 } className="text-[#e2dcdcb3] cursor-pointer" /></button>  */}
+           <button onClick={ handleNav } ><RiMenu2Fill size={ 40 } className="text-[#e2dcdcb3] cursor-pointer" /></button> 
           </div>
         ) : (
           <div className='p-2 flex items-center justify-center m-auto'>
-            {/* <button onClick={ handleNav } ><GiCrossMark size={ 40 } className="text-[#e2dcdcb3] cursor-pointer" /></button> */}
+            <button onClick={ handleNav } ><GiCrossMark size={ 40 } className="text-[#e2dcdcb3] cursor-pointer" /></button>
           </div>
         ) }
        </button> 

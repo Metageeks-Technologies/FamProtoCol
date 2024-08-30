@@ -12,8 +12,8 @@ export interface ITwitterInfo
   twitterId?: string;
   username?: string;
   profileImageUrl?: string;
-  oauthToken?: string;
-  oauthTokenSecret?: string;
+  accessToken?: string;
+  refereshToken?: string;
 }
 export interface ITeleInfo
 {

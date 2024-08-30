@@ -45,8 +45,8 @@ const KolsDataSchema: Schema = new Schema({
     twitterId: { type: String },
     username: { type: String },
     profileImageUrl: { type: String },
-    oauthToken: { type: String },
-    oauthTokenSecret: { type: String },
+    accessToken: { type: String },
+    refreshToken: { type: String },
   },
   discordInfo: {
     discordId: { type: String },

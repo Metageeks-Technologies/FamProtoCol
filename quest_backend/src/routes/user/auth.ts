@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import passport from "../../utils/passport";
-import { checkExistingUser, checkIfUserFollows, loginFailed, loginSuccess, logout, updateUser } from "../../controllers/user/auth";
+import { checkExistingUser, loginFailed, loginSuccess, logout, updateUser } from "../../controllers/user/auth";
 import { isAuthenticated } from "../../middleware/user/authorize.user";
 import { TwitterConnected } from "../../middleware/user/twitter";
 import { checkGuilds, checkInviteLink, fetchGuildChannelInfo, sendDiscord } from "../../controllers/user/discord";
@@ -59,121 +59,7 @@ authrouter.get(
     res.redirect(`${process.env.PUBLIC_CLIENT_URL}/sucessfulLogin`);
   }
 );
- 
 
-// Connect twitter account  of user and check it is authenticate or not
-
-// authrouter.get(
-//   "/twitter", 
-//   passport.authenticate("twitter")
-// );
-
-// authrouter.get(
-//   "/twitter/callback",
-//   passport.authenticate("twitter", {
-//     successRedirect:`${process.env.PUBLIC_CLIENT_URL}/sucessfulLogin`,
-//     failureRedirect: `${process.env.PUBLIC_CLIENT_URL}/failed`,
-//      })
-// );
-const consumerKey = process.env.Twitter_Key!;
-const consumerSecret = process.env.Twitter_Secret_key!;
-const callbackURL = `${process.env.PUBLIC_SERVER_URL}/auth/twitter/callback`;
-const sessionSecret = process.env.JWT_SECRET as string;
-
-const oauthConsumer = new oauth.OAuth(
-  'https://api.twitter.com/oauth/request_token',
-  'https://api.twitter.com/oauth/access_token',
-  consumerKey,
-  consumerSecret,
-  '1.0A',
-  callbackURL,
-  'HMAC-SHA1'
-);
-
-authrouter.get('/twitter', (req, res) => {
-  oauthConsumer.getOAuthRequestToken((error, oauthToken, oauthTokenSecret, results) => {
-    if (error) {
-      return res.status(500).send(error);
-    }
-    // console.log('OAuth Request Token:', { oauthToken, oauthTokenSecret });
-    // res.cookie('oauthToken', oauthToken, { httpOnly: true });
-    // res.cookie('oauthTokenSecret', oauthTokenSecret, { httpOnly: true });
-    res.cookie('oauthToken', oauthToken, { httpOnly: true, secure: true, sameSite: 'none' });
-    res.cookie('oauthTokenSecret', oauthTokenSecret, { httpOnly: true, secure: true, sameSite: 'none' });
-    res.redirect(`https://api.twitter.com/oauth/authenticate?oauth_token=${oauthToken}`);
- });
-});
-
-authrouter.get('/twitter/callback', (req, res) => {
-  const { oauth_token: oauthToken, oauth_verifier: oauthVerifier } = req.query;
-  const oauthTokenSecret = req.cookies.oauthTokenSecret;
-
-  // console.log('Received callback with params:', { oauthToken, oauthVerifier, oauthTokenSecret });
-
-  if (!oauthToken || !oauthVerifier || !oauthTokenSecret) {
-    console.error('Missing OAuth parameters:', { oauthToken, oauthVerifier, oauthTokenSecret });
-    return res.status(401).send({ statusCode: 401, data: 'Request token missing' });
-  }
-  
-  oauthConsumer.getOAuthAccessToken(
-    oauthToken as string,
-    oauthTokenSecret,
-    oauthVerifier as string,
-    async (error, oauthAccessToken, oauthAccessTokenSecret, results) => {
-      if (error) {
-        return res.status(500).send(error);
-      }
-
-      const profileUrl = 'https://api.twitter.com/1.1/account/verify_credentials.json';
-      const profileParams = { include_email: 'true' };
-
-      oauthConsumer.get(
-        `${profileUrl}?include_email=true`,
-        oauthAccessToken,
-        oauthAccessTokenSecret,
-        async (error, data, response) => {
-          if (error) {
-            return res.status(500).send(error);
-          }
-
-          const profile = JSON.parse(data as string);
-          // console.log("cookies",req.cookies)
-          try {
-            const tokens = req.cookies.authToken;
-            // console.log("twitter",tokens)
-            const jwtPayload = jwt.verify(tokens, sessionSecret);
-            // console.log(jwtPayload)
-            const users = jwtPayload as jwtUser;
-
-            if (!users || !users.ids) {
-              return res.status(400).send('User ID not provided');
-            }
-
-            let user = await UserDb.findById(users.ids);
-
-            if (!user) {
-              return res.status(404).send('User not found');
-            }
-
-            user.twitterInfo = {
-              twitterId: profile.id,
-              username: profile.screen_name,
-              profileImageUrl: profile.profile_image_url_https,
-              oauthToken: oauthAccessToken,
-              oauthTokenSecret: oauthAccessTokenSecret,
-            };
-
-            await user.save();
-           
-            res.redirect(`${process.env.PUBLIC_CLIENT_URL}/sucessfulLogin`);
-          } catch (error: any) {
-            return res.status(500).send(error);
-          }
-        }
-      );
-    }
-  );
-});
 // Connect Discord account  of user and check it is authenticate or not
 
 authrouter.get(
@@ -237,8 +123,6 @@ authrouter.get('/telegram/callback', verifyToken, async (req, res) => {
 
 
 // Get the Specific user info
-
-authrouter.get( "/twitter/follows/:targetUserId", isAuthenticated, checkIfUserFollows );
 
 // check if user exisit or not
 authrouter.post( "/check/user", checkExistingUser );

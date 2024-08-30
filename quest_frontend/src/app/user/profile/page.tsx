@@ -112,7 +112,7 @@ const Profile: React.FC = () =>
     window.location.href = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/discord`;
   };
   const signupX = async () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/twitter`;
+    window.location.href = `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/auth`;
   };
   const signupTelegram= async () => {
     if(user?.teleInfo?.telegramId){

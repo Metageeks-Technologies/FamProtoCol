@@ -21,6 +21,7 @@ import {auth} from "./utils/fireAdmin"
 import UserDb, { generateToken } from "./models/user/user";
 import grantRouter from "./routes/grants/grant";
 import telegramRouter from "./routes/telegram/telegram";
+import twitterRouter from "./routes/twitter/twitter";
 
 dotenv.config();
 const app: Express = express();
@@ -143,6 +144,7 @@ app.post('/api/verify-phone', async(req:Request, res:Response) => {
 
 // TelegramBot;
 app.use('/telegram',telegramRouter);
+app.use('/twitter',twitterRouter);
 // Example route
 app.get('/', (req: Request, res: Response) => {
   

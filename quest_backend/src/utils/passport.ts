@@ -76,60 +76,6 @@ GoogleStrategy.prototype.authorizationParams = function () {
   };
 };
 
-// Twitter OAuth configuration
-
-passport.use(
-  new TwitterStrategy(
-    {
-      consumerKey: process.env.Twitter_Key!,
-      consumerSecret: process.env.Twitter_Secret_key!,
-      callbackURL: `${process.env.PUBLIC_SERVER_URL}/auth/twitter/callback`,
-      includeEmail: true,
-      passReqToCallback: true, 
-    } , // Type assertion
-    async (
-      req: Request,
-      token: string,
-      tokenSecret: string,
-      profile: TwitterProfile,
-      done: (error: any, user?: any) => void
-    ) => {
-      const tokens=req.cookies.authToken;
-      try {
-        const data= await jwt.verify(tokens, secretKey);
-        const users = data as jwtUser;
-        if (!users || !users.ids) {
-          return done(new Error( 'User ID not provided'));
-        }
-    
-        // Fetch the user by ID
-        let user = await UserDb.findById(users.ids);
-        
-        if (!user) {
-          return done(new Error('User not found'));
-        }
-
-          if (user) {
-            user.twitterInfo = {
-              twitterId: profile.id,
-              username: profile.username,
-              profileImageUrl: profile.photos?.[0].value,
-              oauthToken: token,
-              oauthTokenSecret: tokenSecret,
-            };
-            await user.save();
-          } else {
-            return done(new Error("User not found"), null);
-          }
-          return done(null, user);
-
-      } catch (error: any) {
-        return done(error);
-      }
-    }
-  )
-);
-
 // Discord OAUth Authentication
 
 const scopes = ['identify', 'email', 'guilds', 'guilds.join'];
