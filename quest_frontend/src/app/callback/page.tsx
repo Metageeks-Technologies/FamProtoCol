@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const page = () => {
+const CallBackPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const state = searchParams.get("state");
@@ -33,4 +33,4 @@ const page = () => {
   return <div>Authenticating...</div>;
 };
 
-export default page;
+export default CallBackPage;
