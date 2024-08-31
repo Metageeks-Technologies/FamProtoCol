@@ -117,21 +117,6 @@ export const OAuth2WithTwitterCallback = async (
   }
 };
 
-// const getTwitterUser = async (username: string) => {
-//     try {
-//         const response = await axios.get(`https://api.twitter.com/2/users/by/username/${username}`, {
-//         headers: {
-//             Authorization: `Bearer ${BearerToken}`,
-//         },
-//         });
-//         console.log('Response from Twitter API:', response.data);
-//         return response.data.data.id;
-//     } catch (error) {
-//         console.error('Error getting user from Twitter API:', error);
-//         throw new Error('Error getting user from Twitter API');
-//     }
-// }
-
 export const checkFollow = async (req: any, res: any) => {
   const { targetUserName } = req.body;
   const { ids } = req.user;
@@ -168,10 +153,17 @@ export const checkFollow = async (req: any, res: any) => {
       }
     );
     console.log("user", userData);
-    const followers = await loggedClient.v2.following(twitterId as string);
-
-    console.log("Response from Twitter API:", followers.data);
-    return res.status(200).json({ success: true, response: followers });
+    const targetUserId = await loggedClient.v2.userByUsername(targetUserName);
+    console.log("targetUserId", targetUserId);
+    if (!targetUserId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+    const follow = await loggedClient.v2.follow(twitterId,targetUserId.data.id);
+    
+    console.log("follow", follow);
+    return res.status(200).json({ success: true, response: follow.data });
   } catch (error) {
     console.error("Error in checkFollow API:", error);
     return res
@@ -226,13 +218,14 @@ export const checkTweetLike = async (req: any, res: any) => {
         return res.status(200).json({ success: false, isLiked: false });
     }
 
+    let isLiked = false;
     response.data.data.forEach(async (tweet: any) => {
       if (tweet.id === tweetId) {
-        return res.status(200).json({ success: true, isLiked: true });
+        isLiked = true;
       }
     });
 
-    return res.status(200).json({ success: true, isLiked: false });
+    return res.status(200).json({ success: true, isLiked });
   } catch (error) {
     console.error("Error in tweetLiked API:", error);
     return res
@@ -283,13 +276,13 @@ export const checkTweetRetweet = async (req: any, res: any) => {
 
     const response = await loggedClient.v2.tweetRetweetedBy(tweetId as string);
     console.log("Response from Twitter API:", response);
-
+    let isRetweeted = false;
     response?.data?.forEach(async (user: any) => {
       if (user.id === twitterId) {
-        return res.status(200).json({ success: true, isRetweeted: true });
+        isRetweeted = true;
       }
     });
-    return res.status(200).json({ success: true, isRetweeted: false });
+    return res.status(200).json({ success: true, isRetweeted});
   } catch (error) {
     console.error("Error in tweetRetweeted API:", error);
     return res

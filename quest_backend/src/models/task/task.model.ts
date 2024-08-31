@@ -1,9 +1,9 @@
-import mongoose, { Document, Model, Schema } from 'mongoose';
-import { type } from 'os';
+import mongoose, { Document, Model, Schema } from "mongoose";
+import { type } from "os";
 
 // Base interface for all task types
 export interface ITaskBase extends Document {
-  category: 'Actions' | 'Answers' | 'Social' | 'On-chain action';
+  category: "Actions" | "Answers" | "Social" | "On-chain action";
   // type: 'visit' | 'poll' | 'quiz' | 'invite' | 'upload';
   type: string;
   questId: mongoose.Types.ObjectId;
@@ -14,8 +14,7 @@ export interface ITaskBase extends Document {
     submission?: string;
     userName?: string;
   }>;
-} 
-
+}
 
 interface IQuiz {
   question: string;
@@ -32,12 +31,12 @@ interface IPoll {
 export type TaskOrPoll = ITaskBase & {
   _id: string;
   visitLink?: string;
-  discord?:string;
-  discordLink?:string
-  guild?:string;
+  discord?: string;
+  discordLink?: string;
+  guild?: string;
   visitor?: mongoose.Types.ObjectId[];
   quizzes?: IQuiz[];
- polls?: IPoll[];
+  polls?: IPoll[];
   question?: string;
   options?: string[];
   correctAnswer?: string;
@@ -45,26 +44,22 @@ export type TaskOrPoll = ITaskBase & {
   invitee?: mongoose.Types.ObjectId[];
   uploadLink?: string;
   response?: string | number;
-  taskName?:string;
+  taskName?: string;
   taskDescription?: string;
   uploadFileType?: string;
-    rewards: {
+  rewards: {
     xp: number;
     coins: number;
   };
-  walletsToConnect?:number
+  walletsToConnect?: number;
   connectedWallets?: string[];
   opinionQuestion?: string;
-  tweet?: {
-    tweetUrl?: string;
-    tweetAction?: string;
-    tweetUsername?: string;
-    tweetWords?: string[];
-    defaultTweet?: string;
-  };
-  telegram?:{
-    telegramLink?:string;
-  }
+  tweetLikeUrl?: string;
+  tweetRetweetUrl?: string;
+  tweetUsername?: string;
+  tweetWords?: string[];
+  defaultTweet?: string;
+  telegramGroupLink?: string;
 };
 
 const TaskSchema: Schema = new mongoose.Schema(
@@ -77,66 +72,71 @@ const TaskSchema: Schema = new mongoose.Schema(
     },
     questId: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true, 
-      ref: 'Quest'
+      required: true,
+      ref: "Quest",
     },
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'user' 
+      ref: "user",
     },
     // Optional fields based on task type
     visitLink: { type: String },
-    discord:{type:String},
-    guild:{type:String},
-    discordLink:{type:String},
-    visitor: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],
-        quizzes: [{
-      question: { type: String },
-      options: [{ type: String }],
-      correctAnswer: { type: String }
-    }],
-    polls: [{
-      question: { type: String },
-      options: [{ type: String }]
-    }],
+    discord: { type: String },
+    guild: { type: String },
+    discordLink: { type: String },
+    visitor: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    quizzes: [
+      {
+        question: { type: String },
+        options: [{ type: String }],
+        correctAnswer: { type: String },
+      },
+    ],
+    polls: [
+      {
+        question: { type: String },
+        options: [{ type: String }],
+      },
+    ],
     inviteLink: { type: String },
-    invitee: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    invitee: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     uploadLink: { type: String },
     response: { type: String || Number },
-    taskName:{type:String},
-    taskDescription:{type:String},
-  rewards: {
+    taskName: { type: String },
+    taskDescription: { type: String },
+    rewards: {
       xp: { type: Number, default: 0 },
       coins: { type: Number, default: 0 },
     },
-  opinionQuestion: {type:String},
-    completions: [{
-      user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      completedAt: { type: Date, default: Date.now },
-      submission: { type: String },
-      userName : {type : String}
-    } ],
+    opinionQuestion: { type: String },
+    completions: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        completedAt: { type: Date, default: Date.now },
+        submission: { type: String },
+        userName: { type: String },
+      },
+    ],
     uploadFileType: {
-       type: String,
-     },
-    walletsToConnect: { type: Number, default: 0 },
-    connectedWallets: [ { type: String } ],
-    tweet:{
-      tweetUrl: { type: String },
-      tweetAction: { type: String },
-      tweetUsername: { type: String},
-      tweetWords:[{type:String}],
-      defaultTweet:{type:String}, 
+      type: String,
     },
-    telegram:{
-      telegramLink:{type:String}
-    }
+    walletsToConnect: { type: Number, default: 0 },
+    connectedWallets: [{ type: String }],
+    tweetLikeUrl: { type: String },
+    tweetRetweetUrl: { type: String },
+    tweetUsername: { type: String },
+    tweetWords: [{ type: String }],
+    defaultTweet: { type: String },
+    telegramGroupLink: { type: String },
   },
   { timestamps: true }
 );
 
 // Create the model
-const TaskModel: Model<TaskOrPoll> = mongoose.model<TaskOrPoll>('Task', TaskSchema);
+const TaskModel: Model<TaskOrPoll> = mongoose.model<TaskOrPoll>(
+  "Task",
+  TaskSchema
+);
 
 export default TaskModel;

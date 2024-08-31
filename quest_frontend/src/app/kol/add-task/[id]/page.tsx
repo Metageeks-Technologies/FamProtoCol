@@ -39,13 +39,12 @@ interface TaskOption {
   inviteLink?: string;
   uploadLink?: string;
   response?: string | number;
-  tweet?: {
-    tweetUrl?: string;
-    tweetAction?: string;
-    tweetUsername?: string;
-    tweetWords?: string[];
-    defaultTweet?: string;
-  };
+  tweetLikeUrl?: string;
+  tweetRetweetUrl?: string;
+  tweetUsername?: string;
+  tweetWords?: string[];
+  defaultTweet?: string;
+  telegramGroupLink?: string;
 }
 
 const AddTask = ({ params }: { params: { id: string } }) => {
@@ -71,11 +70,12 @@ const AddTask = ({ params }: { params: { id: string } }) => {
   const [wallets, setWallets] = useState(0);
   const [activeTab, setActiveTab] = useState<string>("tweetReaction");
   const [telegram, setTelegram] = useState({
-    telegramLink: "",
+    telegramGroupLink: "",
   });
+  const [validBot, setValidBot] = useState(false);
   const [tweet, setTweet] = useState({
-    tweetUrl: "",
-    tweetAction: "like",
+    tweetLikeUrl: "",
+    tweetRetweetUrl: "",
     tweetUsername: "",
     tweetWords: [] as string[],
     defaultTweet: "",
@@ -121,6 +121,16 @@ const AddTask = ({ params }: { params: { id: string } }) => {
       { question: "", options: ["", "", "", ""], correctAnswer: "" },
     ]);
     setWallets(0);
+    setTweet({
+      tweetLikeUrl: "",
+      tweetRetweetUrl: "",
+      tweetUsername: "",
+      tweetWords: [],
+      defaultTweet: "",
+    });
+    setTelegram({
+      telegramGroupLink: "",
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,9 +200,25 @@ const AddTask = ({ params }: { params: { id: string } }) => {
         ...baseTask,
         opinionQuestion: opinionQuestion,
       },
-      Twitter: {
+      "Tweet Like": {
         ...baseTask,
-        tweet: tweet,
+        tweetLikeUrl: tweet.tweetLikeUrl,
+      },
+      "Tweet Retweet": {
+        ...baseTask,
+        tweetRetweetUrl: tweet.tweetRetweetUrl,
+      },
+      "Twitter Follow": {
+        ...baseTask,
+        tweetUsername: tweet.tweetUsername,
+      },
+      Tweet: {
+        ...baseTask,
+        defaultTweet: tweet.defaultTweet,
+      },
+      Telegram: {
+        ...baseTask,
+        telegramGroupLink: telegram.telegramGroupLink,
       },
     };
 
@@ -337,12 +363,52 @@ const AddTask = ({ params }: { params: { id: string } }) => {
       tweetWords: prevTweet.tweetWords.filter((_, i) => i !== index),
     }));
   };
+  const extractChatId = (url: string) => {
+    const regex = /^https:\/\/web\.telegram\.org\/a\/#(-?\d+)$/;
+    const match = url.match(regex);
+
+    if (match) {
+      return { status: true, chatId: match[1] }; // Return the chat ID
+    } else {
+      return { status: false }; // Return false if the format is incorrect
+    }
+  };
+  const handleCheckTeleBot = async (telegramGroupLink: string) => {
+    try {
+      const { status, chatId } = extractChatId(telegramGroupLink);
+      if (!status) {
+        notify("error", "Invalid Telegram Group Link");
+        return;
+      }
+      
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/telegram/checkBot?chat_id=${chatId}`,
+          {
+            headers: {
+              Authorization: authToken,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (!response.data.success) {
+          notify("error", response.data.message);
+          return;
+        }
+
+        notify("success", response.data.message);
+        setValidBot(true);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
       {isOpen && (
         <div className=" inset-0 z-50 overflow-y-auto bg-black bg-opacity-75 flex items-center justify-center">
-          <div className="relative p-4 w-full max-w-4xl">
+          <div className="relative p-4 w-full">
             <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl shadow-2xl">
               <div className="flex items-center justify-between p-5 border-b border-gray-700 bg-gray-800 rounded-t-3xl">
                 <h3 className="text-2xl font-bold text-white">
@@ -368,95 +434,143 @@ const AddTask = ({ params }: { params: { id: string } }) => {
               </div>
 
               <div className="flex flex-col md:flex-row">
-                <div className="p-4 md:p-5 flex flex-col gap-4 bg-[#141414] text-white w-full md:w-1/2">
-                  {categories
-                    .slice(0, Math.ceil(categories.length / 2))
-                    .map((category: string) => (
-                      <div key={category}>
-                        <div className="mx-4">
-                          <h4 className="text-xl font-medium mb-2 text-gray-400 ">
-                            {category}
-                          </h4>
-                        </div>
-                        <div className="space-y-2 mb-7 grid gap-4 sm:grid-cols-1">
-                          {taskOptions
-                            .filter((task: any) => task.category === category)
-                            .map((task: any, index: any) => (
-                              <div
-                                key={index}
-                                className="flex items-center p-3 text-base font-medium rounded-3xl dark:text-white cursor-pointer hover:bg-[#272A2A] text-white shadow"
-                                onClick={() => openTaskModal(task)}
-                              >
-                                <div className="flex items-center justify-center  mr-3">
-                                  <img
-                                    src={task.icon}
-                                    alt={task.name}
-                                    // width={40}
-                                    // height={40}
-                                    className="flex-shrink-0 h-12 w-12 rounded-full object-cover"
-                                  />
-                                </div>
+                <div className="p-4 md:p-5 flex flex-col gap-4 bg-[#141414] text-white w-full md:w-1/3">
+                  {categories.map(
+                    (category: string) =>
+                      category === "Answers" && (
+                        <div key={category}>
+                          <div className="mx-4">
+                            <h4 className="text-xl font-medium mb-2 text-gray-400 ">
+                              {category}
+                            </h4>
+                          </div>
+                          <div className="space-y-2 mb-4 grid gap-2 sm:grid-cols-1">
+                            {taskOptions
+                              .filter((task: any) => task.category === category)
+                              .map((task: any, index: any) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center p-3 text-base font-medium rounded-3xl dark:text-white cursor-pointer hover:bg-[#272A2A] text-white shadow"
+                                  onClick={() => openTaskModal(task)}
+                                >
+                                  <div className="flex items-center justify-center  mr-3">
+                                    <img
+                                      src={task.icon}
+                                      alt={task.name}
+                                      // width={40}
+                                      // height={40}
+                                      className="flex-shrink-0 h-12 w-12 rounded-full object-cover"
+                                    />
+                                  </div>
 
-                                <div className="flex-1 ">
-                                  <h3>{task.name}</h3>
-                                  <div className="text-sm  ">
-                                    <p className="text-gray-400">
-                                      {" "}
-                                      {task.description}{" "}
-                                    </p>
+                                  <div className="flex-1 ">
+                                    <h3>{task.name}</h3>
+                                    <div className="text-sm  ">
+                                      <p className="text-gray-400 truncate ">
+                                        {" "}
+                                        {task.description}{" "}
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                  )}
                 </div>
 
-                <div className="p-4 md:p-5 flex flex-col gap-4 bg-[#141414] text-white w-full md:w-1/2">
-                  {categories
-                    .slice(Math.ceil(categories.length / 2))
-                    .map((category: string) => (
-                      <div key={category}>
-                        <div className="mx-4">
-                          <h4 className="text-xl font-medium mb-2 text-gray-400 ">
-                            {category}
-                          </h4>
-                        </div>
+                <div className="p-4 md:p-5 flex flex-col gap-2 bg-[#141414] text-white w-full md:w-1/3">
+                  {categories.map(
+                    (category: string) =>
+                      (category === "Actions" || category === "Social") && (
+                        <div key={category}>
+                          <div className="mx-4">
+                            <h4 className="text-xl font-medium mb-2 text-gray-400 ">
+                              {category}
+                            </h4>
+                          </div>
 
-                        <div className="space-y-2 mb-7 grid gap-4 sm:grid-cols-1">
-                          {taskOptions
-                            .filter((task: any) => task.category === category)
-                            .map((task: any, index: any) => (
-                              <div
-                                key={index}
-                                className="flex items-center p-3 text-base font-medium rounded-3xl dark:text-white cursor-pointer hover:bg-[#272A2A] text-white shadow"
-                                onClick={() => openTaskModal(task)}
-                              >
-                                <div className="flex items-center justify-center  mr-3">
-                                  <img
-                                    src={task.icon}
-                                    alt={task.name}
-                                    // width={40}
-                                    // height={40}
-                                    className="flex-shrink-0 h-12 w-12 rounded-full object-cover"
-                                  />
-                                </div>
+                          <div className="space-y-2 mb-4 grid gap-2 sm:grid-cols-1">
+                            {taskOptions
+                              .filter((task: any) => task.category === category)
+                              .map((task: any, index: any) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center p-3 text-base font-medium rounded-3xl dark:text-white cursor-pointer hover:bg-[#272A2A] text-white shadow"
+                                  onClick={() => openTaskModal(task)}
+                                >
+                                  <div className="flex items-center justify-center  mr-3">
+                                    <img
+                                      src={task.icon}
+                                      alt={task.name}
+                                      // width={40}
+                                      // height={40}
+                                      className="flex-shrink-0 h-12 w-12 rounded-full object-cover"
+                                    />
+                                  </div>
 
-                                <div className="flex-1 ">
-                                  <h3>{task.name}</h3>
-                                  <div className="text-sm  ">
-                                    <p className="text-gray-400">
-                                      {" "}
-                                      {task?.description}{" "}
-                                    </p>
+                                  <div className="flex-1 ">
+                                    <h3>{task.name}</h3>
+                                    <div className="text-sm  ">
+                                      <p className="text-gray-400 truncate ">
+                                        {" "}
+                                        {task?.description}{" "}
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                  )}
+                </div>
+                <div className="p-4 md:p-5 flex flex-col gap-4 bg-[#141414] text-white w-full md:w-1/3">
+                  {categories.map(
+                    (category: string) =>
+                      category === "On-chain action" && (
+                        <div key={category}>
+                          <div className="mx-4">
+                            <h4 className="text-xl font-medium mb-2 text-gray-400 ">
+                              {category}
+                            </h4>
+                          </div>
+
+                          <div className="space-y-2 mb-4 grid gap-2 sm:grid-cols-1">
+                            {taskOptions
+                              .filter((task: any) => task.category === category)
+                              .map((task: any, index: any) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center p-3 text-base font-medium rounded-3xl dark:text-white cursor-pointer hover:bg-[#272A2A] text-white shadow"
+                                  onClick={() => openTaskModal(task)}
+                                >
+                                  <div className="flex items-center justify-center  mr-3">
+                                    <img
+                                      src={task.icon}
+                                      alt={task.name}
+                                      // width={40}
+                                      // height={40}
+                                      className="flex-shrink-0 h-12 w-12 rounded-full object-cover"
+                                    />
+                                  </div>
+
+                                  <div className="flex-1 ">
+                                    <h3>{task.name}</h3>
+                                    <div className="text-sm  ">
+                                      <p className="text-gray-400 truncate ">
+                                        {" "}
+                                        {task?.description}{" "}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                      )
+                  )}
                 </div>
               </div>
             </div>
@@ -535,142 +649,69 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                       />
                     </div>
                   )}
+                  {selectedTask.name === "Tweet Like" && (
+                    <div className="flex flex-col justify-start items-start gap-2 mb-4">
+                      <label htmlFor="tweetUrl">TweetUrl</label>
+                      <input
+                        type="text"
+                        placeholder="https://x.com/HOW3_Official/status/1829297591920464076"
+                        className="w-full px-2 py-1 rounded-md bg-gray-700"
+                        id="tweetUrl"
+                        name="tweetUrl"
+                        value={tweet.tweetLikeUrl}
+                        onChange={(e) => {
+                          setTweet({
+                            ...tweet,
+                            tweetLikeUrl: e.target.value,
+                          });
+                        }}
+                      />
+                    </div>
+                  )}
 
-                  {selectedTask.name === "Twitter" && (
-                    <>
-                      <div className="mb-4 mt-4 ">
-                        <ul
-                          className="flex flex-wrap justify-center -mb-px text-sm font-medium text-center"
-                          role="tablist"
-                        >
-                          <li className="me-2" role="presentation">
-                            <button
-                              className={`inline-block px-4 py-1 rounded-md ${
-                                activeTab === "tweetReaction"
-                                  ? "text-white bg-purple-600"
-                                  : "text-purple-600 hover:text-gray-300"
-                              }`}
-                              onClick={() => handleTabClick("tweetReaction")}
-                              type="button"
-                              role="tab"
-                              aria-selected={activeTab === "tweetReaction"}
-                            >
-                              Tweet Reaction
-                            </button>
-                          </li>
-                          <li className="me-2" role="presentation">
-                            <button
-                              className={`inline-block px-4 py-1 rounded-md ${
-                                activeTab === "tweetFollow"
-                                  ? "text-white bg-purple-600"
-                                  : "text-purple-600 hover:text-gray-300"
-                              }`}
-                              onClick={() => handleTabClick("tweetFollow")}
-                              type="button"
-                              role="tab"
-                              aria-selected={activeTab === "tweetFollow"}
-                            >
-                              Tweet Follow
-                            </button>
-                          </li>
-                          <li className="me-2" role="presentation">
-                            <button
-                              className={`inline-block px-4 py-1 rounded-md ${
-                                activeTab === "tweet"
-                                  ? "text-white bg-purple-600"
-                                  : "text-purple-600 hover:text-gray-300"
-                              }`}
-                              onClick={() => handleTabClick("tweet")}
-                              type="button"
-                              role="tab"
-                              aria-selected={activeTab === "tweet"}
-                            >
-                              Tweet
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
+                  {selectedTask.name === "Tweet Retweet" && (
+                    <div className="flex flex-col justify-start items-start gap-2 mb-4">
+                      <label htmlFor="tweetUrl">TweetUrl</label>
+                      <input
+                        type="text"
+                        placeholder="https://x.com/HOW3_Official/status/1829297591920464076"
+                        className="w-full px-2 py-1 rounded-md bg-gray-700"
+                        id="tweetUrl"
+                        name="tweetUrl"
+                        value={tweet.tweetRetweetUrl}
+                        onChange={(e) => {
+                          setTweet({
+                            ...tweet,
+                            tweetRetweetUrl: e.target.value,
+                          });
+                        }}
+                      />
+                    </div>
+                  )}
 
-                      <div id="default-styled-tab-content">
-                        <div
-                          className={`p-4 rounded-lg text-white ${
-                            activeTab === "tweetReaction" ? "block" : "hidden"
-                          }`}
-                          role="tabpanel"
-                          aria-labelledby="tweetReaction-tab"
-                        >
-                          <div className="flex flex-col justify-start items-start gap-2 mb-4">
-                            <label htmlFor="tweetUrl">TweetUrl</label>
-                            <input
-                              type="text"
-                              placeholder="https://x.com/HOW3_Official/status/1829297591920464076"
-                              className="w-full px-2 py-1 rounded-md bg-gray-700"
-                              id="tweetUrl"
-                              name="tweetUrl"
-                              value={tweet.tweetUrl}
-                              onChange={(e) => {
-                                setTweet({
-                                  ...tweet,
-                                  tweetUrl: e.target.value,
-                                });
-                              }}
-                            />
-                          </div>
-                          <div className="flex flex-col justify-start items-start gap-2">
-                            <label htmlFor="tweetAction">Tweet Action :</label>
-                            <select
-                              id="tweetAction"
-                              name="tweetAction"
-                              className="rounded-md px-2 py-1 bg-gray-700"
-                              value={tweet.tweetAction}
-                              onChange={(e) => {
-                                setTweet({
-                                  ...tweet,
-                                  tweetAction: e.target.value,
-                                });
-                              }}
-                            >
-                              <option value="like">Like</option>
-                              <option value="retweet">Retweet</option>
-                              <option value="reply">Reply</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div
-                          className={`p-4 rounded-lg text-white ${
-                            activeTab === "tweetFollow" ? "block" : "hidden"
-                          }`}
-                          role="tabpanel"
-                          aria-labelledby="tweetFollow-tab"
-                        >
-                          <div className="flex flex-col justify-start items-start gap-2 mb-4">
-                            <label htmlFor="tweetUsername">
-                              Twitter Username
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="@johnDoe"
-                              className="w-full px-2 py-1 rounded-md bg-gray-700"
-                              id="tweetUsername"
-                              name="tweetUsername"
-                              value={tweet.tweetUsername}
-                              onChange={(e) => {
-                                setTweet({
-                                  ...tweet,
-                                  tweetUsername: e.target.value,
-                                });
-                              }}
-                            />
-                          </div>
-                        </div>
-                        <div
-                          className={`p-4 rounded-lg text-white ${
-                            activeTab === "tweet" ? "block" : "hidden"
-                          }`}
-                          role="tabpanel"
-                          aria-labelledby="tweet-tab"
-                        >
-                          {/* <div className="flex flex-col justify-start items-start gap-2 mb-4">
+                  {selectedTask.name === "Twitter Follow" && (
+                    <div className="flex flex-col justify-start items-start gap-2 mb-4">
+                      <label htmlFor="tweetUsername">Twitter Username</label>
+                      <input
+                        type="text"
+                        placeholder="@johnDoe"
+                        className="w-full px-2 py-1 rounded-md bg-gray-700"
+                        id="tweetUsername"
+                        name="tweetUsername"
+                        value={tweet.tweetUsername}
+                        onChange={(e) => {
+                          setTweet({
+                            ...tweet,
+                            tweetUsername: e.target.value,
+                          });
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {selectedTask.name === "Tweet" && (
+                    <div>
+                      {/* <div className="flex flex-col justify-start items-start gap-2 mb-4">
                             <label htmlFor="tweetWords">Tweet Words</label>
                             <div className="flex justify-between items-center">
                               <input
@@ -711,47 +752,71 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                             </p>
                           </div> */}
 
-                          <div className=" flex flex-col justify-start items-start gap-2">
-                            <label htmlFor="default tweet">Default tweet</label>
-                            <textarea
-                              className="w-full p-2 rounded-md bg-gray-700"
-                              value={tweet.defaultTweet}
-                              onChange={(e) => {
-                                setTweet({
-                                  ...tweet,
-                                  defaultTweet: e.target.value,
-                                });
-                              }}
-                            />
-                          </div>
-                        </div>
+                      <div className=" flex flex-col justify-start items-start gap-2">
+                        <label htmlFor="default tweet">Default tweet</label>
+                        <textarea
+                          className="w-full p-2 rounded-md bg-gray-700"
+                          value={tweet.defaultTweet}
+                          onChange={(e) => {
+                            setTweet({
+                              ...tweet,
+                              defaultTweet: e.target.value,
+                            });
+                          }}
+                        />
                       </div>
-                    </>
+                    </div>
                   )}
 
-                  {
-                    selectedTask.name==="Telegram" && (
-                      <div className="flex items-center mt-2">
+                  {selectedTask.name === "Telegram" && (
+                    <div className="flex flex-col mt-2">
+                      <p className="text-sm text-start mb-4 text-White">
+                        {" "}
+                        Add official{" "}
+                        <Link
+                          target="_blank"
+                          href="https://web.telegram.org/a/#7203312841"
+                        >
+                          <b>@FamProtocolBot</b>
+                        </Link>{" "}
+                        Bot in your Telegram Group
+                      </p>
 
-                        <label className="w-full p-3 border-r-1  rounded-l-lg bg-gray-700 text-white">
-                          Telegram Link
-                        </label>
-                        <input
-                          type="text"
-                          className="w-3/4 p-3 bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:outline-none"
-                          placeholder="Telegram Link"
-                          value={telegram.telegramLink}
-                          onChange={(e) =>
-                            setTelegram({
-                              ...telegram,
-                              telegramLink: e.target.value,
-                            })
-                          }
-                        />
-                        <button className="px-2 py-1 bg-blue-700 rouneded-md  " >check Bot</button>
+                      <label className="w-full mb-4 text-white">
+                        Telegram Link
+                      </label>
+
+                      <input
+                        type="text"
+                        className="w-full p-3 rounded-md bg-gray-700 focus:ring-2 mb-4 focus:ring-gray-500 focus:outline-none"
+                        placeholder="https://web.telegram.org/a/#-4503041781"
+                        value={telegram.telegramGroupLink}
+                        onChange={(e) =>
+                          setTelegram({
+                            ...telegram,
+                            telegramGroupLink: e.target.value,
+                          })
+                        }
+                      />
+
+                      <div className="mb-2 flex justify-end items-end">
+                        {validBot ? (
+                          <div className="px-4 py-2 rounded-md bg-blue-700">
+                            Bot Connected
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              handleCheckTeleBot(telegram.telegramGroupLink);
+                            }}
+                            className="px-4 py-2 bg-blue-700 rounded-md  "
+                          >
+                            check Bot
+                          </button>
+                        )}
                       </div>
-                    )
-                  }
+                    </div>
+                  )}
 
                   <label className="block text-gray-300 font-semibold mb-2">
                     Rewards

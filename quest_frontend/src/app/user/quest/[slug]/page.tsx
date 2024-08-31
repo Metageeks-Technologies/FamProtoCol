@@ -1,4 +1,26 @@
 "use client"
+
+import Cookies from "js-cookie";
+import QuizPollCarousel from "@/app/components/QuizPollCarousel";
+import {
+  fetchTaskById,
+  completeTask,
+  connetToWallets,
+  fetchTasks,
+} from "@/redux/reducer/taskSlice";
+import { AppDispatch, RootState } from "@/redux/store";
+
+import { notify } from "@/utils/notify";
+import { Button, Progress } from "@nextui-org/react";
+import axios from "axios";
+import React, { useEffect, useState, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ethers } from "ethers";
+import { GITCOIN_PASSPORT_WEIGHTS } from "./stamp-weights";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+// types.ts
 declare global {
   interface Window {
     ethereum?: any;
@@ -11,26 +33,6 @@ declare global {
     walletsToConnect?: number;
   };
 }
-import QuizPollCarousel from "@/app/components/QuizPollCarousel";
-import {
-  fetchTaskById,
-  completeTask,
-  connetToWallets,
-  fetchTasks,
-} from "@/redux/reducer/taskSlice";
-import { AppDispatch, RootState } from "@/redux/store";
-import { notify } from "@/utils/notify";
-import { Button, Progress } from "@nextui-org/react";
-import axios from "axios";
-import React, { useEffect, useState, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { ethers } from "ethers";
-import { GITCOIN_PASSPORT_WEIGHTS } from "./stamp-weights";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-
-// types.ts
-
 export interface QuizQuestion {
   question: string;
   options: string[];
@@ -70,13 +72,12 @@ export interface CardData {
   walletsToConnect?: number;
   connectedWallets?: [string];
   opinionQuestion?: string;
-  tweet?: {
-    tweetUrl?: string;
-    tweetAction?: string;
-    tweetUsername?: string;
-    tweetWords?: string[];
-    defaultTweet?: string;
-  };
+  tweetLikeUrl?: string;
+  tweetRetweetUrl?: string;
+  tweetUsername?: string;
+  tweetWords?: string[];
+  defaultTweet?: string;
+  telegramGroupLink?: string;
 }
 
 const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
@@ -221,9 +222,20 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
         return true;
       case "Connect multiple wallet":
         return true;
-      // default:
-      //   console.log( "validation is complete, no matches found" );
-      //   return false;
+      case "Twitter Follow":
+        return true;
+      case "Tweet Like":
+        return true;
+      case "Tweet":
+        return true;
+      case "Tweet Retweet":
+        return true;
+      case "Telegram":
+        return true;
+
+      default:
+        console.log( "validation is complete, no matches found" );
+        return false;
     }
   };
 
@@ -526,17 +538,8 @@ const Popup: React.FC<{
   const router = useRouter();
   // const tasks = useSelector( ( state: RootState ) => state.task.tasks );
   const [localConnectedWallets, setLocalConnectedWallets] = useState<any>([]);
-  const [activeTab, setActiveTab] = useState<string>("tweetReaction");
-  const [tweeterVerify, setTweeterVerify] = useState({
-    tweetLike: false,
-    tweetRetweet: false,
-    userFollow: false,
-    tweet: false,
-  });
+  const authToken = `Bearer ${Cookies.get("authToken")}`;
 
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
-  };
   useEffect(() => {
     if (selectedCard?.type === "Connect multiple wallet") {
       setLocalConnectedWallets(selectedCard?.connectedWallets);
@@ -708,7 +711,9 @@ const Popup: React.FC<{
 
   //Below codes are related to Metamask wallet connection
   useEffect(() => {
+    if(selectedCard?.type === "Connect wallet" || selectedCard?.type === "Gitcoin passport" || selectedCard?.type === "Civic pass verification" || selectedCard?.type === "Ens holder" || selectedCard?.type === "Eth holder" || selectedCard?.type === "Connect multiple wallet") {
     checkConnection();
+    }
   }, []);
 
   const checkConnection = async () => {
@@ -1165,7 +1170,7 @@ const Popup: React.FC<{
 
       if (response.data.isLiked) {
         notify("success", "You have liked the tweet");
-        setTweeterVerify((prev) => ({ ...prev, tweetLike: true }));
+        onSubmit(selectedCard._id, { visited: "Tweet liked" });
       } else {
         notify("error", "You have not liked the tweet");
       }
@@ -1195,17 +1200,17 @@ const Popup: React.FC<{
         { tweetId },
         { withCredentials: true }
       );
-      console.log("like response", response.data);
+     
       if(!response.data.success){
         notify("error", "Some error occured while checking tweet retweet");
         return;
       }
 
       if (response.data.isRetweeted) {
-        notify("success", "You have liked the tweet");
-        setTweeterVerify((prev) => ({ ...prev, tweetRetweet: true }));
+        notify("success", "Task completed successfully");
+        onSubmit(selectedCard._id, { visited: "Tweet retweeted" });
       } else {
-        notify("error", "You have not liked the tweet");
+        notify("error", "You have not Retweeted the tweet");
       }
     } catch (error) {
       console.log("error while checking tweet like", error);
@@ -1233,14 +1238,57 @@ const Popup: React.FC<{
         return;
       }
 
-      notify("success", "Tweet Posted successfully");
-      setTweeterVerify((prev) => ({ ...prev, tweet: true }));
-
+      onSubmit(selectedCard._id, { visited: "Tweet sent" });
+      notify("success", "Tweet sent successfully");
     } catch (error) {
       console.log("error while sending tweet", error);
       notify("error", "Error while sending tweet");
     }
   };
+  const extractChatId = (url: string) => {
+    const regex = /^https:\/\/web\.telegram\.org\/a\/#(-?\d+)$/;
+    const match = url.match(regex);
+
+    if (match) {
+      return { status: true, chatId: match[1] }; // Return the chat ID
+    } else {
+      return { status: false }; // Return false if the format is incorrect
+    }
+  };
+  const handleVerifyJoinTelegramGroup = async (groupUrl: string) => {
+    if(!user?.teleInfo?.telegramId){
+      notify("error", "Please connect your telegram account to proceed");
+      router.push("/user/profile");
+      return;
+    }
+    try{
+      const { status, chatId } = extractChatId(groupUrl);
+      if(!status){
+        notify("error", "Invalid Telegram group URL");
+        return;
+      }
+
+    const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/telegram/getChatMember?chat_id=${chatId}&user_id=${user?.teleInfo?.telegramId}`,
+          {
+            headers: {
+              Authorization: authToken,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (!response.data.success) {
+          notify("error", response.data.message);
+          return;
+        }
+        onSubmit(selectedCard._id, { visited: "Telegram group joined" });
+    }
+    catch(error){
+      console.log("error while checking telegram group", error);
+      notify("error", "Error while checking telegram group");
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center">
@@ -1556,162 +1604,97 @@ const Popup: React.FC<{
                   </Button>
                 )}
 
-                {selectedCard.type === "Twitter" && (
-                  <>
-                    <div className="mb-4 mt-4">
-                      <ul
-                        className="flex flex-wrap -mb-px text-sm font-medium text-center"
-                        role="tablist"
-                      >
-                        <li className="me-2" role="presentation">
-                          <button
-                            className={`inline-block px-4 py-1 rounded-md ${
-                              activeTab === "tweetReaction"
-                                ? "text-white bg-purple-600"
-                                : "text-purple-600 hover:text-gray-300"
-                            }`}
-                            onClick={() => handleTabClick("tweetReaction")}
-                            type="button"
-                            role="tab"
-                            aria-selected={activeTab === "tweetReaction"}
-                          >
-                            Tweet Reaction
-                          </button>
-                        </li>
-                        <li className="me-2" role="presentation">
-                          <button
-                            className={`inline-block px-4 py-1 rounded-md ${
-                              activeTab === "tweetFollow"
-                                ? "text-white bg-purple-600"
-                                : "text-purple-600 hover:text-gray-300"
-                            }`}
-                            onClick={() => handleTabClick("tweetFollow")}
-                            type="button"
-                            role="tab"
-                            aria-selected={activeTab === "tweetFollow"}
-                          >
-                            Tweet Follow
-                          </button>
-                        </li>
-                        <li className="me-2" role="presentation">
-                          <button
-                            className={`inline-block px-4 py-1 rounded-md ${
-                              activeTab === "tweet"
-                                ? "text-white bg-purple-600"
-                                : "text-purple-600 hover:text-gray-300"
-                            }`}
-                            onClick={() => handleTabClick("tweet")}
-                            type="button"
-                            role="tab"
-                            aria-selected={activeTab === "tweet"}
-                          >
-                            Tweet
-                          </button>
-                        </li>
-                      </ul>
+                {selectedCard.type=== "Tweet Like" && (
+                    <div className="flex flex-col mb-4">
+                          <div className="mb-4 text-start text-white">
+                          Like the following tweet{" "}
+                        </div>
+
+                        <Link
+                          target="_blank"
+                          href={selectedCard?.tweetLikeUrl as string}
+                          className="rounded-full px-4 py-2 bg-blue-500 text-white mb-4"
+                        >
+                          <div className="flex justify-center items-center gap-2"><span><i className="bi bi-twitter"></i></span><span>Tweet</span></div>
+                        </Link>
+                        <div className="flex justify-end items-center mb-2">
+                         <button
+                          onClick={() => {
+                            handleVerifyLike(
+                              selectedCard?.tweetLikeUrl as string
+                            );
+                          }}
+                          className="bg-blue-400 px-4 py-2 rounded-full "
+                        >
+                         Submit
+                        </button>
+                        </div> 
                     </div>
+                )}
 
-                    <div id="default-styled-tab-content">
-                      <div
-                        className={`p-4 rounded-lg text-white ${
-                          activeTab === "tweetReaction" ? "block" : "hidden"
-                        }`}
-                        role="tabpanel"
-                        aria-labelledby="tweetReaction-tab"
-                      >
-                        {selectedCard?.tweet?.tweetAction === "like" && (
-                          <div className="flex flex-col mb-4">
-                          {
-                            tweeterVerify.tweetLike ? (
-                              <div className="text-green-500 text-center text-lg">liking tweet done</div>
-                            ) : (
-                              <>
-                              <div className="mb-4 text-start text-white">
-                              Like the following tweet{" "}
-                            </div>
+                {selectedCard.type=== "Tweet Retweet" && (
+                    <div className="flex flex-col mb-4">
+                    
+                          <div className="mb-4 text-start text-white">
+                        Retweet the following tweet{" "}
+                        </div>
 
-                            <Link
-                              target="_blank"
-                              href={selectedCard.tweet?.tweetUrl as string}
-                              className="rounded-full px-4 py-2 bg-blue-500 text-white mb-4"
-                            >
-                              <div className="flex justify-center items-center gap-2"><span><i className="bi bi-twitter"></i></span><span>Tweet</span></div>
-                            </Link>
-                            <div className="flex justify-end items-center mb-2">
-                             <button
-                              onClick={() => {
-                                handleVerifyLike(
-                                  selectedCard?.tweet?.tweetUrl as string
-                                );
-                              }}
-                              className="bg-red-500 px-4 py-2 rounded-full "
-                            >
-                              {" "}
-                              verify{" "}
-                            </button>
-                            </div>
-                           
-                              </>
-                            )
-                          }
+                        <Link
+                          target="_blank"
+                          href={selectedCard?.tweetRetweetUrl as string}
+                          className="rounded-full px-4 py-2 bg-blue-600 text-white mb-4"
+                        >
+                          <div className="flex justify-center items-center gap-2"><span><i className="bi bi-twitter"></i></span><span>ReTweet</span></div>
+                        </Link>
+                        <div className="flex justify-end items-center mb-2">
+                         <button
+                          onClick={() => {
+                            handleVerifyRetweet(
+                              selectedCard?.tweetRetweetUrl as string
+                            );
+                          }}
+                          className="bg-blue-700 px-4 py-2 rounded-full "
+                        >
+                         Submit
+                        </button>
+                        </div>
+                    </div>
+                )}
+
+                {
+                  selectedCard.type === "Tweet" && (
+                    <>
+                    <div className="flex flex-col ">
+                      
+                      {
+                        selectedCard?.defaultTweet && (
+                          <div className="flex flex-col" >
+                              <textarea disabled value={selectedCard?.defaultTweet} className="w-full bg-gray-800 mb-4 rounded-md text-white p-2 border-1 border-gray-400" ></textarea>
                             
+                          <div className="flex justify-end items-center ">
+                          <button onClick={()=>handleSendTweet(selectedCard?.defaultTweet as string)} className="px-4 py-1 rounded-full bg-blue-500 hover:bg-blue-800 text-white" ><div className="flex justify-center items-center gap-2"><span><i className="bi bi-twitter"></i></span><span>Tweet</span></div></button>
                           </div>
-                        )}
-                        
-                        {selectedCard?.tweet?.tweetAction === "retweet" && (
-                          <div className="flex flex-col mb-4">
-                          {
-                            tweeterVerify.tweetRetweet ? (
-                              <div className="text-green-500 text-center text-lg">Retweeting tweet done</div>
-                            ) : (
-                              <>
-                              <div className="mb-4 text-start text-white">
-                            Retweet the following tweet{" "}
-                            </div>
+                             </div>
+                        )
+                      }
+                    </div>
+                    </>
+                  )
+                }
 
-                            <Link
-                              target="_blank"
-                              href={selectedCard.tweet?.tweetUrl as string}
-                              className="rounded-md px-4 py-2 bg-blue-700 text-white mb-4"
-                            >
-                              <div className="flex justify-center items-center gap-2"><span><i className="bi bi-twitter"></i></span><span>Tweet</span></div>
-                            </Link>
-                            <div className="flex justify-end items-center mb-2">
-                             <button
-                              onClick={() => {
-                                handleVerifyRetweet(
-                                  selectedCard?.tweet?.tweetUrl as string
-                                );
-                              }}
-                              className="bg-red-500 px-4 py-2 rounded-full "
-                            >
-                              {" "}
-                              verify{" "}
-                            </button>
-                            </div>
-                              </>
-                            )
-                          }
-                          </div>
-                        )}
-                      </div>
-                      <div
-                        className={`p-4 rounded-lg text-white ${
-                          activeTab === "tweetFollow" ? "block" : "hidden"
-                        }`}
-                        role="tabpanel"
-                        aria-labelledby="tweetFollow-tab"
-                      >
-                        <div className="flex justify-center items-center mb-4">
+                {
+                  selectedCard.type === "Twitter Follow" && (
+                    <div>
+                      <div className="flex justify-center items-center mb-4">
                           <button
                             onClick={() => {
                               handleTwitterFollow(
-                                selectedCard?.tweet?.tweetUsername as string
+                                selectedCard?.tweetUsername as string
                               );
                             }}
                             className="text-white bg-blue-500 rounded-full px-4 py-2 "
                           >
-                          <div className="flex justify-center items-center gap-2"><span><i className="bi bi-twitter"></i></span><span>Follow {selectedCard.tweet?.tweetUsername}</span></div>
+                          <div className="flex justify-center items-center gap-2"><span><i className="bi bi-twitter"></i></span><span>Follow {selectedCard?.tweetUsername}</span></div>
                             
                           </button>
                         </div>
@@ -1720,51 +1703,46 @@ const Popup: React.FC<{
                             className="px-2 py-1 rounded-full bg-red-600 text-white"
                             onClick={() => {
                               handleCheckTwitterFollow(
-                                selectedCard.tweet?.tweetUsername as string
+                                selectedCard?.tweetUsername as string
                               );
                             }}
                           >
                             Claim
                           </button>
                         </div>
-                      </div>
-                      <div
-                        className={`p-4 rounded-lg text-white ${
-                          activeTab === "tweet" ? "block" : "hidden"
-                        }`}
-                        role="tabpanel"
-                        aria-labelledby="tweet-tab"
-                      >
-                        <div className="flex flex-col ">
-                          
-                          {
-                            selectedCard.tweet?.defaultTweet && (
-                              <>
-                              {
-                                tweeterVerify.tweet ? (
-                                  <div className="text-green-500 text-center mb-4" >Tweet Posted successfully</div>
-                                ):(
-                                  <>
-                                  <textarea disabled value={selectedCard.tweet?.defaultTweet} className="w-full bg-gray-800 mb-4 rounded-md text-white p-2 border-1 border-gray-400" ></textarea>
-                              
-                              <div className="flex justify-end items-center ">
-                              <button onClick={()=>handleSendTweet(selectedCard.tweet?.defaultTweet as string)} className="px-4 py-1 rounded-full bg-blue-500 hover:bg-blue-800 text-white" ><div className="flex justify-center items-center gap-2"><span><i className="bi bi-twitter"></i></span><span>Tweet</span></div></button>
-                              </div>
-                                  </>
-                                )
-                              }
-                              
-                              </>
-                            )
-                          }
-                          
-                         
-                         
-                        </div>
-                      </div>
                     </div>
-                  </>
-                )}
+                  )
+                }
+
+                {selectedCard.type==="Telegram" && (
+                  <div className="flex flex-col mb-4">
+                     
+                          <div className="mb-4 text-start text-white">
+                          Join the telegram group{" "}
+                        </div>
+
+                        <Link
+                          target="_blank"
+                          href={selectedCard?.telegramGroupLink as string}
+                          className="rounded-full px-4 py-2 bg-blue-500 text-white mb-4"
+                        >
+                          <div className="flex justify-center items-center gap-2"><span><i className="bi bi-telegram"></i></span><span>join The Group</span></div>
+                        </Link>
+                        <div className="flex justify-end items-center mb-2">
+                         <button
+                          onClick={() => {
+                            handleVerifyJoinTelegramGroup(
+                              selectedCard?.telegramGroupLink as string
+                            );
+                          }}
+                          className="bg-blue-600 px-4 py-2 rounded-full "
+                        >
+                         Submit
+                        </button>
+                        </div>
+                        </div>
+                )
+                }
 
                 {selectedCard.type === "Connect multiple wallet" &&
                   [...Array(selectedCard.walletsToConnect)].map((_, index) => (
