@@ -1,10 +1,10 @@
 "use client";
-import React from "react";
+import React, { Suspense,useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const CallBackPage = () => {
+const CallBackPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const state = searchParams.get("state");
@@ -26,11 +26,20 @@ const CallBackPage = () => {
       console.log(error);
     }
   };
-  React.useEffect(() => {
+
+  useEffect(() => {
     handleLogin();
-  }, []);
+  }, []); // Ensure dependencies are set correctly
 
   return <div>Authenticating...</div>;
+};
+
+const CallBackPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CallBackPageContent />
+    </Suspense>
+  );
 };
 
 export default CallBackPage;
