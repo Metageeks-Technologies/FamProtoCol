@@ -1,6 +1,10 @@
-  {
+{
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,7 +22,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
@@ -26,8 +32,10 @@
     "**/*.ts",
     "**/*.tsx",
     "src/**/*.ts",
-    ".next/types/**/*.ts"
-, "src/app/sucessfulLogin"    
+    ".next/types/**/*.ts",
+    "src/app/sucessfulLogin"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

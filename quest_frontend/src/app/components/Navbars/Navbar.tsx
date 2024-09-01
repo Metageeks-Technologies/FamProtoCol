@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown, Avatar, DropdownItem, DropdownMenu, DropdownTrigger, Input, Badge, Button } from "@nextui-org/react";
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { Toaster } from "react-hot-toast";
 
 import { logoutUser } from '@/redux/reducer/authSlice';
 import { AppDispatch, persistor, RootState } from '@/redux/store';

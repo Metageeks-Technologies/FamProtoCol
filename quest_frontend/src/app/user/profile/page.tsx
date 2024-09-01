@@ -21,7 +21,7 @@ const columns = [
 
 const Profile: React.FC = () => {
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
+  // const [isClient, setIsClient] = useState(false);
   const [earned, setEarned] = useState<number | null>(null);
   const [allFriends, setAllFriends] = useState<any>([]);
 
@@ -80,18 +80,19 @@ const Profile: React.FC = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/discord`;
   };
   const signupX = async () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/auth`;
+    const authUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/auth`;
+    window.open(authUrl, '_blank', 'noopener,noreferrer');
   };
   
   useEffect(() => {
-    setIsClient(true);
+    // setIsClient(true);
     getFriends();
     dispatch(fetchUserData());
   }, []);
 
-  if (!isClient)
+  if (!user)
     return (
-      <div className="flex justify-center items-center">
+      <div className="min-h-screen flex justify-center items-center">
         <BallTriangle />
       </div>
     );
