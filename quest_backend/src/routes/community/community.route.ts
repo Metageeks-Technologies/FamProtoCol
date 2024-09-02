@@ -1,6 +1,6 @@
 import express  from "express"
 import { CommunityController } from "../../controllers/community/community.controller";
-import { RefrralMiddleaware } from "../../middleware/middleware";
+import { RefrralMiddleaware } from "../../middleware/user/referralAuthorize";
 
 const communityRoute = express.Router();
 

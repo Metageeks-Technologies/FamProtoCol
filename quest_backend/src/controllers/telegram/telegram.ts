@@ -1,4 +1,4 @@
-import { tele_api } from "../../utils/telegramApi/telegramApi";
+import { tele_api } from "../../utils/telegramApi";
 export const sendMessage = async (chat_id: string, messageText: string) => {
   console.log("sendMessage", chat_id, messageText);
   const api = await tele_api();

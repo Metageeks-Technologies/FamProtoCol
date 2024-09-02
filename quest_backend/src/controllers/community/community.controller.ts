@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import CommunityModel, { Community } from '../../models/community/community.model';
 import UserDb from '../../models/user/user';
 import { sendMessage } from '../../controllers/telegram/telegram';
-import { sendDiscord } from '../discord/discord';
+import { sendDiscord } from '../user/discord';
 
 export const CommunityController = {
 

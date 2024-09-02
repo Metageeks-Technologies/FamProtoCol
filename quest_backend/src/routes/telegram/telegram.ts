@@ -1,7 +1,7 @@
 
 import { checkBot,getChatMember, sendMessageToGroup, telegramWebHook } from "../../controllers/telegram/telegram";
 import express from "express";
-import { verifyToken } from "../../middleware/middleware";
+import { verifyToken } from "../../middleware/user/verifyToken";
 
 const telegramRouter = express.Router();
 
