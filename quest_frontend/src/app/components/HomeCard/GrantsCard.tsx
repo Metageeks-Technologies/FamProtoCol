@@ -88,7 +88,8 @@ const GrantsCard = () => {
       <Slider { ...settings }>
         {grantItems.map((grant, index) => (
           <div className="relative" key={grant._id}>
-            <div className="relative grant-clip bg-gray-500 box1 w-12 ">
+          <div className="grant-clip bg-zinc-800 p-[2px]">
+            <div className="relative grant-clip bg-zinc-950 box1 w-12 ">
               <div
                 key={index}
                 className=" box2 grant-clip w-full px-5 py-3 home-g"
@@ -112,7 +113,7 @@ const GrantsCard = () => {
                 </div>
 
                 <div className="ml-8 mt-3 uppercase">
-                  <p className="text-end" style={{ fontSize: "0.6rem" }}>
+                  <p className="text-end h-[5vh] text-wrap " style={{ fontSize: "0.6rem" }}>
                     {grant.description}
                   </p>
                 </div>
@@ -139,6 +140,7 @@ const GrantsCard = () => {
                   </div>
                 </div>
               </div>
+            </div>
             </div>
             <div className="absolute -top-1 -right-1">
               <svg

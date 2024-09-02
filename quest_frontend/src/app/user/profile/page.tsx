@@ -5,9 +5,9 @@ import { BallTriangle } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import ModalForm from "@/app/components/ModalForm";
-import { fetchUserData, IUser } from "@/redux/reducer/authSlice";
+import { fetchUserData} from "@/redux/reducer/authSlice";
 import { Button, Chip } from "@nextui-org/react";
-import type { Friend } from "./data";
+import type { Friend } from "@/types/types";
 import UserTable from "@/app/components/table/userTable";
 import TeleApp from "@/app/components/telegram";
 

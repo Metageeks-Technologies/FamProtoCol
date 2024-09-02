@@ -6,13 +6,17 @@ const Footer = () => {
     <div className="bg-black text-white pb-10 lg:px-20 sm:px-20 px-10">
     <div className="flex flex-wrap">
       <div className="mt-10 w-full md:w-full lg:w-1/2 pr-4">
-        <div className="mb-4">
+      <div className='flex items-center gap-4 mb-4'>
+        <div className="w-10 h-10">
           <img
-            src='https://s3-alpha-sig.figma.com/img/4512/b4ae/e762c2983c04d88202e359621154bb15?Expires=1721001600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=OiPWhLmECDGKHGbJf5PRRFaKXBpklLIRggKSIooahgqBpMPLhfvkfdieq4tWITNiASO70HIpVcMhWUHWaHwxufDuV-CgL4Qmc7HERzB9GU5M02pvnZCrJocx3oQ3UhnZfqwos6DhhuTBWlA2OrOm8qzjpELwnfxA7z7FCTT39XM4OyklyewONudq7zwPd6Tk6tXAEIJxJTsSeYboDA5Am74xmCc2an2a7kbTXfCEzdS553PjwVyX1-hhESunB8WDuCB8bpWu5JaET-rD76hJ-BNh6LPvSBFrpSJLQ8fUY6earwCf4b-dkE5s78cC9yXpgEkLGAmlMh3iqUndUo8xSA__'
-            alt='Flowbite Logo'
-            className='h-12 w-32'
+            src='https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png'
+            alt='FamProtocol'
+            className='w-full h-full object-cover'
           />
         </div>
+        <div className='text-xl'>FamProtocol</div>
+
+</div>
         <p className="text-gray-400">
           Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
         </p>
