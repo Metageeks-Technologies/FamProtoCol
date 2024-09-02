@@ -1,19 +1,13 @@
+import { Request } from "express";
 import passport from "passport";
 import { Strategy as GoogleStrategy, Profile } from "passport-google-oauth20";
-import {
-  Strategy as TwitterStrategy,
-  IStrategyOptionWithRequest,
-  Profile as TwitterProfile,
-} from "passport-twitter";
 import jwt from 'jsonwebtoken';
 import { Strategy as DiscordStrategy, Profile as DiscordProfile } from "passport-discord";
 import dotenv from "dotenv";
 import UserDb, { IUser } from "../models/user/user";
-import { Request } from "express";
 import KolsDB from "../models/kols/kols";
-import { fetchGuilds } from "../controllers/user/discord";
-import { jwtUser } from "middleware/user/verifyToken";
-import { error } from "console";
+import { fetchGuilds } from "../controllers/discord/discord";
+import { jwtUser } from "../middleware/middleware";
 
 dotenv.config();
 

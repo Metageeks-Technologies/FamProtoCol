@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addFeed, getFeeds, getFeedById, updateFeed, deleteFeed } from '../controllers/feeds/feed';
+import { addFeed, getFeeds, getFeedById, updateFeed, deleteFeed } from '../../controllers/feeds/feed';
 
 const feedRouter = Router();
 

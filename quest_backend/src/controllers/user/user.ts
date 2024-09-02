@@ -167,3 +167,55 @@ export const getAllUser = async ( req: Request, res: Response ) =>
   }
 }
 
+export const getUserProfile = async ( req: Request, res: Response ) =>{
+  const user = req.user as any;
+  let data;
+  if (!user) {
+    return res
+      .status(201)
+      .json({ success: false, message: "User not found. Please login" });
+  }
+  data = await User.findById(user.ids);
+  return res.status(200).send(data);
+}
+
+export const updateUser = async ( req: Request, res: Response ) =>
+{
+  const user = req.user as any;
+  const { bgImage, bio, nickname, image } = req.body;  // Extract the fields from the request body
+  // console.log( "user", req.user );
+  // console.log( "req.body", req.body );
+  try
+  {
+
+    // Check the role and find the appropriate user document
+    let data;
+    if ( !user )
+    {
+      return res.status( 201 ).json( { success: false, message: "Invlid request" } );
+
+    }
+    data = await User.findById( user.ids );
+
+    if ( !data )
+    {
+      return res.status( 201 ).json( { success: false, message: "User not found. Please login" } );
+
+    }
+    // console.log( "data", data );
+
+    // Update user fields
+    // user.bgImage = bgImage || user.bgImage;  // Update only if provided
+    data.bio = bio || user.bio;
+    data.displayName = nickname || user.nickname;
+    data.image = image || user.image;
+    await data.save();  // Save the updated user document
+
+    return res.status( 200 ).json( { message: 'User updated successfully', data } );
+    // Save the updated kol document
+  } catch ( error )
+  {
+    console.error( 'Error updating user or KOL:', error );
+    return res.status( 500 ).json( { error: 'An error occurred while updating user or KOL' } );
+  }
+};

@@ -1,6 +1,6 @@
 import express from 'express';
 import {   createKols, deleteKol, getAllKol, getKolById, updateKol } from '../../controllers/kols/kols';
-import { isAuthenticated } from '../../middleware/user/authorize.user';
+import { isAuthenticated } from '../../middleware/middleware';
 
 const kolsRouter = express.Router();
 

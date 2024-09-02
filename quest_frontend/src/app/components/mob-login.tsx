@@ -229,7 +229,7 @@ const LoginPage: React.FC<LoginPageProps> = ( { setNav } ) =>
                 setuser( users );
                 toast.success( "OTP verified successfully!" );
                 //   Send user data to the backend
-                const response = await fetch( `${ process.env.NEXT_PUBLIC_SERVER_URL }/api/verify-phone`, {
+                const response = await fetch( `${ process.env.NEXT_PUBLIC_SERVER_URL }/auth/verify-phone`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

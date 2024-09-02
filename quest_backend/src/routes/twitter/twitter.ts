@@ -1,4 +1,4 @@
-import { verifyToken } from "../../middleware/user/verifyToken";
+import { verifyToken } from "../../middleware/middleware";
 import {
   checkFollow,
   checkTweetLike,
