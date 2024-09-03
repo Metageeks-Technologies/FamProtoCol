@@ -12,8 +12,8 @@ import { jwtUser } from "../middleware/user/verifyToken";
 dotenv.config();
 
 // Google Authentication
-console.log("Google ID",process.env.GOOGLE_CLIENT_ID);
-console.log("Google Secret",process.env.GOOGLE_SECRET_ID);
+// console.log("Google ID",process.env.GOOGLE_CLIENT_ID);
+// console.log("Google Secret",process.env.GOOGLE_SECRET_ID);
 
 passport.use(
   new GoogleStrategy(
