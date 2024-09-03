@@ -12,7 +12,7 @@ export const DiscordJoin: React.FC<DiscordJoinProps> = ({ setModalView }) => {
 
   const handleSubmit=()=>{
     setModalView(false);
-    window.open("https://discord.com/oauth2/authorize?client_id=1257216544438616116&permissions=8&integration_type=0&scope=bot", "_blank");
+    window.open("https://discord.com/oauth2/authorize?GOOGLE_CLIENT_ID=1257216544438616116&permissions=8&integration_type=0&scope=bot", "_blank");
     onClose();
   }
 
