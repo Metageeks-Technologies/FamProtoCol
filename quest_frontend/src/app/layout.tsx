@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Providers } from "./provider";
@@ -26,6 +25,10 @@ export default function RootLayout ( {
         <meta charSet="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link rel="icon" href="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png" sizes="any" />
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=New+Amsterdam&display=swap" rel="stylesheet"></link>
+        <link href="https://fonts.googleapis.com/css2?family=Krub:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&family=New+Amsterdam&display=swap" rel="stylesheet"></link>
       </head>
       <body>
         <Providers>

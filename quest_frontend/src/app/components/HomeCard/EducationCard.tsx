@@ -166,7 +166,7 @@ const EducationCardList: React.FC = () =>
             </div>
           </div>
 
-          <div className="p-2  edu neo mt-5 grid lg:gap-10 sm:gap-10 gap-4 mx-8 lg:mx-0 grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 lg:basis-[50%]">
+          <div className="p-2 edu neo mt-5 grid lg:gap-10 sm:gap-10 gap-4 mx-8 lg:mx-0 grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 lg:basis-[50%]">
             { loading ? (
               <>
                 <SkeletonCard />
@@ -176,13 +176,13 @@ const EducationCardList: React.FC = () =>
             ) : ( educationQuests?.map( ( data, index ) => (
               <div key={ index } className="cursor-pointer" onClick={ () => router.push( `/user/community-project/${ data?.community }` ) } >
                 <div>
-                  <div className="box1 education-clip bg-red-700 ">
-                    <div className="education-clip box2 border h-28 w-48 bg-red-700/10 flex justify-center items-center p-4">
-                      <div>
+                  <div className={`box1 education-clip overflow-hidden p-[2px] ${index===0 && "bg-[#F9003B]"} ${index===1 && "bg-[#4E46D6]"} ${index===2 &&" bg-[#FFAA17]"} `}>
+                    <div className="box2 education-clip h-28 w-48 bg-black flex justify-center items-center p-4">
+                      <div className="h-16 w-36 overflow-hidden ">
                         <img
                           src={ data.logo }
-                          alt=""
-                          className="h-16 w-36 object-cover"
+                          alt={data.title}
+                          className="w-full h-full object-cover"
                         />
                       </div>
                     </div>
@@ -210,7 +210,7 @@ const EducationCardList: React.FC = () =>
                 <h1 className="text-gray-400 font-thin">KOL quests</h1>
               </div>
             </div>
-          <div className="mt-5 neo p-2 grid lg:gap-10 sm:gap-10 gap-4 mx-8 lg:mx-0 grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 lg:basis-[50%]">
+          <div className="p-2 edu neo mt-5 grid lg:gap-10 sm:gap-10 gap-4 mx-8 lg:mx-0 grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 lg:basis-[50%]">
             { loading ? (
               <>
                 <SkeletonCard />
@@ -218,15 +218,15 @@ const EducationCardList: React.FC = () =>
                 <SkeletonCard />
               </>
             ) : ( kolQuests.map( ( data, index ) => (
-              <div key={ index } className="">
+              <div key={ index } className="cursor-pointer">
                 <div>
-                  <div className="box1 education-clip bg-red-600">
-                    <div className="education-clip box2 border h-28 w-48 bg-red-700/10 flex justify-center items-center p-4">
-                      <div>
+                  <div className={`box1 education-clip overflow-hidden p-[2px] ${index===0 && "bg-[#F9003B]"} ${index===1 && "bg-[#4E46D6]"} ${index===2 &&" bg-[#FFAA17]"} `}>
+                    <div className="box2 education-clip h-28 w-48 bg-black flex justify-center items-center p-4">
+                      <div className="h-16 w-36 overflow-hidden ">
                         <img
                           src={ data.logo }
-                          alt=""
-                          className="h-16 w-36 object-cover"
+                          alt={data.title}
+                          className="w-full h-full object-cover"
                         />
                       </div>
                     </div>

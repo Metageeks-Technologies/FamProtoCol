@@ -3,7 +3,7 @@
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
     /* Language and Environment */
-    "target": "ESNext",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "target": "ES6",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     "module": "commonjs",                            /* Specify what module code is generated. */
     "rootDir": "./src",                              /* Specify the root folder within your source files. */
     "outDir": "./dist",                              /* Specify an output folder for all emitted files. */
@@ -12,15 +12,10 @@
     "skipLibCheck": true,                            /* Skip type checking .d.ts files that are included with TypeScript. */
     "strict": true,                                  /* Enable all strict type-checking options. */
     "resolveJsonModule": true,                       /* Enable importing .json files. */
-    "baseUrl": "./src",                              /* Specify the base directory to resolve non-relative module names. */
+    "removeComments": true,
+    "baseUrl": "./",                              /* Specify the base directory to resolve non-relative module names. */
     "paths": {
-      "@controllers/": ["controllers/"],
-      "@models/": ["models/"],
-      "@utils/": ["utils/"],
-      "@community/": ["community/"],
-      "@task/": ["task/"],
-      "@user/": ["user/"],
-      "@other-models/": ["other-models/"]
+      "@/*": ["src/*"]
     },
     "moduleResolution": "node"                        /* Specify how TypeScript looks up a file from a given module specifier. */
   },

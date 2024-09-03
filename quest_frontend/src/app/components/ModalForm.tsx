@@ -47,7 +47,7 @@ const ModalForm = () =>
     {
       const response = await axios.post( `${ process.env.NEXT_PUBLIC_SERVER_URL }/aws/generate-upload-url`, {
         folder: 'userProfile',
-        fileName,
+        fileName : `${user?._id}`,
       } );
       return response.data.url;
     } catch ( error )
@@ -101,7 +101,7 @@ const ModalForm = () =>
         const uploadSuccess = await handleUpload();
         if ( uploadSuccess )
         {
-          newImageUrl = `https://${ process.env.NEXT_PUBLIC_S3_BUCKET_NAME }.s3.amazonaws.com/userProfile/${ file.name }`;
+          newImageUrl = `https://${ process.env.NEXT_PUBLIC_S3_BUCKET_NAME }.s3.amazonaws.com/userProfile/${user?._id}`;
         } else
         {
           setLoader( false );

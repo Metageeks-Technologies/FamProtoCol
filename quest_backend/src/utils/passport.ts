@@ -1,10 +1,5 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy, Profile } from "passport-google-oauth20";
-import {
-  Strategy as TwitterStrategy,
-  IStrategyOptionWithRequest,
-  Profile as TwitterProfile,
-} from "passport-twitter";
 import jwt from 'jsonwebtoken';
 import { Strategy as DiscordStrategy, Profile as DiscordProfile } from "passport-discord";
 import dotenv from "dotenv";
@@ -12,69 +7,70 @@ import UserDb, { IUser } from "../models/user/user";
 import { Request } from "express";
 import KolsDB from "../models/kols/kols";
 import { fetchGuilds } from "../controllers/user/discord";
-import { jwtUser } from "middleware/user/verifyToken";
-import { error } from "console";
+import { jwtUser } from "../middleware/user/verifyToken";
 
 dotenv.config();
 
 // Google Authentication
+console.log("Google ID",process.env.CLIENT_ID);
+console.log("Google Secret",process.env.SECRET_ID);
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.CLIENT_ID!,
-      clientSecret: process.env.SECRET_ID!,
-      callbackURL: `${process.env.PUBLIC_SERVER_URL}/auth/google/callback`,
-      passReqToCallback: true,  
-    },
-    async (req: Request, accessToken: any, refreshToken: any, profile: Profile, done: any) => {
-      try {
-        const role = req.query.state as string;  
+// passport.use(
+//   new GoogleStrategy(
+//     {
+//       clientID: process.env.CLIENT_ID || '',
+//       clientSecret: process.env.SECRET_ID || '',
+//       callbackURL: `${process.env.PUBLIC_SERVER_URL}/auth/google/callback`,
+//       passReqToCallback: true,  
+//     },
+//     async (req: Request, accessToken: any, refreshToken: any, profile: Profile, done: any) => {
+//       try {
+//         const role = req.query.state as string;  
         
-        let user;
+//         let user;
         
-        if (role === 'kol') {
-          user = await KolsDB.findOne({ googleId: profile.id });
-          if (!user) {
-            user = new KolsDB({
-              googleId: profile.id,
-              displayName: profile.displayName,
-              email: profile.emails?.[0].value,
-              image: profile.photos?.[0].value,
-            });
-            await user.save();
-          }
-        } else {
-          user = await UserDb.findOne({ googleId: profile.id });
+//         if (role === 'kol') {
+//           user = await KolsDB.findOne({ googleId: profile.id });
+//           if (!user) {
+//             user = new KolsDB({
+//               googleId: profile.id,
+//               displayName: profile.displayName,
+//               email: profile.emails?.[0].value,
+//               image: profile.photos?.[0].value,
+//             });
+//             await user.save();
+//           }
+//         } else {
+//           user = await UserDb.findOne({ googleId: profile.id });
 
-          if (!user) {
-            user = new UserDb({
-              googleId: profile.id,
-              displayName: profile.displayName,
-              email: profile.emails?.[0].value,
-              image: profile.photos?.[0].value,
-            });
-            await user.save();
-          }
-        }
+//           if (!user) {
+//             user = new UserDb({
+//               googleId: profile.id,
+//               displayName: profile.displayName,
+//               email: profile.emails?.[0].value,
+//               image: profile.photos?.[0].value,
+//             });
+//             await user.save();
+//           }
+//         }
 
-        return done(null, user);
-      } catch (error) {
-        console.error("Error during authentication:", error);
-        return done(error);
-      }
-    }
-  )
-);
+//         return done(null, user);
+//       } catch (error) {
+//         console.error("Error during authentication:", error);
+//         return done(error);
+//       }
+//     }
+//   )
+// );
 
 // To show google acces page every time
  
-GoogleStrategy.prototype.authorizationParams = function () {
-  return {
-    access_type: "offline",
-    prompt: "consent",
-  };
-};
+// GoogleStrategy.prototype.authorizationParams = function () {
+//   return {
+//     access_type: "offline",
+//     prompt: "consent",
+//   };
+// };
 
 // Discord OAUth Authentication
 
@@ -85,8 +81,8 @@ const scopes = ['identify', 'email', 'guilds', 'guilds.join'];
 passport.use(
   new DiscordStrategy(
     {
-      clientID: process.env.DISCORD_ID!, 
-      clientSecret: process.env.DISCORD_SECRET_KEY!,
+      clientID: process.env.DISCORD_ID || '', 
+      clientSecret: process.env.DISCORD_SECRET_KEY || '',
       callbackURL: `${process.env.PUBLIC_SERVER_URL}/auth/discord/callback`,
       scope: ['identify', 'email', 'guilds', 'guilds.join'],
       passReqToCallback: true,
