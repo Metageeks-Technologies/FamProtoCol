@@ -1,16 +1,14 @@
 "use client";
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { BallTriangle } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchUserData } from "@/redux/reducer/authSlice";
 import { Chip } from "@nextui-org/react";
-import type { Friend } from "../data";
+import type { Friend } from "@/types/types";
 import UserTable from "@/app/components/table/userTable";
 import axios from "axios";
-import { notify } from "@/utils/notify";
-import Image from "next/image";
 
 type BadgesData = {
   id: number;

@@ -142,7 +142,7 @@ const LandingPage = () => {
             return;
         }
 
-      const path = `https://${ process.env.NEXT_PUBLIC_S3_BUCKET_NAME }.s3.amazonaws.com/userProfile/${domain}-${ logo.name }`;
+      const path = `https://${ process.env.NEXT_PUBLIC_S3_BUCKET_NAME }.s3.amazonaws.com/userProfile/${domain}/${ logo.name }`;
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/user/domain`,
         {
@@ -235,11 +235,12 @@ const LandingPage = () => {
     setLoader(false);
   };
   const getUploadUrl = async (fileName: string): Promise<string> => {
+    
     try {
       const response = await axios.post<{ url: string }>(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/aws/generate-upload-url`,
         {
-          folder: `userProfile`,
+          folder: `userProfile/${domain}`,
           fileName,
         }
       );
@@ -292,7 +293,8 @@ const LandingPage = () => {
 
   return (
     <>
-        <div className="min-h-screen landing-page">
+    <div className="min-h-screen">
+        <div className="landing-page">
           <div className="w-[90%] mx-auto p-8">
           <div className="flex flex-col justify-between h-screen">
             <div className="w-full md:mt-0 mt-4">
@@ -322,9 +324,9 @@ const LandingPage = () => {
                     <h1 className="text-zinc-400 ">SOCIAL MEDIA:</h1>
                   </div>
                   <div className="flex row gap-1">
-                    <div className="box1 right-trapezium w-[2rem] h-[2rem] bg-[#ffffff33]">
+                    <div className="box1 right-trapezium w-[2rem] h-[2rem] bg-zinc-800 p-[1.5px]">
                       <svg
-                        className="box2 right-trapezium p-2"
+                        className="box2 right-trapezium p-2 bg-black"
                         xmlns="http://www.w3.org/2000/svg"
                         width="17"
                         height="17"
@@ -337,9 +339,9 @@ const LandingPage = () => {
                         />
                       </svg>
                     </div>
-                    <div className="box1 left-right-trapezium w-[2rem] h-[2rem] px-2 bg-[#ffffff33]">
+                    <div className="box1 left-right-trapezium w-[2rem] h-[2rem] bg-zinc-800 p-[1.5px]">
                       <svg
-                        className="box2 left-right-trapezium p-2"
+                        className="box2 left-right-trapezium p-2 bg-black"
                         xmlns="http://www.w3.org/2000/svg"
                         width="17"
                         height="17"
@@ -352,9 +354,9 @@ const LandingPage = () => {
                         />
                       </svg>
                     </div>
-                    <div className="box1 left-trapezium w-[2rem] h-[2rem] bg-[#ffffff33]">
+                    <div className="box1 left-trapezium w-[2rem] h-[2rem] bg-zinc-800 p-[1.5px]">
                       <svg
-                        className="box2 left-trapezium p-2"
+                        className="box2 left-trapezium p-2 bg-black "
                         xmlns="http://www.w3.org/2000/svg"
                         width="15"
                         height="15"
@@ -396,27 +398,29 @@ const LandingPage = () => {
                   EMBRACE THE ALMIGHTY REWARDS OF BLOCKCHAIN NETWORK!
                 </h1> */}
                 <div className="flex justify-center items-center gap-3 flex-wrap mb-2">
-                <div className="w-8 h-8">
+                <div className="w-10 h-10">
                 <img className="w-full h-full" src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png" alt="fam protocol" />
                 </div>
-                <div className="font-bold text-4xl text-white">FAM PROTOCOL</div>
+                <div className="flex flex-col justify-start items-start">
+                <span className="text-xl text-gray-400 krub-regular text-wrap">FAM</span><span className="text-xl text-gray-400 krub-regular text-wrap">PROTOCOL</span>
+                 </div>
                 
                 </div>
-                <div className="text-center text-xl">Fams Gonna Make It</div>
-                <p className="mt-6 text-neutral-300 leading-relaxed ">
+                <div className="text-center text-xl text-gray-400 krub-regular " style={{wordSpacing:"4px"}} >Fam's Gonna Make It</div>
+                <p className="mt-6 text-gray-400 leading-relaxed krub-regular ">
                   Community Owned Internet Protocol
                 </p>
                 <div className="mt-8 flex justify-center gap-4">
                   <Button
                     // onClick={() => handleOpen()}
-                    className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-300"
+                    className="bg-[#5538CE] text-white py-2 px-6 rounded-lg hover:bg-[#6243dd] transition duration-300"
                   >
                     Get Onboarded
                   </Button>
                   <Link
                     // href="/home"
                     href='#'
-                    className="bg-white text-black py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
+                    className="bg-white text-black font-bold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
                   >
                     Explore
                   </Link>
@@ -428,8 +432,26 @@ const LandingPage = () => {
             </div>
           </div>
           </div>
+           <section className="flex flex-col mt-10 justify-end relative bottom-0 text-center uppercase whitespace-nowrap w-full">
+     <header className="flex flex-col items-center w-full max-md:px-5 max-md:max-w-full">
+      <div className="flex relative flex-col max-w-full w-[65%]">
+      <div className="flex gap-10 items-start mt-1.5 w-full ">
+        <div className="flex flex-col justify-start items-start self-stretch my-auto">
+          <a href="#developers" className="text-white ">Developers</a>
+          <a href="#documentation" className='text-sm text-fuchsia-500' >Documentation</a>
+          <a href="#github" className='text-sm text-fuchsia-500'>Github</a>
         </div>
-    
+        <div className="flex flex-col justify-end items-end self-stretch my-auto">
+        <a href="#about" className="text-white ">About</a>
+          <a href="#careers" className='text-sm text-fuchsia-500' >Careers</a>
+          <a href="#community" className='text-sm text-fuchsia-500'>Community</a>
+        </div>
+      </div>
+    </div>
+    </header>
+    </section>
+        </div>
+    </div>
       <Modal
         backdrop="blur"
         placement="center"

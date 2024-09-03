@@ -62,7 +62,7 @@ export interface IUser extends Document {
   createdCommunities: mongoose.Types.ObjectId[];
   createdQuests: mongoose.Types.ObjectId[];
   createdTasks: mongoose.Types.ObjectId[];
-  
+  inviteCode: string;
 }
 
 // Create the User schema
@@ -122,6 +122,7 @@ const userSchema: Schema = new mongoose.Schema(
     createdTasks: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Task' } ],
     createdQuests: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Quest' } ],
     createdCommunities: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Community' } ],
+    inviteCode: { type: String, default: '' },
   },
   { timestamps: true }
 );
