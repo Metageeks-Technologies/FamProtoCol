@@ -1,10 +1,5 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy, Profile } from "passport-google-oauth20";
-import {
-  Strategy as TwitterStrategy,
-  IStrategyOptionWithRequest,
-  Profile as TwitterProfile,
-} from "passport-twitter";
 import jwt from 'jsonwebtoken';
 import { Strategy as DiscordStrategy, Profile as DiscordProfile } from "passport-discord";
 import dotenv from "dotenv";
@@ -18,12 +13,14 @@ import { error } from "console";
 dotenv.config();
 
 // Google Authentication
+console.log("Google ID",process.env.CLIENT_ID);
+console.log("Google Secret",process.env.SECRET_ID);
 
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.CLIENT_ID!,
-      clientSecret: process.env.SECRET_ID!,
+      clientID: process.env.CLIENT_ID as string,
+      clientSecret: process.env.SECRET_ID as string,
       callbackURL: `${process.env.PUBLIC_SERVER_URL}/auth/google/callback`,
       passReqToCallback: true,  
     },
