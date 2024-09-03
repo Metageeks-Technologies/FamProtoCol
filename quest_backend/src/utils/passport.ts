@@ -12,14 +12,14 @@ import { jwtUser } from "../middleware/user/verifyToken";
 dotenv.config();
 
 // Google Authentication
-console.log("Google ID",process.env.CLIENT_ID);
-console.log("Google Secret",process.env.SECRET_ID);
+console.log("Google ID",process.env.GOOGLE_CLIENT_ID);
+console.log("Google Secret",process.env.GOOGLE_SECRET_ID);
 
 // passport.use(
 //   new GoogleStrategy(
 //     {
-//       clientID: process.env.CLIENT_ID || '',
-//       clientSecret: process.env.SECRET_ID || '',
+//       clientID: process.env.GOOGLE_CLIENT_ID || '',
+//       clientSecret: process.env.GOOGLE_SECRET_ID || '',
 //       callbackURL: `${process.env.PUBLIC_SERVER_URL}/auth/google/callback`,
 //       passReqToCallback: true,  
 //     },
