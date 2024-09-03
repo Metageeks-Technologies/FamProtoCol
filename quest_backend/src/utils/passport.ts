@@ -15,62 +15,62 @@ dotenv.config();
 console.log("Google ID",process.env.GOOGLE_CLIENT_ID);
 console.log("Google Secret",process.env.GOOGLE_SECRET_ID);
 
-// passport.use(
-//   new GoogleStrategy(
-//     {
-//       clientID: process.env.GOOGLE_CLIENT_ID || '',
-//       clientSecret: process.env.GOOGLE_SECRET_ID || '',
-//       callbackURL: `${process.env.PUBLIC_SERVER_URL}/auth/google/callback`,
-//       passReqToCallback: true,  
-//     },
-//     async (req: Request, accessToken: any, refreshToken: any, profile: Profile, done: any) => {
-//       try {
-//         const role = req.query.state as string;  
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_SECRET_ID || '',
+      callbackURL: `${process.env.PUBLIC_SERVER_URL}/auth/google/callback`,
+      passReqToCallback: true,  
+    },
+    async (req: Request, accessToken: any, refreshToken: any, profile: Profile, done: any) => {
+      try {
+        const role = req.query.state as string;  
         
-//         let user;
+        let user;
         
-//         if (role === 'kol') {
-//           user = await KolsDB.findOne({ googleId: profile.id });
-//           if (!user) {
-//             user = new KolsDB({
-//               googleId: profile.id,
-//               displayName: profile.displayName,
-//               email: profile.emails?.[0].value,
-//               image: profile.photos?.[0].value,
-//             });
-//             await user.save();
-//           }
-//         } else {
-//           user = await UserDb.findOne({ googleId: profile.id });
+        if (role === 'kol') {
+          user = await KolsDB.findOne({ googleId: profile.id });
+          if (!user) {
+            user = new KolsDB({
+              googleId: profile.id,
+              displayName: profile.displayName,
+              email: profile.emails?.[0].value,
+              image: profile.photos?.[0].value,
+            });
+            await user.save();
+          }
+        } else {
+          user = await UserDb.findOne({ googleId: profile.id });
 
-//           if (!user) {
-//             user = new UserDb({
-//               googleId: profile.id,
-//               displayName: profile.displayName,
-//               email: profile.emails?.[0].value,
-//               image: profile.photos?.[0].value,
-//             });
-//             await user.save();
-//           }
-//         }
+          if (!user) {
+            user = new UserDb({
+              googleId: profile.id,
+              displayName: profile.displayName,
+              email: profile.emails?.[0].value,
+              image: profile.photos?.[0].value,
+            });
+            await user.save();
+          }
+        }
 
-//         return done(null, user);
-//       } catch (error) {
-//         console.error("Error during authentication:", error);
-//         return done(error);
-//       }
-//     }
-//   )
-// );
+        return done(null, user);
+      } catch (error) {
+        console.error("Error during authentication:", error);
+        return done(error);
+      }
+    }
+  )
+);
 
 // To show google acces page every time
  
-// GoogleStrategy.prototype.authorizationParams = function () {
-//   return {
-//     access_type: "offline",
-//     prompt: "consent",
-//   };
-// };
+GoogleStrategy.prototype.authorizationParams = function () {
+  return {
+    access_type: "offline",
+    prompt: "consent",
+  };
+};
 
 // Discord OAUth Authentication
 
