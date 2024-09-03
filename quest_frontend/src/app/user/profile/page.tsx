@@ -10,6 +10,8 @@ import { Button, Chip } from "@nextui-org/react";
 import type { Friend } from "@/types/types";
 import UserTable from "@/app/components/table/userTable";
 import TeleApp from "@/app/components/telegram";
+import axios from "axios";
+import { notify } from "@/utils/notify";
 
 const columns = [
   { name: "NAME", uid: "name" },
@@ -21,13 +23,13 @@ const columns = [
 
 const Profile: React.FC = () => {
   const router = useRouter();
-  // const [isClient, setIsClient] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
   const [earned, setEarned] = useState<number | null>(null);
   const [allFriends, setAllFriends] = useState<any>([]);
-
-  const dispatch = useDispatch<AppDispatch>();
+  const [referral, setReferral] = useState<string>("");
+  const [isReferral, setIsReferral] = useState<boolean>(false);
   const user: any = useSelector((state: RootState) => state.login.user);
-  // console.log( user );
+
 
   const getFriendIds = (user: any) => {
     // Combine followers and following into a single array
@@ -83,6 +85,28 @@ const Profile: React.FC = () => {
     const authUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/auth`;
     window.open(authUrl, '_blank', 'noopener,noreferrer');
   };
+
+  const onGenerateReferral = async () => {
+
+    try {
+      
+      const response =await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/generateRefferalCode`,{
+     withCredentials: true, 
+    });
+
+    if(response.data.success){
+       setIsReferral(true);
+      setReferral(response.data.referralCode);
+      notify("success", "Referral code generated successfully!");
+      
+    }
+
+    } catch (error) {
+      console.error(error);
+      notify("error", "Failed to generate referral code!");
+      return ;
+    }
+  }
   
   useEffect(() => {
     // setIsClient(true);
@@ -132,10 +156,10 @@ const Profile: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex row gap-1">
-                        <div className="box1 right-trapezium  w-[2rem] h-[2rem] bg-[#ffffff33]">
+                        <div className="box1 right-trapezium  w-[2rem] h-[2rem] p-[2px] bg-zinc-800 ">
                           <a target="_blank" href={"https://x.com/fr_Ani5"}>
                             <svg
-                              className="box2 right-trapezium p-2"
+                              className="box2 right-trapezium p-2 bg-black "
                               xmlns="http://www.w3.org/2000/svg"
                               width="17"
                               height="17"
@@ -149,13 +173,13 @@ const Profile: React.FC = () => {
                             </svg>
                           </a>
                         </div>
-                        <div className="box1 left-right-trapezium w-[2rem] h-[2rem] px-2 bg-[#ffffff33]">
+                        <div className="box1 left-right-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-800 ">
                           <a
                             href={"https://discord.gg/vASfWSV6"}
                             target="_blank"
                           >
                             <svg
-                              className="box2 left-right-trapezium p-2"
+                              className="box2 left-right-trapezium bg-black p-2"
                               xmlns="http://www.w3.org/2000/svg"
                               width="17"
                               height="17"
@@ -169,13 +193,13 @@ const Profile: React.FC = () => {
                             </svg>
                           </a>
                         </div>
-                        <div className="box1 left-trapezium w-[2rem] h-[2rem] bg-[#ffffff33]">
+                        <div className="box1 left-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-800 ">
                           <a
                             target="_blank"
                             href={"https://t.me/+8Cgy2Zu8y-U0MjVl"}
                           >
                             <svg
-                              className="box2 left-trapezium p-2 bi bi-telegram"
+                              className="box2 left-trapezium p-2 bi bi-telegram bg-black "
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
                               height="16"
@@ -194,9 +218,54 @@ const Profile: React.FC = () => {
                   <div className="lg:w-2/5">
                     {user && (
                       <div className="">
-                        <div className="flex  flex-col  items-center justify-center">
-                          <div>
+                        <div className="flex flex-col items-center justify-center">
+                          <div className="flex flex-col justify-center items-center gap-2" >
                             <ModalForm />
+                             <div className="flex flex-col">
+                   {isReferral && (
+                    <>
+                    <div className="flex justify-center  gap-2 items-center my-2">
+                      <input
+                        type="text"
+                        value={referral}
+                        readOnly
+                        className="text-md font-bold bg-gray-800 text-white border border-gray-700 rounded px-2 py-1 w-full"
+                      />
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(referral);
+                          notify(
+                            "default",
+                            "Referral code copied to clipboard!"
+                          );
+                        }}
+                        className="bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700 transition-colors duration-300"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                          />
+                        </svg>
+                         </button>
+                    </div>
+                    </>
+                   )}
+                    <button
+                      className="p-2 rounded-2xl bg-purple-600 text-white px-4 m-3 hover:bg-purple-700 transition-colors duration-300"
+                      onClick={onGenerateReferral}
+                    >
+                      Generate Referral
+                    </button>
+                  </div>
                           </div>
                           <div className="flex flex-row justify-center items-center my-4 gap-2">
                             {!user?.teleInfo?.telegramId && (
@@ -264,8 +333,8 @@ const Profile: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <div></div>
-                </div>
+                  </div>
+               
               </div>
               {/* badges */}
               <div className="lg:w-1/2 ">

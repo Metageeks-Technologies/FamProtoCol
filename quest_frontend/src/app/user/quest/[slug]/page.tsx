@@ -1568,6 +1568,7 @@ const Popup: React.FC<{
                     Submit Gitcoin passport
                   </Button>
                 )}
+
                 {selectedCard.type === "Gitcoin passport" && showScore && (
                   <Button
                     variant="solid"
@@ -1600,6 +1601,7 @@ const Popup: React.FC<{
                     Verify the account
                   </Button>
                 )}
+                
                 {selectedCard.type == "Eth holder" && (
                   <Button
                     variant="solid"
