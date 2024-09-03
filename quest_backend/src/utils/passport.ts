@@ -8,7 +8,6 @@ import { Request } from "express";
 import KolsDB from "../models/kols/kols";
 import { fetchGuilds } from "../controllers/user/discord";
 import { jwtUser } from "middleware/user/verifyToken";
-import { error } from "console";
 
 dotenv.config();
 
@@ -19,8 +18,8 @@ console.log("Google Secret",process.env.SECRET_ID);
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.CLIENT_ID as string,
-      clientSecret: process.env.SECRET_ID as string,
+      clientID: process.env.CLIENT_ID || '',
+      clientSecret: process.env.SECRET_ID || '',
       callbackURL: `${process.env.PUBLIC_SERVER_URL}/auth/google/callback`,
       passReqToCallback: true,  
     },
@@ -82,8 +81,8 @@ const scopes = ['identify', 'email', 'guilds', 'guilds.join'];
 passport.use(
   new DiscordStrategy(
     {
-      clientID: process.env.DISCORD_ID!, 
-      clientSecret: process.env.DISCORD_SECRET_KEY!,
+      clientID: process.env.DISCORD_ID || '', 
+      clientSecret: process.env.DISCORD_SECRET_KEY || '',
       callbackURL: `${process.env.PUBLIC_SERVER_URL}/auth/discord/callback`,
       scope: ['identify', 'email', 'guilds', 'guilds.join'],
       passReqToCallback: true,
