@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 import UserDb, { IUser } from "../models/user/user";
 import { Request } from "express";
 import KolsDB from "../models/kols/kols";
-import { fetchGuilds } from "../controllers/user/discord";
+import { fetchGuilds } from "../controllers/discord/discord";
 import { jwtUser } from "../middleware/user/verifyToken";
 
 dotenv.config();

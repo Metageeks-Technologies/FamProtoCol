@@ -1,5 +1,5 @@
 import express from 'express';
-import { generateUploadPresignedUrl, generateGetPresignedUrl } from '../controllers/s3services';
+import { generateUploadPresignedUrl, generateGetPresignedUrl } from '../../controllers/aws/s3services';
 
 const router = express.Router();
 router.post('/generate-upload-url', async (req, res) => {

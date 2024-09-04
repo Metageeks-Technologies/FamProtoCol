@@ -1,7 +1,7 @@
 // s3Service.ts
 import { PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import s3 from '../awsConfig';
+import s3 from '../../utils/awsConfig';
 
 // Generate a presigned URL for uploading
 export const generateUploadPresignedUrl = async (key: string, expiresIn: number = 3600): Promise<string> => {
