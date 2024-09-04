@@ -16,6 +16,7 @@ import { Spinner } from "@nextui-org/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { notify } from "@/utils/notify";
+import { connectWallet } from "@/utils/wallet-connect";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -41,49 +42,6 @@ const LandingPage = () => {
     const regex = /^[a-zA-Z0-9-]+$/;
     // console.log("step2",regex.test(str));
     return regex.test(str);
-  };
-
-  const connectWallet = async (): Promise<string | null> => {
-    try {
-      // Check if MetaMask is installed
-      if (typeof window.ethereum === "undefined") {
-        // Prompt the user to install MetaMask and provide a link
-        if (
-          confirm(
-            "MetaMask is not installed. Would you like to download it now?"
-          )
-        ) {
-          // Open the MetaMask download page in a new tab
-          window.open("https://metamask.io/download.html", "_blank");
-        }
-        return null;
-      }
-
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const accounts = await provider.send("eth_requestAccounts", []);
-
-      if (accounts.length === 0) {
-        alert("No Ethereum account is connected. Please connect your wallet.");
-        return null;
-      }
-
-      const accountAddress = accounts[0];
-      setAddress(accountAddress);
-
-      const balance = await provider.getBalance(accountAddress);
-      setBalance(ethers.formatEther(balance));
-
-      // Assuming checkENS is an async function that needs the account address
-      // await checkENS(accountAddress);
-
-      console.log("Wallet connected:", accountAddress);
-      // onSubmit(taskId, { visited: "wallet connected" });
-
-      return accountAddress;
-    } catch (err) {
-      console.log("Error connecting wallet:", err);
-      return null;
-    }
   };
 
   const handleDomainChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,7 +129,7 @@ const LandingPage = () => {
 
   const handleMinting = async () => {
     setLoader(true);
-
+  
     if (!isAlphanumericWithHyphen(domain)) {
       setError(
         "Invalid Username: The username must contain only alphanumeric characters and hyphens. Spaces are not allowed"
@@ -179,54 +137,68 @@ const LandingPage = () => {
       setLoader(false);
       return;
     }
-
+  
     const updatedDomain = domain + ".fam";
-
-    const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
-    const contractABI = process.env.NEXT_PUBLIC_CONTRACT_ABI
-      ? JSON.parse(process.env.NEXT_PUBLIC_CONTRACT_ABI)
+  
+    const ArbicontractAddress = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
+    const usdcContractAddress = process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS!;
+    const contractABI = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ABI
+      ? JSON.parse(process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ABI)
       : null;
-
-    // console.log("step1 ", contractAddress, contractABI, address);
-    if (!contractAddress || !contractABI || !address) {
-      const res = await connectWallet();
-      if(res){
+    const usdcABI = process.env.NEXT_PUBLIC_USDC_ABI
+      ? JSON.parse(process.env.NEXT_PUBLIC_USDC_ABI)
+      : null;
+  
+    if (!ArbicontractAddress || !contractABI || !address) {
+      const walletInfo = await connectWallet();
+      if (walletInfo) {
         setAlertMessage("Wallet connected successfully");
         setIswalletconnected(true);
+        // Update the address state here
+        setAddress(walletInfo.address);
+      } else {
+        setError("Failed to connect wallet.");
+        setLoader(false);
+        return;
       }
-      setLoader(false);
-      return;
     }
-    console.log("step2: react minting stage ");
+  
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
-      const contract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
-
-      // Sending transaction
+  
+      // Initialize USDC contract instance
+      const usdcContract = new ethers.Contract(usdcContractAddress, usdcABI, signer);
+  
+      // Check the user's USDC balance
+      const usdcBalance = await usdcContract.balanceOf(await signer.getAddress()); // Ensure to use signer's address
+      const usdcAmount = ethers.parseUnits("5", 6); // 5 USDC with 6 decimals
+  
+      if (usdcBalance < usdcAmount) {
+        setError("Insufficient USDC balance. Please ensure you have at least 5 USDC in your wallet.");
+        setLoader(false);
+        return;
+      }
+  
+      // Approve the minting fee (5 USDC) for your contract
+      const approveTx = await usdcContract.approve(ArbicontractAddress, usdcAmount);
+      await approveTx.wait();
+  
+      // Initialize your upgradeable contract instance
+      const contract = new ethers.Contract(ArbicontractAddress, contractABI, signer);
+  
+      // Call the mintDomain function with the domain and minting fee
       const tx = await contract.mintDomain(updatedDomain);
-
-      // Waiting for the transaction to be mined
       await tx.wait();
-
-      // Update the state to show success message
-      console.log("Domain mited successfully", tx);
+  
+      console.log("Domain minted successfully", tx);
       setAlertMessage(`Domain ${updatedDomain} minted successfully!`);
       setHash(tx.hash);
       setShowPasswordField(true);
     } catch (error) {
-      // Type narrowing with `if` checks
       if (typeof error === "object" && error !== null && "reason" in error) {
         setError(`${(error as { reason: string }).reason}`);
-      } else if (
-        typeof error === "object" &&
-        error !== null &&
-        "message" in error
-      ) {
+      } else if (typeof error === "object" && error !== null && "message" in error) {
         setError(`${(error as { message: string }).message}`);
       } else {
         setError("An unknown error occurred.");
@@ -234,6 +206,7 @@ const LandingPage = () => {
     }
     setLoader(false);
   };
+    
   const getUploadUrl = async (fileName: string): Promise<string> => {
     
     try {
@@ -412,7 +385,7 @@ const LandingPage = () => {
                 </p>
                 <div className="mt-8 flex justify-center gap-4">
                   <Button
-                    // onClick={() => handleOpen()}
+                    onClick={() => handleOpen()}
                     className="bg-[#5538CE] text-white py-2 px-6 rounded-lg hover:bg-[#6243dd] transition duration-300"
                   >
                     Get Onboarded
