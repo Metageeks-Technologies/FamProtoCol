@@ -79,7 +79,8 @@ const Profile: React.FC = () => {
   };
 
   const signupDiscord = async () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/discord`;
+    const authUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/discord/auth`;
+    window.open(authUrl, '_blank', 'noopener,noreferrer');
   };
   const signupX = async () => {
     const authUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/auth`;

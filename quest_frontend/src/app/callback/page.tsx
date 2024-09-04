@@ -3,6 +3,7 @@ import React, { Suspense,useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@nextui-org/react";
 
 const CallBackPageContent = () => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const CallBackPageContent = () => {
           withCredentials: true,
         }
       );
-      router.push("/");
+      router.push("/user/profile");
       console.log(data);
     } catch (error) {
       router.push("/");
@@ -31,7 +32,9 @@ const CallBackPageContent = () => {
     handleLogin();
   }, []); // Ensure dependencies are set correctly
 
-  return <div>Authenticating...</div>;
+  return <div className="min-h-screen flex justify-center items-center " >
+    <Spinner size="lg" />
+   </div>;
 };
 
 const CallBackPage = () => {
