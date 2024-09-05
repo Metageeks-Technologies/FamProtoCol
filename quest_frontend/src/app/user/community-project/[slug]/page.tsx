@@ -214,17 +214,17 @@ export default function CommunityProject ( {
 
           <div className="flex">
             <div className="lg:w-48 lg:h-48 sm:h-40 sm:w-44 h-20 w-28  ">
-              <div className="box1 right-trapezium   bg-[#ffffff33]">
+              <div className="box1 right-trapezium p-[2px] bg-zinc-800 ">
                 <img
                   src={ `${ community.logo }` }
                   alt=""
-                  className="box2  rounded right-trapezium lg:w-48 lg:h-48 sm:h-40 sm:w-44 h-20 w-28  object-cover"
+                  className="box2 rounded right-trapezium lg:w-48 lg:h-48 sm:h-40 sm:w-44 h-20 w-28  object-cover"
                 />
               </div>
             </div>
 
             <div className="lg:h-48 sm:h-40 lg:w-full sm:w-full h-20 w-full ">
-              <div className="box1 community-clip bg-[#ffffff33]">
+              <div className="box1 community-clip p-[1px] bg-zinc-800 ">
                 <div
                   className="h-full w-full box2 community-clip relative"
                   style={ {
@@ -261,11 +261,11 @@ export default function CommunityProject ( {
           </div>
 
           <div className=" flex lg:flex-row sm:flex-row flex-col gap-4 lg:mt-4 sm:mt-0 mt-4">
-            <div className="flex items-center   group-hover:bg-[#735dcf]">
+            <div className="flex items-center group-hover:bg-[#735dcf]">
               <div className="flex row gap-1">
-                <div className="box1 right-trapezium w-[2rem] h-[2rem]  bg-[#ffffff33] ">
+                <div className="box1 right-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-700 ">
                   <svg
-                    className="box2 right-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 h-2 w-2  sm:p-1 "
+                    className="box2 bg-black right-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 h-2 w-2  sm:p-1 "
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 17 17"
                     fill="none"
@@ -276,9 +276,9 @@ export default function CommunityProject ( {
                     />
                   </svg>
                 </div>
-                <div className="box1 left-right-trapezium w-[2rem] h-[2rem] px-2 bg-[#ffffff33]">
+                <div className="box1 left-right-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-700 ">
                   <svg
-                    className="box2 left-right-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 sm:p-1 h-3 w-4 "
+                    className="box2 bg-black left-right-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 sm:p-1 h-3 w-4 "
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 17 17"
                     fill="none"
@@ -289,9 +289,9 @@ export default function CommunityProject ( {
                     />
                   </svg>
                 </div>
-                <div className="box1 left-trapezium w-[2rem] h-[2rem] bg-[#ffffff33]">
+                <div className="box1 left-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-700 ">
                   <svg
-                    className="box2 left-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 sm:p-1 h-3 w-4"
+                    className="box2 bg-black p-2 left-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 sm:p-1 h-3 w-4"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 15 15"
                     fill="none"
@@ -324,48 +324,6 @@ export default function CommunityProject ( {
               </p>
             </div>
           </div>
-
-
-          {/* <div className="p-6">
-            <p className="text-lg text-white  mb-6">{community.description}</p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h2 className="text-2xl font-semibold text-blue-600 mb-4">
-                  Ecosystems
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {community.ecosystem.map((eco, index) => (
-                    <span
-                      key={index}
-                      className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold"
-                    >
-                      {eco}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <div className="flex gap-2">
-                 
-                  <div>
-                    <h2 className="text-2xl font-medium text-blue-600 mb-4">
-                      Community Stats
-                    </h2>
-                  </div>
-                </div>
-                <div className="bg-blue-50 p-2 rounded-lg w-48 flex justify-center">
-                  <div className="flex items-center ">
-                    <p className="text-2xl font-bold text-blue-800">
-                      {community.quests?.length || 0}
-                    </p>
-                    <p className="text-gray-600 mx-3">Active Quests</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> */}
         </div>
 
         <div className="mai div flex  lg:flex-row sm:flex-col flex-col mt-16 gap-24 justify-end ">
@@ -469,33 +427,6 @@ export default function CommunityProject ( {
         </div>
 
         <div>
-          {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
-          {currentQuests?.map((quest: any, index: number) => (
-            <div
-              key={index}
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.href = `/user/quest/${quest._id}`;
-              }}
-            >
-              <div className=" bg-[#121212] border   dark:border-gray-700 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                <div className="bg-blue-100 h-40 flex items-center justify-center">
-                  <span className="text-6xl text-blue-500">🏆</span>
-                </div>
-                <div className="p-4">
-                  <h3 className="text-xl font-semibold text-neutral-300 mb-2">
-                    {quest.title}
-                  </h3>
-                  <p className="text-neutral-300">
-                    Click to view quest details
-                  </p>
-                </div>
-              </div>
-            </div>
-            // </Link>
-          ))}
-        </div> */}
-
           <div className="p-2 edu  mt-10  grid lg:gap-10 sm:gap-10 gap-4  mx-8  lg:mx-0 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
             { currentQuests?.map( ( quest: any, index: number ) => (
               <div
@@ -520,13 +451,13 @@ export default function CommunityProject ( {
                 className=""
               >
                 <div>
-                  <div className="box1 education-clip bg-red-700 ">
-                    <div className="education-clip box2 border h-28 w-48 bg-red-700/10 flex justify-center items-center p-4">
+                  <div className={`box1 education-clip p-[2px]  ${(index%4)===0 && "bg-red-500" } ${(index%4)===1 && "bg-blue-500" } ${(index%4)===2 && "bg-green-500" } ${(index%4)===3 && "bg-yellow-500" } `}>
+                    <div className="education-clip box2 h-28 w-48 bg-black flex justify-center items-center p-2">
                       <div>
                         <img
                           src={ quest?.logo || `https://dummyimage.com/150x100/718096/ffffff&text=${ quest.title }` }
                           alt=""
-                          className="h-16 w-36 object-fill"
+                          className="h-20 w-48 object-fill"
                         />
                       </div>
                     </div>

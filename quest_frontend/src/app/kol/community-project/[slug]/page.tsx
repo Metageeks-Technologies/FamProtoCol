@@ -182,17 +182,17 @@ export default function CommunityProject ( {
         <div className=' rounded-lg shadow-lg overflow-hidden'>
           <div className='flex'>
             <div className='lg:w-48 lg:h-48 sm:h-40 sm:w-44 h-20 w-28  '>
-              <div className='box1 right-trapezium   bg-[#ffffff33]'>
+              <div className='box1 right-trapezium p-[2px] bg-zinc-800 '>
                 <img
                   src={ `${ community.logo }` }
                   alt=''
-                  className='box2  rounded right-trapezium lg:w-48 lg:h-48 sm:h-40 sm:w-44 h-20 w-28  object-cover'
+                  className='box2 rounded right-trapezium lg:w-48 lg:h-48 sm:h-40 sm:w-44 h-20 w-28  object-cover'
                 />
               </div>
             </div>
 
             <div className='lg:h-48 sm:h-40 lg:w-full sm:w-full h-20 w-full '>
-              <div className='box1 community-clip bg-[#ffffff33]'>
+              <div className='box1 community-clip p-[2px] '>
                 <div
                   className='h-full w-full box2 community-clip relative'
                   style={ {
@@ -239,11 +239,11 @@ export default function CommunityProject ( {
           </div>
 
           <div className=' flex lg:flex-row sm:flex-row flex-col gap-4 lg:mt-4 sm:mt-0 mt-4'>
-            <div className='flex items-center   group-hover:bg-[#735dcf]'>
+            <div className='flex items-center group-hover:bg-[#735dcf]'>
               <div className='flex row gap-1'>
-                <div className='box1 right-trapezium w-[2rem] h-[2rem]  bg-[#ffffff33] '>
+                <div className='box1 right-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-800 '>
                   <svg
-                    className='box2 right-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 h-2 w-2  sm:p-1 '
+                    className='box2 bg-black right-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 h-2 w-2  sm:p-1 '
                     xmlns='http://www.w3.org/2000/svg'
                     viewBox='0 0 17 17'
                     fill='none'
@@ -254,9 +254,9 @@ export default function CommunityProject ( {
                     />
                   </svg>
                 </div>
-                <div className='box1 left-right-trapezium w-[2rem] h-[2rem] px-2 bg-[#ffffff33]'>
+                <div className='box1 left-right-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-800'>
                   <svg
-                    className='box2 left-right-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 sm:p-1 h-3 w-4 '
+                    className='box2 bg-black left-right-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 sm:p-1 h-3 w-4 '
                     xmlns='http://www.w3.org/2000/svg'
                     viewBox='0 0 17 17'
                     fill='none'
@@ -267,9 +267,9 @@ export default function CommunityProject ( {
                     />
                   </svg>
                 </div>
-                <div className='box1 left-trapezium w-[2rem] h-[2rem] bg-[#ffffff33]'>
+                <div className='box1 left-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-800 '>
                   <svg
-                    className='box2 left-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 sm:p-1 h-3 w-4'
+                    className='box2 bg-black left-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 sm:p-1 h-3 w-4'
                     xmlns='http://www.w3.org/2000/svg'
                     viewBox='0 0 15 15'
                     fill='none'
@@ -292,7 +292,7 @@ export default function CommunityProject ( {
               </div>
             </div>
 
-            <div className='flex gap-2 lg:mt-0 sm:mt-4'>
+            <div className='flex justify-start items-center gap-2 lg:mt-0 sm:mt-4'>
               <h1 className='text-neutral-200'>BIO:</h1>
               <p className='text-sm text-neutral-500'>
                 {community?.description || ''}
@@ -427,8 +427,8 @@ export default function CommunityProject ( {
                 className=''
               >
                 <div>
-                  <div className='box1 education-clip bg-red-700 '>
-                    <div className='education-clip box2 border h-28 w-48 bg-red-700/10 flex justify-center items-center p-4'>
+                  <div className={`box1 education-clip p-[2px] ${(index%4==0 && "bg-red-500")} ${(index%4==2 && "bg-blue-500")} ${(index%4==2 && "bg-green-500")} ${(index%4==3 && "bg-yellow-500")} `}>
+                    <div className='education-clip box2 h-28 w-48 bg-black flex justify-center items-center p-4'>
                       <div>
                         <img
                           src={
