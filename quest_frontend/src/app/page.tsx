@@ -21,6 +21,7 @@ import { connectWallet } from "@/utils/wallet-connect";
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [domain, setDomain] = useState<string>("");
+  const [referralCode, setReferralCode] = useState('');
   const [error, setError] = useState("");
   const [address, setAddress] = useState<string>("");
   const [balance, setBalance] = useState<string>("");
@@ -126,8 +127,8 @@ const LandingPage = () => {
       setLoader(false);
     }
   };
-
-  const handleMinting = async () => {
+    
+  const handleDomainMinting = async () => {
     setLoader(true);
   
     if (!isAlphanumericWithHyphen(domain)) {
@@ -154,7 +155,6 @@ const LandingPage = () => {
       if (walletInfo) {
         setAlertMessage("Wallet connected successfully");
         setIswalletconnected(true);
-        // Update the address state here
         setAddress(walletInfo.address);
       } else {
         setError("Failed to connect wallet.");
@@ -171,7 +171,7 @@ const LandingPage = () => {
       const usdcContract = new ethers.Contract(usdcContractAddress, usdcABI, signer);
   
       // Check the user's USDC balance
-      const usdcBalance = await usdcContract.balanceOf(await signer.getAddress()); // Ensure to use signer's address
+      const usdcBalance = await usdcContract.balanceOf(await signer.getAddress());
       const usdcAmount = ethers.parseUnits("5", 6); // 5 USDC with 6 decimals
   
       if (usdcBalance < usdcAmount) {
@@ -186,13 +186,19 @@ const LandingPage = () => {
   
       // Initialize your upgradeable contract instance
       const contract = new ethers.Contract(ArbicontractAddress, contractABI, signer);
+      let tx ;
+      // Call the mintDomainWithReferral function with the domain and referral code
+      if (referralCode && referralCode != '') {
+         tx = await contract.mintDomainWithReferral(updatedDomain, referralCode);
+        await tx.wait();
+    } else {
+      tx = await contract.mintDomain(updatedDomain);
+          await tx.wait();
+ }
+     
   
-      // Call the mintDomain function with the domain and minting fee
-      const tx = await contract.mintDomain(updatedDomain);
-      await tx.wait();
-  
-      console.log("Domain minted successfully", tx);
-      setAlertMessage(`Domain ${updatedDomain} minted successfully!`);
+      console.log("Domain minted successfully with referral", tx);
+      setAlertMessage(`Domain ${updatedDomain} minted successfully with referral code!`);
       setHash(tx.hash);
       setShowPasswordField(true);
     } catch (error) {
@@ -206,7 +212,7 @@ const LandingPage = () => {
     }
     setLoader(false);
   };
-    
+  
   const getUploadUrl = async (fileName: string): Promise<string> => {
     
     try {
@@ -499,8 +505,9 @@ const LandingPage = () => {
                             Invite Code
                           </label>
                           <input
-                            disabled={true}
                             type="text"
+                            value={referralCode}
+                            onChange={(e)=> setReferralCode(e.target.value)}
                             className="w-full bg-black border-1 text-gray-500 border-gray-500 px-4 py-2 "
                             name="inviteCode"
                             placeholder="invite code"
@@ -562,7 +569,7 @@ const LandingPage = () => {
                       <Button
                         radius="md"
                         className="bg-[#5538CE] text-white w-full"
-                        onPress={handleMinting}
+                        onPress={handleDomainMinting}
                       >
                         {loader ? (
                           <Spinner color="white" size="sm" />
