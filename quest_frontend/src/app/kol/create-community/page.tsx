@@ -6,11 +6,11 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { getCommunitySuccess } from "@/redux/reducer/adminCommunitySlice";
 import { useRouter } from "next/navigation";
 import { useDropzone } from 'react-dropzone';
-import { BallTriangle } from "react-loader-spinner";
 import axios from "axios";
 import { Select, SelectItem } from "@nextui-org/react";
 import Multiselect from 'multiselect-react-dropdown';
 import { notify } from "@/utils/notify";
+import { BallTriangleLoader } from "@/app/components/loader";
 
 interface Category
 {
@@ -38,7 +38,7 @@ const CreateCommunity: React.FC = () =>
   const [ categories, setCategories ] = useState<Category[]>( [] );
   const [ ecosystems, setEcosystems ] = useState<string>( "" );
   const [ file, setFile ] = useState<File | null>( null );
-  const [preview, setPreview] = useState<string|null>(null);
+  const [ preview, setPreview] = useState<string|null>(null);
   const [ loader, setLoader ] = useState<boolean>( false );
   const [ isClient, setIsClient ] = useState<boolean>( false );
   const [ isBlockchainRelated, setIsBlockchainRelated ] = useState<boolean>( false );
@@ -46,7 +46,7 @@ const CreateCommunity: React.FC = () =>
 
   const dispatch = useDispatch<AppDispatch>();
   const communityData = useSelector<RootState, CommunityData>( ( state:any ) => state.adminCommunity );
-  const UserId = useSelector<RootState, string | undefined>( ( state ) => state.login.user?._id );
+  const UserId = useSelector<RootState, string | undefined>( ( state ) => state?.login.user?._id );
 
   useEffect( () =>
   {
@@ -171,12 +171,12 @@ const CreateCommunity: React.FC = () =>
 
   if ( !isClient ) return (
     <div className="flex justify-center items-center">
-      <BallTriangle color="#8B5CF6" height={ 100 } width={ 100 } />
+      <BallTriangleLoader />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#14141494] flex items-center justify-center p-4 font-[ProFontWindow] text-white">
+    <div className="min-h-screen bg-[#14141494] flex items-center justify-center p-8 font-[ProFontWindow] text-white">
       <div className="bg-[#00000064] border border-gray-800 shadow-xl w-full max-w-2xl p-6 md:p-8">
         <h1 className="text-2xl md:text-3xl mx-4 font-bold font-sans text-center mb-2">LET'S CREATE YOUR COMMUNITY</h1>
         <p className="text-gray-400 mx-4 mb-6 md:mb-8 text-sm md:text-base text-center">Our users like to know more about a community before they get involved. Please include any information they may need.</p>
@@ -291,18 +291,27 @@ const CreateCommunity: React.FC = () =>
                   placeholder="Select Categories"
                   style={ {
                     chips: {
-                      background: '#FFFFff',  
-                      color: '#000000'        
+                      background: '#FA00FF',  
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      fontFamily: 'arial',
                     },
                     searchBox: {
                       border: '1px solid #1f1f1f',
                       borderRadius: '8px',
                       background: 'black',
-                      color: 'white'
+                      color: 'white',
+
                     },
                     option: {
                       color: 'white',
-                      background: 'black'
+                      background: 'black',
+                      height: '25px',
+                      fontSize: '12px',
+                      fontFamily: 'arial',
+                      // borderBottom:"1px solid #fff",
+                      padding: '10px 10px',
                     },
                     optionContainer: {
                       background: 'black'
@@ -323,11 +332,17 @@ const CreateCommunity: React.FC = () =>
                 <Select
                   placeholder="Select Ecosystem"
                   selectionMode="single"
+                  classNames={{
+                    
+                    listbox: 'bg-black text-white',
+                    listboxWrapper: 'bg-black',
+                    popoverContent: 'bg-black border border-gray-800',
+                  }}
                   onChange={ ( e ) => setEcosystems( e.target.value ) }
-                  className="w-full border border-gray-800 rounded-lg focus:outline-none focus:ring-2 transition-colors duration-300 bg-black text-sm text-white"
+                  className="w-full shadow-none border border-gray-800 rounded-lg text-sm text-white"
                 >
                   { communityData?.ecosystems?.map( ( ecosystem: any ) => (
-                    <SelectItem key={ ecosystem._id } value={ ecosystem } className="bg-gray-600 text-white">
+                    <SelectItem key={ ecosystem._id } value={ ecosystem } className="bg-black px-4 py-2 text-white">
                       { ecosystem?.name }
                     </SelectItem>
                   ) ) }
@@ -340,21 +355,13 @@ const CreateCommunity: React.FC = () =>
             { !loader ? (
               <button
                 type="submit"
-                className={ `bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg transition-colors duration-300 text-sm ${ isDisable ? "hover:bg-red-500" : "bg-blue-500" }` }
+                className={ `px-6 py-2 rounded-lg transition-colors duration-300  text-sm ${ isDisable ? "bg-famViolate-light" : "bg-famViolate hover:bg-famViolate-dark" }` }
                 disabled={ isDisable }
               >
-                { isDisable ? "Please wait..." : "Submit" }
-
+                 Submit
               </button>
             ) : (
-              <BallTriangle
-                height={ 40 }
-                width={ 40 }
-                radius={ 5 }
-                color="#8B5CF6"
-                ariaLabel="ball-triangle-loading"
-                visible={ true }
-              />
+              <BallTriangleLoader />
             ) }
           </div>
         </form>

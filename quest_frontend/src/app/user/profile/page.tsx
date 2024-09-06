@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { BallTriangle } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import ModalForm from "@/app/components/ModalForm";
@@ -12,6 +11,7 @@ import UserTable from "@/app/components/table/userTable";
 import TeleApp from "@/app/components/telegram";
 import axios from "axios";
 import { notify } from "@/utils/notify";
+import { TailSpinLoader } from "@/app/components/loader";
 
 const columns = [
   { name: "NAME", uid: "name" },
@@ -79,7 +79,7 @@ const Profile: React.FC = () => {
   };
 
   const signupDiscord = async () => {
-    const authUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/discord/auth`;
+    const authUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/discord`;
     window.open(authUrl, '_blank', 'noopener,noreferrer');
   };
   const signupX = async () => {
@@ -118,7 +118,7 @@ const Profile: React.FC = () => {
   if (!user)
     return (
       <div className="min-h-screen flex justify-center items-center">
-        <BallTriangle />
+        <TailSpinLoader/>
       </div>
     );
 
@@ -157,7 +157,7 @@ const Profile: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex row gap-1">
-                        <div className="box1 right-trapezium  w-[2rem] h-[2rem] p-[2px] bg-zinc-800 ">
+                        <div className="box1 right-trapezium  w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                           <a target="_blank" href={"https://x.com/fr_Ani5"}>
                             <svg
                               className="box2 right-trapezium p-2 bg-black "
@@ -174,7 +174,7 @@ const Profile: React.FC = () => {
                             </svg>
                           </a>
                         </div>
-                        <div className="box1 left-right-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-800 ">
+                        <div className="box1 left-right-trapezium w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                           <a
                             href={"https://discord.gg/vASfWSV6"}
                             target="_blank"
@@ -194,7 +194,7 @@ const Profile: React.FC = () => {
                             </svg>
                           </a>
                         </div>
-                        <div className="box1 left-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-800 ">
+                        <div className="box1 left-trapezium w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                           <a
                             target="_blank"
                             href={"https://t.me/+8Cgy2Zu8y-U0MjVl"}

@@ -1,10 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import User, { IUser } from "../../models/user/user";
+import { Request, Response } from "express";
+import { IUser } from "../../models/user/user";
 import dotenv from "dotenv";
 import {
-  ChannelType,
   Client,
-  DiscordAPIError,
   GatewayIntentBits,
   TextChannel,
 } from "discord.js";
@@ -26,6 +24,7 @@ interface Guild {
   name?: string; // Optional property
 }
 
+client.login(process.env.DISCORD_TOKEN as string);
 // Event handler when the client is ready
 client.once("ready", () => {
   console.log("Discord bot ready!");
@@ -38,10 +37,19 @@ client.on("error", (error) => {
 
 client.on("shardError", (error) => {
   console.error("WebSocket connection error:", error);
+  setTimeout(() => {
+    console.log('Retrying WebSocket connection...');
+    client.login(process.env.DISCORD_TOKEN); // Re-login to retry
+  }, 5000); 
 });
 
+client.on('reconnect', () => {
+  console.log('Reconnecting to Discord...');
+});
+
+
 // Log in the Discord client with the bot token
-client.login(process.env.DISCORD_TOKEN as string);
+
 
 export const fetchGuildChannelInfo = async (guildId: string, token: string) => {
   try {
