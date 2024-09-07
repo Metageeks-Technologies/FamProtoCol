@@ -42,8 +42,13 @@ export const loginFailed = async (
 
 // logout
 export const logout = async (req: Request, res: Response) => {
-  res.clearCookie("authToken");
-  res.status(200).json({ message: "Logged out successfully" });
+   res.clearCookie("_fam_token", {
+    httpOnly: true,   // Ensure the cookie is not accessible via client-side JavaScript
+    secure: process.env.NODE_ENV === 'production', // Use secure flag in production
+    sameSite: 'strict',  // Protect against CSRF
+    path: '/',  // Specify the path where the cookie is set (usually '/')
+  });
+  return res.status(200).json({ message: "Logged out successfully" });
 };
 
 export const updateUser = async (req: Request, res: Response) => {
@@ -160,7 +165,7 @@ export const verifyPhone = async (req: Request, res: Response) => {
     };
     // console.log("jwtToken:-",jwtToken, "Otiopns:-",options)
     // alert("User Authuthenticaed")
-    res.status(200).cookie("authToken", jwtToken, options).json({
+    res.status(200).cookie("_fam_token", jwtToken, options).json({
       success: true,
       authToken: jwtToken,
       message: "user authenticated succesfully",
@@ -207,8 +212,6 @@ export const validateInviteUrl = async (req: Request, res: Response) => {
       .send({ success: false, message: "Failed to fetch guilds" });
   }
 };
-
-
 
 export const getProfile = async (req: Request, res: Response) => {
   const user = req.user as any;

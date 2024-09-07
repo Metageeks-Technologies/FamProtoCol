@@ -32,7 +32,7 @@ interface ReferralFormProps {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const authToken = `Bearer ${Cookies.get('authToken')}`;
+    const authToken = `Bearer ${Cookies.get('_fam_token')}`;
     const response = await axios.post(
         `${ process.env.NEXT_PUBLIC_SERVER_URL }/community/get/joinCommunities/${id}`,
       formData ,

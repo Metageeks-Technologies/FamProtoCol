@@ -64,7 +64,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
   const [success, setSuccess] = useState(false);
   const [showConnectButton, setShowConnectButton] = useState(false);
   const [modalView, setModalView] = useState(false);
-  const authToken = `Bearer ${Cookies.get("authToken")}`;
+  const authToken = `Bearer ${Cookies.get("_fam_token")}`;
   const [wallets, setWallets] = useState(0);
   const [activeTab, setActiveTab] = useState<string>("tweetReaction");
   const [telegram, setTelegram] = useState({

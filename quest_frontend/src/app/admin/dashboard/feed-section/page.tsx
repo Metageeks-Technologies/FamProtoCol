@@ -176,7 +176,7 @@ const AddFeedPage = () =>
       setLoader( false );
       return notify( "warn","Only JPEG, PNG, WEBP, GIF, SVG images are allowed" );
     }
-    const token = localStorage.getItem( 'token' );
+    const token = localStorage.getItem( '_fam_admin_token' );
     if ( token )
     {
 
@@ -227,7 +227,7 @@ const AddFeedPage = () =>
     e.preventDefault();
     setLoader(true);
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('_fam_admin_token');
     if (!token) {
       console.error('Token not found');
       setLoader(false);
@@ -283,7 +283,7 @@ const AddFeedPage = () =>
   //submit for delete the feed
   const handleDeleteFeed = async (id:any) =>{
     setLoader(true);
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('_fam_admin_token');
     if (!token) {
       console.error('Token not found');
       setLoader(false);

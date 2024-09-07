@@ -321,7 +321,7 @@ const onGenerateReferral = async () => {
                     >
                       Generate Referral
                     </button>
-                    <button className="px-2 py-2 bg-blue-500" onClick={handleSwal} >Swal</button>
+                    {/* <button className="px-2 py-2 bg-blue-500" onClick={handleSwal} >Swal</button> */}
                   </div>
                           </div>
                           <div className="flex flex-row justify-center items-center my-4 gap-2">

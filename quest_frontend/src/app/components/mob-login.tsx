@@ -240,17 +240,12 @@ const LoginPage: React.FC<LoginPageProps> = ( { setNav } ) =>
                 // console.log( "response:-", response );
                 if ( response.ok )
                 {
-                    const data = await response.json();
-                    Cookies.set( 'authToken', data.authToken, { expires: 7 } );
-                    // console.log( data );
                     setLoading( false );
-
                     dispatch( fetchUserData() );
                     setNav( true );
                     router.push('/home' );
                 }else{
                     toast.error('Invalid otp')
-
                 }
             } catch ( error )
             {

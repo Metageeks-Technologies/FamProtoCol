@@ -90,7 +90,7 @@ passport.use(
     async (req: Request, accessToken: string, refreshToken: string, profile: DiscordProfile, done: any) => {
       try {
          
-        const token=req.cookies.authToken;
+        const token=req.cookies._fam_token;
         // console.log("token in discord",token)
         const data= await jwt.verify(token, secretKey);
         const users = data as jwtUser;
