@@ -12,6 +12,7 @@ import TeleApp from "@/app/components/telegram";
 import axios from "axios";
 import { notify } from "@/utils/notify";
 import { TailSpinLoader } from "@/app/components/loader";
+import { SweetAlert } from "@/utils/sweetAlert";
 
 const columns = [
   { name: "NAME", uid: "name" },
@@ -86,6 +87,10 @@ const Profile: React.FC = () => {
     const authUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/auth`;
     window.open(authUrl, '_blank', 'noopener,noreferrer');
   };
+
+  const handleSwal=()=>{
+    SweetAlert("error","hello","djadfnas");
+  }
 
   const onGenerateReferral = async () => {
 
@@ -266,6 +271,7 @@ const Profile: React.FC = () => {
                     >
                       Generate Referral
                     </button>
+                    <button className="px-2 py-2 bg-blue-500" onClick={handleSwal} >Swal</button>
                   </div>
                           </div>
                           <div className="flex flex-row justify-center items-center my-4 gap-2">
