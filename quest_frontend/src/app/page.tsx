@@ -5,10 +5,7 @@ import {
   Button,
   Modal,
   ModalContent,
-  ModalHeader,
-  Input,
   ModalBody,
-  ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
 import { ethers } from "ethers";
@@ -17,7 +14,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { notify } from "@/utils/notify";
 import { connectWallet } from "@/utils/wallet-connect";
-import { dom } from "@fortawesome/fontawesome-svg-core";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -30,7 +26,7 @@ const LandingPage = () => {
   const [balance, setBalance] = useState<string>("");
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [loader, setLoader] = useState(false);
-  const [iswalletconnected, setIswalletconnected] = useState(false);
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [showPasswordField, setShowPasswordField] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
@@ -204,7 +200,7 @@ const LandingPage = () => {
       const walletInfo = await connectWallet();
       if (walletInfo) {
         setAlertMessage("Wallet connected successfully");
-        setIswalletconnected(true);
+        setIsWalletConnected(true);
         setAddress(walletInfo.address);
       } else {
         setError("Failed to connect wallet.");
@@ -637,7 +633,7 @@ const LandingPage = () => {
                       >
                         {loader ? (
                           <Spinner color="white" size="sm" />
-                        ) : iswalletconnected ? (
+                        ) : isWalletConnected ? (
                           <span>Mint</span>
                         ) : (
                           <span>Connect Wallet</span>
