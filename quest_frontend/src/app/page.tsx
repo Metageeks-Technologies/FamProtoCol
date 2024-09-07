@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Button,
   Modal,
@@ -17,10 +17,13 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { notify } from "@/utils/notify";
 import { connectWallet } from "@/utils/wallet-connect";
+import { dom } from "@fortawesome/fontawesome-svg-core";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [domain, setDomain] = useState<string>("");
+  const [existingDomain, setExistingDomain] = useState<string[]>([]);
+  const [isDomainAvailable, setIsDomainAvailable] = useState<string>("");
   const [referralCode, setReferralCode] = useState('');
   const [error, setError] = useState("");
   const [address, setAddress] = useState<string>("");
@@ -38,17 +41,52 @@ const LandingPage = () => {
   const [thankYou, setThankYou] = useState<boolean>(false);
   const router = useRouter();
 
+
+  const fetchDomains= async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/domains`);
+      if(response.data.success){
+        setExistingDomain(response.data.filteredDomain);
+        console.log(response.data.filteredDomain);
+      }
+      else{
+        console.log("error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchDomains();
+  }, []);
+
   const isAlphanumericWithHyphen = (str: string): boolean => {
-    // console.log("step1",str);
     const regex = /^[a-zA-Z0-9-]+$/;
-    // console.log("step2",regex.test(str));
     return regex.test(str);
   };
 
   const handleDomainChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
     setError("");
     setAlertMessage("");
     setDomain(event.target.value);
+    setIsDomainAvailable("");
+
+    if(domain.length<3){
+      return;
+    }
+
+    // console.log("domain" , event.target.value + ".fam");
+    // console.log("exiting domain",existingDomain);
+    const checkDomain = event.target.value + ".fam";
+    const isExistingDomain = existingDomain.includes(checkDomain);
+    if (isExistingDomain) {
+      setIsDomainAvailable("false");
+      return;
+    }
+    setIsDomainAvailable("true");
+    return ;
   };
 
   const handleOpen = () => {
@@ -130,6 +168,18 @@ const LandingPage = () => {
     
   const handleDomainMinting = async () => {
     setLoader(true);
+
+    if(!domain || domain === "" || domain.length>3 ){
+      setError("Domain name must be atleast 4 characters long");
+      setLoader(false);
+      return;
+    }
+
+    if(isDomainAvailable === "false"){
+      setError("Domain already exists");
+      setLoader(false);
+      return;
+    }
   
     if (!isAlphanumericWithHyphen(domain)) {
       setError(
@@ -479,11 +529,11 @@ const LandingPage = () => {
                       />
                     </div>
                     <div className="flex flex-col justify-center gap-4">
-                      <div className="flex gap-4 flex-row justify-between items-center">
+                      <div className="flex gap-4 flex-row justify-between">
                         <div>
                           <label
                             htmlFor="domain"
-                            className="uppercase font-['profontwindows']"
+                            className="uppercase text-sm font-['profontwindows']"
                           >
                             Setup Username
                           </label>
@@ -496,11 +546,25 @@ const LandingPage = () => {
                             name="domain"
                             placeholder="domain"
                           />
+                          {
+                          domain && isDomainAvailable==="false" && (
+                              <div className="text-red-600 font-['profontwindows'] text-xs text-end">
+                                Domain already exists
+                              </div>
+                            )
+                        }
+                        {
+                          domain && isDomainAvailable==="true" && (
+                              <div className="text-green-600 font-['profontwindows'] text-xs text-end">
+                                Domain available
+                              </div>
+                            )
+                          }
                         </div>
                         <div>
                           <label
                             htmlFor="inviteCode"
-                            className="uppercase font-['profontwindows']"
+                            className="uppercase text-sm font-['profontwindows']"
                           >
                             Invite Code
                           </label>
@@ -517,7 +581,7 @@ const LandingPage = () => {
                       <div>
                         <label
                           htmlFor="password"
-                          className="uppercase font-['profontwindows']"
+                          className="uppercase text-sm font-['profontwindows']"
                         >
                           Password
                         </label>

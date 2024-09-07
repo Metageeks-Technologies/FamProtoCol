@@ -61,11 +61,11 @@ const Navbar: React.FC = () =>
                 await persistor.flush();
                 localStorage.clear();
                 Cookies.remove( 'authToken' );
-                // setRefresh( true );
+                setRefresh( true );
                 router.push( '/home' );
-                // window.location.reload();
+                window.location.reload();
                 notify( "success", "Logout Successful" );
-                // setRefresh( false );
+                setRefresh( false );
             }
         } catch ( error )
         {

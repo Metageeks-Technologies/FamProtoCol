@@ -37,6 +37,13 @@ export interface IDiscordInfo {
 export interface IUser extends Document {
   phone_number: string;
   googleId:string;
+  domain:{
+    domainAddress: string;
+    image:string;
+    hashCode: string;
+    walletAddress: string;
+    password: string;
+  },
   displayName: string;
   email: string;
   bio: string;

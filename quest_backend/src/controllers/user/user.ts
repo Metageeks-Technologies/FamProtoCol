@@ -169,7 +169,7 @@ const generateReferral = (length: number): string => {
   return referralCode;
 };
 
-const checkReferralCode = async (referralCode: string) => {
+const referralExits = async (referralCode: string) => {
   const user = await User.find({ inviteCode: referralCode });
 
   if (user) {
@@ -179,7 +179,7 @@ const checkReferralCode = async (referralCode: string) => {
 };
 
 export const generateReferralCode = async (req: any, res: Response) => {
-  console.log(generateReferral,req.user);
+  console.log(generateReferral, req.user);
   try {
     const { ids } = req.user;
     console.log(ids);
@@ -191,15 +191,15 @@ export const generateReferralCode = async (req: any, res: Response) => {
         .status(400)
         .json({ success: false, message: "User not found" });
     }
-    
+
     let referralCode = generateReferral(6);
     let flag = true;
     while (flag) {
-      let checkReferral = await checkReferralCode(referralCode);
+      let checkReferral = await referralExits(referralCode);
       if (checkReferral) {
-        flag = false;
-      } else {
         referralCode = generateReferral(6);
+      } else {
+        flag = false;
       }
     }
 
@@ -209,5 +209,19 @@ export const generateReferralCode = async (req: any, res: Response) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err });
+  }
+};
+
+export const getDomains = async (req: Request, res: Response) => {
+  try {
+    const domains = await User.find({}, "domain.domainAddress");
+    console.log(domains);
+    let filteredDomain = domains
+      .filter((d: any) => d.domain && d.domain.domainAddress)
+      .map((d: any) => d.domain.domainAddress);
+
+    return res.send({ success: true, filteredDomain });
+  } catch (err) {
+    return res.send({ success: false, message: err });
   }
 };
