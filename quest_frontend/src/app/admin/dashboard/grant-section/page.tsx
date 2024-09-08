@@ -163,7 +163,7 @@ const Grantspage = () => {
         setLoading( false );
         return notify( "warn","Only JPEG, PNG, WEBP, GIF, SVG images are allowed" );
       }
-      const token = localStorage.getItem( 'token' );
+      const token = localStorage.getItem( '_fam_admin_token' );
       if ( token )
       {
   
@@ -217,7 +217,7 @@ const Grantspage = () => {
         e.preventDefault();
         setLoading(true);
     
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('_fam_admin_token');
         if (!token) {
           console.error('Token not found');
           setLoading(false);
@@ -273,7 +273,7 @@ const Grantspage = () => {
     // delete grant
   const handleDeleteGrant = async (id:any) =>{
     setLoading(true);
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('_fam_admin_token');
     if (!token) {
       console.error('Token not found');
       setLoading(false);

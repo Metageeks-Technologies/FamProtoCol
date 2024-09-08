@@ -81,7 +81,7 @@ export const fetchUserData = createAsyncThunk(
   {
     try
     {
-      const authToken = `Bearer ${ Cookies.get( 'authToken' ) }`;
+      const authToken = `Bearer ${ Cookies.get( '_fam_token' ) }`;
       const response = await axios.get( `${ process.env.NEXT_PUBLIC_SERVER_URL }/auth/profile`, {
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ export const updateUserProfile = createAsyncThunk(
   'login/updateUserProfile',
   async (formData: Partial<IUser>, { rejectWithValue }) => {
     try {
-      const authToken = `Bearer ${Cookies.get('authToken')}`;
+      const authToken = `Bearer ${Cookies.get('_fam_token')}`;
       const response = await axios.put(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/profile/update`, formData, {
         headers: {
           'Content-Type': 'application/json',

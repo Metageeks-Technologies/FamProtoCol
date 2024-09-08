@@ -60,7 +60,6 @@ const Navbar: React.FC = () =>
             {
                 await persistor.flush();
                 localStorage.clear();
-                Cookies.remove( 'authToken' );
                 setRefresh( true );
                 router.push( '/home' );
                 window.location.reload();

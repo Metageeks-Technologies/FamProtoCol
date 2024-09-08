@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 import UserDb, { IUser } from "../models/user/user";
 import { Request } from "express";
 import KolsDB from "../models/kols/kols";
-import { fetchGuilds } from "../controllers/user/discord";
+import { fetchGuilds } from "../controllers/discord/discord";
 import { jwtUser } from "../middleware/user/verifyToken";
 
 dotenv.config();
@@ -90,7 +90,7 @@ passport.use(
     async (req: Request, accessToken: string, refreshToken: string, profile: DiscordProfile, done: any) => {
       try {
          
-        const token=req.cookies.authToken;
+        const token=req.cookies._fam_token;
         // console.log("token in discord",token)
         const data= await jwt.verify(token, secretKey);
         const users = data as jwtUser;

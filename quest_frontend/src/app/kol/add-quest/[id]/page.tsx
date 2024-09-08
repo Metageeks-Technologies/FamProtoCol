@@ -9,6 +9,7 @@ import { notify } from '@/utils/notify';
 import axios from 'axios';
 import Multiselect from 'multiselect-react-dropdown';
 import { getCommunitySuccess } from '@/redux/reducer/adminCommunitySlice';
+import { BallTriangleLoader } from '@/app/components/loader';
 
 interface Category
 {
@@ -202,7 +203,7 @@ function CreateQuest ()
                 type="text"
                 value={ title }
                 onChange={ ( e ) => setTitle( e.target.value ) }
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-300 bg-gray-800 text-white"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-famViolate transition-colors duration-300 bg-gray-800 text-white"
                 required
               />
             </div>
@@ -212,7 +213,7 @@ function CreateQuest ()
             <textarea
               value={ description }
               onChange={ ( e ) => setDescription( e.target.value ) }
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-300 bg-gray-800 text-white"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-famViolate transition-colors duration-300 bg-gray-800 text-white"
               rows={ 4 }
               required
             />
@@ -254,7 +255,7 @@ function CreateQuest ()
                   color: 'white'
                 }
               } }
-              className="w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-300 text-sm text-white"
+              className="w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-famViolate transition-colors duration-300 text-sm text-white"
               showCheckbox={ false }
               avoidHighlightFirstOption={ true }
               hideSelectedList={ false }
@@ -275,26 +276,20 @@ function CreateQuest ()
                   placeholder="Value"
                   min={1}
                   max={500}
-                  className="w-1/2 px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-300 bg-gray-800 text-white"
+                  className="w-1/2 px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-famViolate transition-colors duration-300 bg-gray-800 text-white"
                   required
                 />
               </div>
             ) ) }
           </div>
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-end mt-6">
             <button
               type="submit"
               disabled={ isSubmitting }
-              className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`bg-famViolate text-white px-6 py-2 rounded-lg hover:bg-famViolate-light transition-colors duration-300 shadow-lg ${isSubmitting?"opacity-50 cursor-not-allowed":"cursor-pointer"}`}
             >
               { isSubmitting ? (
-                <div className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Submitting...
-                </div>
+                <BallTriangleLoader/>
               ) : (
                 'Submit'
               ) }

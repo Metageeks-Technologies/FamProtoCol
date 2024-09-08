@@ -1,14 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Button,
   Modal,
   ModalContent,
-  ModalHeader,
-  Input,
   ModalBody,
-  ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
 import { ethers } from "ethers";
@@ -16,16 +13,20 @@ import { Spinner } from "@nextui-org/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { notify } from "@/utils/notify";
+import { connectWallet } from "@/utils/wallet-connect";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [domain, setDomain] = useState<string>("");
+  const [existingDomain, setExistingDomain] = useState<string[]>([]);
+  const [isDomainAvailable, setIsDomainAvailable] = useState<string>("");
+  const [referralCode, setReferralCode] = useState('');
   const [error, setError] = useState("");
   const [address, setAddress] = useState<string>("");
   const [balance, setBalance] = useState<string>("");
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [loader, setLoader] = useState(false);
-  const [iswalletconnected, setIswalletconnected] = useState(false);
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [showPasswordField, setShowPasswordField] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
@@ -36,60 +37,52 @@ const LandingPage = () => {
   const [thankYou, setThankYou] = useState<boolean>(false);
   const router = useRouter();
 
+
+  const fetchDomains= async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/domains`);
+      if(response.data.success){
+        setExistingDomain(response.data.filteredDomain);
+        console.log(response.data.filteredDomain);
+      }
+      else{
+        console.log("error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchDomains();
+  }, []);
+
   const isAlphanumericWithHyphen = (str: string): boolean => {
-    // console.log("step1",str);
     const regex = /^[a-zA-Z0-9-]+$/;
-    // console.log("step2",regex.test(str));
     return regex.test(str);
   };
 
-  const connectWallet = async (): Promise<string | null> => {
-    try {
-      // Check if MetaMask is installed
-      if (typeof window.ethereum === "undefined") {
-        // Prompt the user to install MetaMask and provide a link
-        if (
-          confirm(
-            "MetaMask is not installed. Would you like to download it now?"
-          )
-        ) {
-          // Open the MetaMask download page in a new tab
-          window.open("https://metamask.io/download.html", "_blank");
-        }
-        return null;
-      }
-
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const accounts = await provider.send("eth_requestAccounts", []);
-
-      if (accounts.length === 0) {
-        alert("No Ethereum account is connected. Please connect your wallet.");
-        return null;
-      }
-
-      const accountAddress = accounts[0];
-      setAddress(accountAddress);
-
-      const balance = await provider.getBalance(accountAddress);
-      setBalance(ethers.formatEther(balance));
-
-      // Assuming checkENS is an async function that needs the account address
-      // await checkENS(accountAddress);
-
-      console.log("Wallet connected:", accountAddress);
-      // onSubmit(taskId, { visited: "wallet connected" });
-
-      return accountAddress;
-    } catch (err) {
-      console.log("Error connecting wallet:", err);
-      return null;
-    }
-  };
-
   const handleDomainChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
     setError("");
     setAlertMessage("");
     setDomain(event.target.value);
+    setIsDomainAvailable("");
+
+    if(domain.length<3){
+      return;
+    }
+
+    // console.log("domain" , event.target.value + ".fam");
+    // console.log("exiting domain",existingDomain);
+    const checkDomain = event.target.value + ".fam";
+    const isExistingDomain = existingDomain.includes(checkDomain);
+    if (isExistingDomain) {
+      setIsDomainAvailable("false");
+      return;
+    }
+    setIsDomainAvailable("true");
+    return ;
   };
 
   const handleOpen = () => {
@@ -168,10 +161,22 @@ const LandingPage = () => {
       setLoader(false);
     }
   };
-
-  const handleMinting = async () => {
+    
+  const handleDomainMinting = async () => {
     setLoader(true);
 
+    if(!domain || domain === "" || domain.length>3 ){
+      setError("Domain name must be atleast 4 characters long");
+      setLoader(false);
+      return;
+    }
+
+    if(isDomainAvailable === "false"){
+      setError("Domain already exists");
+      setLoader(false);
+      return;
+    }
+  
     if (!isAlphanumericWithHyphen(domain)) {
       setError(
         "Invalid Username: The username must contain only alphanumeric characters and hyphens. Spaces are not allowed"
@@ -179,54 +184,73 @@ const LandingPage = () => {
       setLoader(false);
       return;
     }
-
+  
     const updatedDomain = domain + ".fam";
-
-    const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
-    const contractABI = process.env.NEXT_PUBLIC_CONTRACT_ABI
-      ? JSON.parse(process.env.NEXT_PUBLIC_CONTRACT_ABI)
+  
+    const ArbicontractAddress = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
+    const usdcContractAddress = process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS!;
+    const contractABI = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ABI
+      ? JSON.parse(process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ABI)
       : null;
-
-    // console.log("step1 ", contractAddress, contractABI, address);
-    if (!contractAddress || !contractABI || !address) {
-      const res = await connectWallet();
-      if(res){
+    const usdcABI = process.env.NEXT_PUBLIC_USDC_ABI
+      ? JSON.parse(process.env.NEXT_PUBLIC_USDC_ABI)
+      : null;
+  
+    if (!ArbicontractAddress || !contractABI || !address) {
+      const walletInfo = await connectWallet();
+      if (walletInfo) {
         setAlertMessage("Wallet connected successfully");
-        setIswalletconnected(true);
+        setIsWalletConnected(true);
+        setAddress(walletInfo.address);
+      } else {
+        setError("Failed to connect wallet.");
+        setLoader(false);
+        return;
       }
-      setLoader(false);
-      return;
     }
-    console.log("step2: react minting stage ");
+  
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
-      const contract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
-
-      // Sending transaction
-      const tx = await contract.mintDomain(updatedDomain);
-
-      // Waiting for the transaction to be mined
-      await tx.wait();
-
-      // Update the state to show success message
-      console.log("Domain mited successfully", tx);
-      setAlertMessage(`Domain ${updatedDomain} minted successfully!`);
+  
+      // Initialize USDC contract instance
+      const usdcContract = new ethers.Contract(usdcContractAddress, usdcABI, signer);
+  
+      // Check the user's USDC balance
+      const usdcBalance = await usdcContract.balanceOf(await signer.getAddress());
+      const usdcAmount = ethers.parseUnits("5", 6); // 5 USDC with 6 decimals
+  
+      if (usdcBalance < usdcAmount) {
+        setError("Insufficient USDC balance. Please ensure you have at least 5 USDC in your wallet.");
+        setLoader(false);
+        return;
+      }
+  
+      // Approve the minting fee (5 USDC) for your contract
+      const approveTx = await usdcContract.approve(ArbicontractAddress, usdcAmount);
+      await approveTx.wait();
+  
+      // Initialize your upgradeable contract instance
+      const contract = new ethers.Contract(ArbicontractAddress, contractABI, signer);
+      let tx ;
+      // Call the mintDomainWithReferral function with the domain and referral code
+      if (referralCode && referralCode != '') {
+         tx = await contract.mintDomainWithReferral(updatedDomain, referralCode);
+        await tx.wait();
+    } else {
+      tx = await contract.mintDomain(updatedDomain);
+          await tx.wait();
+ }
+     
+  
+      console.log("Domain minted successfully with referral", tx);
+      setAlertMessage(`Domain ${updatedDomain} minted successfully with referral code!`);
       setHash(tx.hash);
       setShowPasswordField(true);
     } catch (error) {
-      // Type narrowing with `if` checks
       if (typeof error === "object" && error !== null && "reason" in error) {
         setError(`${(error as { reason: string }).reason}`);
-      } else if (
-        typeof error === "object" &&
-        error !== null &&
-        "message" in error
-      ) {
+      } else if (typeof error === "object" && error !== null && "message" in error) {
         setError(`${(error as { message: string }).message}`);
       } else {
         setError("An unknown error occurred.");
@@ -234,6 +258,7 @@ const LandingPage = () => {
     }
     setLoader(false);
   };
+  
   const getUploadUrl = async (fileName: string): Promise<string> => {
     
     try {
@@ -412,7 +437,7 @@ const LandingPage = () => {
                 </p>
                 <div className="mt-8 flex justify-center gap-4">
                   <Button
-                    // onClick={() => handleOpen()}
+                    onClick={() => handleOpen()}
                     className="bg-[#5538CE] text-white py-2 px-6 rounded-lg hover:bg-[#6243dd] transition duration-300"
                   >
                     Get Onboarded
@@ -500,11 +525,11 @@ const LandingPage = () => {
                       />
                     </div>
                     <div className="flex flex-col justify-center gap-4">
-                      <div className="flex gap-4 flex-row justify-between items-center">
+                      <div className="flex gap-4 flex-row justify-between">
                         <div>
                           <label
                             htmlFor="domain"
-                            className="uppercase font-['profontwindows']"
+                            className="uppercase text-sm font-['profontwindows']"
                           >
                             Setup Username
                           </label>
@@ -517,17 +542,32 @@ const LandingPage = () => {
                             name="domain"
                             placeholder="domain"
                           />
+                          {
+                          domain && isDomainAvailable==="false" && (
+                              <div className="text-red-600 font-['profontwindows'] text-xs text-end">
+                                Domain already exists
+                              </div>
+                            )
+                        }
+                        {
+                          domain && isDomainAvailable==="true" && (
+                              <div className="text-green-600 font-['profontwindows'] text-xs text-end">
+                                Domain available
+                              </div>
+                            )
+                          }
                         </div>
                         <div>
                           <label
                             htmlFor="inviteCode"
-                            className="uppercase font-['profontwindows']"
+                            className="uppercase text-sm font-['profontwindows']"
                           >
                             Invite Code
                           </label>
                           <input
-                            disabled={true}
                             type="text"
+                            value={referralCode}
+                            onChange={(e)=> setReferralCode(e.target.value)}
                             className="w-full bg-black border-1 text-gray-500 border-gray-500 px-4 py-2 "
                             name="inviteCode"
                             placeholder="invite code"
@@ -537,7 +577,7 @@ const LandingPage = () => {
                       <div>
                         <label
                           htmlFor="password"
-                          className="uppercase font-['profontwindows']"
+                          className="uppercase text-sm font-['profontwindows']"
                         >
                           Password
                         </label>
@@ -589,11 +629,11 @@ const LandingPage = () => {
                       <Button
                         radius="md"
                         className="bg-[#5538CE] text-white w-full"
-                        onPress={handleMinting}
+                        onPress={handleDomainMinting}
                       >
                         {loader ? (
                           <Spinner color="white" size="sm" />
-                        ) : iswalletconnected ? (
+                        ) : isWalletConnected ? (
                           <span>Mint</span>
                         ) : (
                           <span>Connect Wallet</span>

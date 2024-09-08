@@ -140,7 +140,7 @@ const Page = () => {
             setLoader( false );
             return notify( "warn","Only JPEG, PNG, WEBP, GIF, SVG images are allowed" );
           }
-          const token = localStorage.getItem( 'token' );
+          const token = localStorage.getItem( '_fam_admin_token' );
           if ( token )
           {
       
@@ -206,7 +206,7 @@ const Page = () => {
     e.preventDefault();
     setLoader(true);
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('_fam_admin_token');
     if (!token) {
       console.error('Token not found');
       setLoader(false);
@@ -262,7 +262,7 @@ const Page = () => {
   // delete badges
   const handleDeleteBadge = async (id: any) => {
     setLoader(true);
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("_fam_admin_token");
     if (!token) {
       console.error("Token not found");
       setLoader(false); 

@@ -538,7 +538,7 @@ const Popup: React.FC<{
   const router = useRouter();
   // const tasks = useSelector( ( state: RootState ) => state.task.tasks );
   const [localConnectedWallets, setLocalConnectedWallets] = useState<any>([]);
-  const authToken = `Bearer ${Cookies.get("authToken")}`;
+  const authToken = `Bearer ${Cookies.get("_fam_token")}`;
 
   useEffect(() => {
     if (selectedCard?.type === "Connect multiple wallet") {

@@ -229,7 +229,7 @@ const LoginPage: React.FC<LoginPageProps> = ( { setNav } ) =>
                 setuser( users );
                 toast.success( "OTP verified successfully!" );
                 //   Send user data to the backend
-                const response = await fetch( `${ process.env.NEXT_PUBLIC_SERVER_URL }/api/verify-phone`, {
+                const response = await fetch( `${ process.env.NEXT_PUBLIC_SERVER_URL }/auth/verify-phone`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -240,17 +240,12 @@ const LoginPage: React.FC<LoginPageProps> = ( { setNav } ) =>
                 // console.log( "response:-", response );
                 if ( response.ok )
                 {
-                    const data = await response.json();
-                    Cookies.set( 'authToken', data.authToken, { expires: 7 } );
-                    // console.log( data );
                     setLoading( false );
-
                     dispatch( fetchUserData() );
                     setNav( true );
                     router.push('/home' );
                 }else{
                     toast.error('Invalid otp')
-
                 }
             } catch ( error )
             {

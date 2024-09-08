@@ -143,8 +143,8 @@ export default function CommunityProject ( {
   if ( !community )
   {
     return (
-      <div className='flex items-center justify-center min-h-screen bg-gray-100'>
-        <div className='text-center p-8 bg-white rounded-lg shadow-md'>
+      <div className='flex items-center justify-center min-h-screen bg-black text-white'>
+        <div className='text-center p-8 bg-zinc-800 border border-zinc-700 text-white rounded-lg shadow-md'>
           <svg
             className='mx-auto h-16 w-16 text-yellow-500'
             fill='none'
@@ -158,16 +158,16 @@ export default function CommunityProject ( {
               d='M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4'
             />
           </svg>
-          <h1 className='mt-4 text-2xl font-bold text-gray-800'>
+          <h1 className='mt-4 text-2xl font-bold text-white'>
             { " " }
             No Community Found{ " " }
           </h1>
-          <p className='mt-2 text-gray-600'>
+          <p className='mt-2 text-gray-300'>
             We couldn't find the community you're looking for.
           </p>
           <button
             onClick={ () => window.history.back() }
-            className='mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300'
+            className='mt-4 px-4 py-2 bg-famViolate text-white rounded hover:bg-famViolate-light transition duration-300'
           >
             Go Back
           </button>
@@ -209,7 +209,7 @@ export default function CommunityProject ( {
                       <span className='card-white-text lg:text-xl sm:text-xl text-sm'>
                         { community.quests?.length || 0 }
                       </span>
-                      <span className=' text-neutral-800 lg:text-medium sm:text-medium text-sm'>
+                      <span className='text-gray-300 font-semibold lg:text-medium sm:text-medium text-sm'>
                         QUESTS
                       </span>
                     </div>
@@ -218,7 +218,7 @@ export default function CommunityProject ( {
                       <span className='card-white-text lg:text-xl sm:text-xl text-sm'>
                         { community.members?.length || 0 }
                       </span>
-                      <span className=' text-neutral-700 lg:text-medium sm:text-medium text-sm'>
+                      <span className=' text-gray-300 font-semibold lg:text-medium sm:text-medium text-sm'>
                         FOLLOWERS
                       </span>
                     </div>
@@ -227,7 +227,7 @@ export default function CommunityProject ( {
                         onClick={ () =>
                           ( window.location.href = `/kol/add-quest/${ id }` )
                         }
-                        className='px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300'
+                        className='px-4 py-2 bg-famViolate text-white rounded-lg hover:bg-famViolate-light transition duration-300'
                       >
                         Create A New Quest
                       </Button>
@@ -403,7 +403,7 @@ export default function CommunityProject ( {
                   </div>
 
                   <Button
-                    className=' lg:py-3 lg:px-4 sm:py-3 lg:mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300'
+                    className=' lg:py-3 lg:px-4 sm:py-3 lg:mt-2 px-4 py-2 bg-famViolate text-white rounded-lg hover:bg-famViolate-light transition duration-300'
                     onClick={ deleteCommunity }
                   >
                     Delete the Community

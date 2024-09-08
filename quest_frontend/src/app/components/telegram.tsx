@@ -32,7 +32,7 @@ const TeleApp: React.FC = () => {
 
       try {
         // Call your API route to save Telegram data
-        const authToken = `Bearer ${ Cookies.get( 'authToken' ) }`;
+        const authToken = `Bearer ${ Cookies.get( '_fam_token' ) }`;
         console.log("step1, telegramData:",telegramData);
         const response = await axios.get( `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/telegram/callback`, {
           headers: {

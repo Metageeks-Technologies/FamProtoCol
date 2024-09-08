@@ -25,7 +25,7 @@ admin task
 
 // Function to check if the token is valid
 const isValidToken = () => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('_fam_admin_token');
 
   if (!token) {
     return false;

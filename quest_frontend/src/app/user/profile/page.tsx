@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { BallTriangle } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import ModalForm from "@/app/components/ModalForm";
@@ -12,6 +11,10 @@ import UserTable from "@/app/components/table/userTable";
 import TeleApp from "@/app/components/telegram";
 import axios from "axios";
 import { notify } from "@/utils/notify";
+import { TailSpinLoader } from "@/app/components/loader";
+import { SweetAlert } from "@/utils/sweetAlert";
+import { ethers } from "ethers";
+import { connectWallet } from "@/utils/wallet-connect"; // Import your wallet connect utility
 
 const columns = [
   { name: "NAME", uid: "name" },
@@ -22,6 +25,7 @@ const columns = [
 ];
 
 const Profile: React.FC = () => {
+
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const [earned, setEarned] = useState<number | null>(null);
@@ -79,7 +83,7 @@ const Profile: React.FC = () => {
   };
 
   const signupDiscord = async () => {
-    const authUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/discord/auth`;
+    const authUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/discord`;
     window.open(authUrl, '_blank', 'noopener,noreferrer');
   };
   const signupX = async () => {
@@ -87,27 +91,78 @@ const Profile: React.FC = () => {
     window.open(authUrl, '_blank', 'noopener,noreferrer');
   };
 
-  const onGenerateReferral = async () => {
+  const handleSwal=()=>{
+    SweetAlert("error","hello","djadfnas");
+  }
 
-    try {
+  // const onGenerateReferral = async () => {
+
+  //   try {
       
-      const response =await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/generateRefferalCode`,{
-     withCredentials: true, 
+  //     const response =await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/generateRefferalCode`,{
+  //    withCredentials: true, 
+  //   });
+
+  //   if(response.data.success){
+  //      setIsReferral(true);
+  //     setReferral(response.data.referralCode);
+  //     notify("success", "Referral code generated successfully!");
+      
+  //   }
+
+  //   } catch (error) {
+  //     console.error(error);
+  //     notify("error", "Failed to generate referral code!");
+  //     return ;
+  //   }
+  // }
+ 
+
+const onGenerateReferral = async () => {
+  try {
+    // Fetch referral code from the backend
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/generateRefferalCode`, {
+      withCredentials: true,
     });
 
-    if(response.data.success){
-       setIsReferral(true);
+    if (response.data.success) {
+      const referralCode = response.data.referralCode;
       setReferral(response.data.referralCode);
-      notify("success", "Referral code generated successfully!");
-      
-    }
+      // Notify the user about the successful generation
+      // notify("success", "Referral code generated successfully!");
 
-    } catch (error) {
-      console.error(error);
-      notify("error", "Failed to generate referral code!");
-      return ;
+      // Connect the wallet if not already connected
+      const walletData = await connectWallet();
+      if (!walletData) {
+        notify("error", "Wallet connection failed. Please try again.");
+        return;
+      }
+
+      // Use ethers to connect to the smart contract
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+
+      const contractAddress = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
+      const contractABI = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ABI
+        ? JSON.parse(process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ABI)
+        : null;
+
+      // Initialize contract instance
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+      // Call createReferralCode on the smart contract
+      const tx = await contract.createReferralCode(referralCode);
+      await tx.wait();
+
+      notify("success", "Referral code saved to the blockchain successfully!");
+      setIsReferral(true);
     }
+  } catch (error) {
+    console.error("Error generating referral code:", error);
+    notify("error", "Failed to generate and save referral code.");
   }
+};
+
   
   useEffect(() => {
     // setIsClient(true);
@@ -118,7 +173,7 @@ const Profile: React.FC = () => {
   if (!user)
     return (
       <div className="min-h-screen flex justify-center items-center">
-        <BallTriangle />
+        <TailSpinLoader/>
       </div>
     );
 
@@ -157,7 +212,7 @@ const Profile: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex row gap-1">
-                        <div className="box1 right-trapezium  w-[2rem] h-[2rem] p-[2px] bg-zinc-800 ">
+                        <div className="box1 right-trapezium  w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                           <a target="_blank" href={"https://x.com/fr_Ani5"}>
                             <svg
                               className="box2 right-trapezium p-2 bg-black "
@@ -174,7 +229,7 @@ const Profile: React.FC = () => {
                             </svg>
                           </a>
                         </div>
-                        <div className="box1 left-right-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-800 ">
+                        <div className="box1 left-right-trapezium w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                           <a
                             href={"https://discord.gg/vASfWSV6"}
                             target="_blank"
@@ -194,7 +249,7 @@ const Profile: React.FC = () => {
                             </svg>
                           </a>
                         </div>
-                        <div className="box1 left-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-800 ">
+                        <div className="box1 left-trapezium w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                           <a
                             target="_blank"
                             href={"https://t.me/+8Cgy2Zu8y-U0MjVl"}
@@ -266,6 +321,7 @@ const Profile: React.FC = () => {
                     >
                       Generate Referral
                     </button>
+                    {/* <button className="px-2 py-2 bg-blue-500" onClick={handleSwal} >Swal</button> */}
                   </div>
                           </div>
                           <div className="flex flex-row justify-center items-center my-4 gap-2">
