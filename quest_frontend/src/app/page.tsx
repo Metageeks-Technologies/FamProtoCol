@@ -471,19 +471,19 @@ const LandingPage = () => {
     </div>
     </header>
     </section> */}
-    <footer className="flex justify-center md:w-1/2 items-center  text-white">
+    <footer className="flex justify-center md:w-1/2 items-center font-famFont text-white">
   
   <div className="flex flex-col w-1/3 md:h-[20vh] items-start">
     <img src="https://clusterprotocol2024.s3.amazonaws.com/others/left.png" alt="Right Facing Arrow" className="object-contain relative" />
   </div>
 
  <div className="flex gap-5 md:h-[20vh] py-2 md:py-8 justify-center items-center">
-        <div className="flex flex-col justify-start items-start my-auto">
+        <div className="flex flex-col justify-start items-start font-famFont my-auto">
           <a href="#developers" className="text-white ">Developers</a>
           <a href="#documentation" className='text-sm text-fuchsia-500' >Documentation</a>
           <a href="#github" className='text-sm text-fuchsia-500'>Github</a>
         </div>
-        <div className="flex flex-col justify-end items-end my-auto">
+        <div className="flex flex-col justify-end font-famFont items-end my-auto">
         <a href="#about" className="text-white ">About</a>
           <a href="#careers" className='text-sm text-fuchsia-500' >Careers</a>
           <a href="#community" className='text-sm text-fuchsia-500'>Community</a>
