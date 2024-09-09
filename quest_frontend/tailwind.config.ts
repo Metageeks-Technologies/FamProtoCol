@@ -32,6 +32,9 @@ const config: Config = {
           "dark":"#3b21a0",
         },
       },
+      fontFamily: {
+        'famFont':['var(--font-proFont)'],
+      },
     },
   },
   darkMode: "class",

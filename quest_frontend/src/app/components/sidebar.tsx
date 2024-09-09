@@ -37,9 +37,9 @@ const Sidebar = () => {
 
   return (
     <>
-      <div className="w-[4rem] flex flex-col border-r-gray-600/45 bg-[#15151557] z-50 fixed md:h-screen glass_effect top-0">
+      <div className="w-[4rem] hidden sm:flex flex-col border-r-gray-600/45 bg-[#15151557] z-50 fixed md:h-screen glass_effect top-0">
         <Link
-          href="/"
+          href="#"//change this to the home page
           className="flex justify-center items-center border-b-gray-600/45 md:border-b border-b w-full h-[5rem]"
         >
           <img
@@ -49,8 +49,8 @@ const Sidebar = () => {
         </Link>
         <div className="flex-1 flex items-center justify-center">
           <button
-            className="flex items-center justify-center border-none text-white text-2xl cursor-pointer"
-            onClick={handleNav}
+            className=" items-center justify-center border-none text-white text-2xl cursor-pointer hidden"//change this to flex to show the menu icon
+            // onClick={handleNav} //this is the function that will be called when the icon is clicked
           >
             {nav ? (
               <RiMenu2Fill
