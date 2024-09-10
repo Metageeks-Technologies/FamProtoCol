@@ -451,26 +451,7 @@ const LandingPage = () => {
             </div>
           </div>
           </div>
-          {/* left https://clusterprotocol2024.s3.amazonaws.com/others/left.png  */}
-          {/* right https://clusterprotocol2024.s3.amazonaws.com/others/right-element.png */}
-           {/* <section className="flex flex-col mt-10 justify-end relative bottom-0 text-center uppercase whitespace-nowrap w-full">
-     <header className="flex flex-col items-center w-full max-md:px-5 max-md:max-w-full">
-      <div className="flex relative flex-col max-w-full w-[65%]">
-      <div className="flex gap-10 items-start mt-1.5 w-full ">
-        <div className="flex flex-col justify-start items-start self-stretch my-auto">
-          <a href="#developers" className="text-white ">Developers</a>
-          <a href="#documentation" className='text-sm text-fuchsia-500' >Documentation</a>
-          <a href="#github" className='text-sm text-fuchsia-500'>Github</a>
-        </div>
-        <div className="flex flex-col justify-end items-end self-stretch my-auto">
-        <a href="#about" className="text-white ">About</a>
-          <a href="#careers" className='text-sm text-fuchsia-500' >Careers</a>
-          <a href="#community" className='text-sm text-fuchsia-500'>Community</a>
-        </div>
-      </div>
-    </div>
-    </header>
-    </section> */}
+         
     <footer className="flex justify-center md:w-1/2 items-center font-famFont text-white">
   
   <div className="flex flex-col w-1/3 md:h-[20vh] items-start">

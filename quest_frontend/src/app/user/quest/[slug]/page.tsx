@@ -634,6 +634,7 @@ const Popup: React.FC<{
           guildId,
         }
       );
+      console.log("response:-", response.data);
       const discordShip = response.data.isMember;
       const datas = {
         taskId: selectedCard._id,
@@ -641,13 +642,16 @@ const Popup: React.FC<{
         userName: user?.displayName,
         submission: "Join Discord Successfully ",
       };
+      console.log("discordShip:-", discordShip);
       if (discordShip) {
-        notify("success", "Join Successful");
+        console.log("Join Successful");
+        // notify("success", "Join Successful");
+        setTimeout(async () => {
         await dispatch(completeTask(datas));
-        router.refresh();
+        },2000);
         onClose();
       } else {
-        notify("error", "Please join Not a member");
+        notify("error", "Please join. Not a member");
       }
       setIsMember(true);
     } catch (error) {
@@ -1359,7 +1363,7 @@ const Popup: React.FC<{
                 )}
 
                 {selectedCard.type === "Discord" && (
-                  <div>
+                  <div className="flex flex-col" >
                     <div className="flex justify-center items-center">
                       <a
                         href={selectedCard.discordLink}
@@ -1371,6 +1375,9 @@ const Popup: React.FC<{
                       >
                         Join Server
                       </a>
+                    </div>
+                    <div className="flex justify-end items-center" >
+                    <button onClick={()=>checkMembership()} className="px-2 py-1 rounded-full bg-famViolate-light ">Claim</button>
                     </div>
                   </div>
                 )}
@@ -1549,14 +1556,13 @@ const Popup: React.FC<{
                     Connect your wallet
                   </Button>
                 )}
-                {selectedCard.type === "Connect wallet" &&
-                  address &&
-                  balance && (
+
+                {selectedCard.type === "Connect wallet" && address && balance && (
                     <div className="mt-4">
                       <p className="text-white">Address: {address}</p>
                       <p className="text-white">Balance: {balance} ETH</p>
                     </div>
-                  )}
+                )}
 
                 {selectedCard.type === "Gitcoin passport" && (
                   <Button

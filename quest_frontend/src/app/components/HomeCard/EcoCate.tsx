@@ -45,8 +45,8 @@ const EcoCate: React.FC = () =>
       </div>
       <div className="eco&cat flex flex-col lg:flex-row lg:justify-between gap-10 ">
         <div className="Main grid gap-4 mx-8  lg:mx-0 grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 pt-6 lg:basis-[50%]">
-          { ecosystem?.map( ( item: data ) => (
-            <div key={ item.id } className="card p cursor-pointer flex gap-1" onClick={ () => router.push( `/ecosystem/${ item.name }` ) }>
+          { ecosystem?.map( ( item: data,index:number ) => (
+            <div key={ index } className="card p cursor-pointer flex gap-1" onClick={ () => router.push( `/ecosystem/${ item.name }` ) }>
               <div className="card bg-black w-28 h-28 border border-gray-700 flex items-center justify-center relative">
                 <div className="w-full h-full relative">
                   <div

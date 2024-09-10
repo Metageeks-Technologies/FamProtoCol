@@ -475,7 +475,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                                   <div className="flex-1 ">
                                     <h3>{task.name}</h3>
                                     <div className="text-sm  ">
-                                      <p className="text-gray-400 truncate">
+                                      <p className="text-gray-400 text-wrap">
                                         {" "}
                                         {task.description}{" "}
                                       </p>
@@ -522,7 +522,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                                   <div className="flex-1 ">
                                     <h3>{task.name}</h3>
                                     <div className="text-sm  ">
-                                      <p className="text-gray-400 truncate ">
+                                      <p className="text-gray-400 text-wrap ">
                                         {" "}
                                         {task?.description}{" "}
                                       </p>
@@ -568,7 +568,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                                   <div className="flex-1 ">
                                     <h3>{task.name}</h3>
                                     <div className="text-sm  ">
-                                      <p className="text-gray-400 text-wrap truncate ">
+                                      <p className="text-gray-400 text-wrap ">
                                         {" "}
                                         {task?.description}{" "}
                                       </p>

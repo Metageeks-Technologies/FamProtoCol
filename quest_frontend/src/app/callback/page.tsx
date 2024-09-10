@@ -23,7 +23,7 @@ const CallBackPageContent = () => {
       router.push("/user/profile");
       console.log(data);
     } catch (error) {
-      router.push("/");
+      router.push("/home");
       console.log(error);
     }
   };

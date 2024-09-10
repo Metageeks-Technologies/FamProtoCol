@@ -35,7 +35,7 @@ export const CommunityController = {
                 res.status( 200 ).json( { newCommunity: newCommunity, msg: "Community Created Successfully" } );
             } else
             {
-                res.status( 400 ).json( { message: "Error in creating the Community" } );
+              res.status( 400 ).json( { message: "Error in creating the Community" } );
             }
         } catch ( error )
         {
