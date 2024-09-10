@@ -515,9 +515,9 @@ export default function CommunityProject ( {
                                 className=''
                             >
                                 <div>
-                                    <div className='box1 education-clip bg-red-700 '>
-                                        <div className='education-clip box2 border h-28 w-48 bg-red-700/10 flex justify-center items-center p-4'>
-                                            <div>
+                                    <div className='box1 education-clip bg-red-500 p-[1px]'>
+                                        <div className='education-clip box2 border bg-red-700/10 flex justify-center items-center p-4'>
+                                            <div className="h-28 w-48" >
                                                 <img
                                                     src={quest.logo}
                                                     alt=''
