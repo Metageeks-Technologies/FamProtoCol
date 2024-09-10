@@ -328,19 +328,23 @@ export const taskController = {
     },
 
     // delete the task
-    deleteTask: async ( req: Request, res: Response ): Promise<void> =>
+    deleteTask: async ( req: any, res: Response ): Promise<void> =>
     {
 
         try
-        {
-            const taskId = req.params.taskId;
-            const userId = req?.body?.creator._id;
+        {  
+            console.log( "req.user", req.user );
+             const {ids} =req.user;
+            const taskId = req.params.id;
+            console.log( "task id",taskId );
+
             const task = await TaskModel.findById( taskId );
+
             if ( !task )
             {
                 res.status( 404 ).json( { message: "Task not found" } );
             }
-            else if ( task?.creator !== userId )
+            else if ( task?.creator?.toString() !== ids?.toString() )
             {
                 res.status( 403 ).json( {
                     message: "You are not authorized to delete this task"
@@ -348,6 +352,16 @@ export const taskController = {
             }
             else
             {
+                const questId=task.questId;
+
+                const quest = await QuestModel.findById( questId );
+
+                if ( quest )
+                {
+                    quest.tasks = quest?.tasks?.filter( ( task ) => task.toString() !== taskId );
+                    await quest.save();
+                }
+                
                 await TaskModel.findByIdAndDelete( taskId );
                 res.status( 200 ).json( { message: "Task deleted successfully" } );
             }

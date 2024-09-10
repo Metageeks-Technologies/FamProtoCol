@@ -1,12 +1,10 @@
 "use client";
-import { fetchQuestById } from "@/redux/reducer/questSlice";
-import { completeTask, fetchTaskById } from "@/redux/reducer/taskSlice";
+import {deleteTask, fetchTaskById } from "@/redux/reducer/taskSlice";
 import { AppDispatch, RootState } from "@/redux/store";
-import { ThunkDispatch } from "@reduxjs/toolkit";
-import { AnyAction } from 'redux';
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
 
 interface Completion
 {
@@ -48,10 +46,37 @@ const QuestPage = ( { params }: { params: { slug: string; }; } ) =>
     dispatch( fetchTaskById( questId ) );
   }, [] );
 
+  const handleDeleteTask=(id:string)=>()=>{
+    Swal.fire({
+  title: "Are you sure?",
+  text: "You won't be able to revert this!",
+  icon: "warning",
+  color:"white",
+  background:"#171616",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Yes, delete it!"
+}).then((result:any) => {
+  if (result.isConfirmed) {
+     dispatch(deleteTask(id));
+    handleClosePopup();
+    router.refresh();
+    Swal.fire({
+      title: "Deleted!",
+      background:"#171616",
+      color: "#48de02",
+      text: "Your task has been deleted.",
+      icon: "success"
+    });
+  }
+});
+   
+  }
+
 
   const handleCardClick = (card: CardData) => {
     setSelectedCard(card);
-    
   };
 
   const handleClosePopup = () =>
@@ -182,6 +207,7 @@ const QuestPage = ( { params }: { params: { slug: string; }; } ) =>
                   </svg>
                 </button>
               </div>
+              <div className="flex justify-end items-center" ><button onClick={handleDeleteTask(selectedCard._id)} className="px-2 py-1 mr-2 mt-2 font-semibold rounded-full text-white bg-famViolate hover:text-gray-400" ><i className="bi bi-trash-fill"></i> Delete task</button></div>
               <div className="p-4 md:p-5 max-h-[70vh] overflow-y-auto">
                 { selectedCard.completions.length > 0 ? (
                   <table className="w-full text-sm text-left text-gray-200">

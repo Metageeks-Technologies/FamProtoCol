@@ -283,17 +283,19 @@ function CreateQuest ()
             ) ) }
           </div>
           <div className="flex justify-end mt-6">
-            <button
+          {
+            isSubmitting && <BallTriangleLoader/>
+          }
+          {
+            !isSubmitting && (
+              <button
               type="submit"
-              disabled={ isSubmitting }
-              className={`bg-famViolate text-white px-6 py-2 rounded-lg hover:bg-famViolate-light transition-colors duration-300 shadow-lg ${isSubmitting?"opacity-50 cursor-not-allowed":"cursor-pointer"}`}
+              className="bg-famViolate text-white px-6 py-2 rounded-lg hover:bg-famViolate-light transition-colors duration-300 shadow-lg cursor-pointer"
             >
-              { isSubmitting ? (
-                <BallTriangleLoader/>
-              ) : (
-                'Submit'
-              ) }
+              Submit
             </button>
+            )
+          }
           </div>
         </form>
       </div>

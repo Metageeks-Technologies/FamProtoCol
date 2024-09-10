@@ -1,7 +1,7 @@
 import express from "express";
 import { taskController } from "../../controllers/task/task.controller";
 import { createTaskOptions, getTaskOptions, updateTaskOptions } from "../../controllers/task/taskOption.controller";
-import { RefrralMiddleaware } from "../../middleware/user/referralAuthorize";
+import { verifyToken } from "../../middleware/user/verifyToken";
 
 
 const taskRouter = express.Router();
@@ -17,17 +17,9 @@ taskRouter.post( "/update-task-options", updateTaskOptions );
 
 taskRouter.post('/get/referral',taskController.referralGenerate);
 
-
-
 // get all tasks
 //in this route you need to apply middleware, only admin can get all tasks
 // taskRouter.get( "/", taskController.getAllTask );
-
-// get task by quest id
-taskRouter.get( "/:id", taskController.getTaskByQuestId );
-    
-// get task by creator (kol id)
-taskRouter.get( "/kol/:id", taskController.getTaskByCreatorId );
 
 // create task
 taskRouter.post( "/", taskController.addTask );
@@ -43,8 +35,12 @@ taskRouter.post( "/complete", taskController.completeTask );
 // claim reward
 taskRouter.post( "/claim", taskController.claimReward );
 
+// get task by creator (kol id)
+taskRouter.get( "/kol/:id", taskController.getTaskByCreatorId );
+// get task by quest id
+taskRouter.get( "/:id", taskController.getTaskByQuestId );
 // delete the task by its id
-taskRouter.delete( "/:id", taskController.deleteTask );
+taskRouter.delete( "/:id",verifyToken, taskController.deleteTask );
 
 // // create the task
 // taskRouter.post( '/visit', taskController.visitLink )
