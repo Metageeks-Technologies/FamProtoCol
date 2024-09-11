@@ -203,9 +203,8 @@ const EcoCate: React.FC = () =>
                       className="styled-image"
                     />
                   </div>
-
                   <h1
-                    className=" mt-1 text-center"
+                    className=" mt-1 text-center font-famFont "
                     style={ { letterSpacing: "2px" } }
                   >
                     { card.name }

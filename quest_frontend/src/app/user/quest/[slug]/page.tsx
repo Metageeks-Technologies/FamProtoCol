@@ -164,7 +164,8 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
         };
         await dispatch(completeTask(data));
         notify("success", "your rewards are added to your profile");
-        window.location.reload();
+        dispatch(fetchTaskById(questId));
+        handleClosePopup();
       } catch (error) {
         console.log("Error in completing the task:", error);
         notify(
@@ -360,6 +361,7 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
           onGenerateReferral={handleGenerateReferral}
           referral={referral}
           validateSubmission={validateSubmission}
+          questId={questId}
         />
       )}
     </div>
@@ -494,6 +496,7 @@ const TaskCards: React.FC<{
 const Popup: React.FC<{
   selectedCard: CardData;
   isCompleted: boolean;
+  questId: string;
   submissions: { [key: string]: string | File };
   referral: string;
   onGenerateReferral: () => void;
@@ -519,8 +522,8 @@ const Popup: React.FC<{
   onGenerateReferral,
   referral,
   validateSubmission,
+  questId,
 }) => {
-  const [linkClicked, setLinkClicked] = useState(false);
   const [isMember, setIsMember] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
   const [address, setAddress] = useState<string>("");
@@ -609,18 +612,6 @@ const Popup: React.FC<{
     }
   };
 
-  const handleLinkClick = () => {
-    setLinkClicked(true);
-  };
-
-  const handleVisibilityChange = () => {
-    if (!document.hidden && linkClicked) {
-      checkMembership();
-
-      // Perform actions when the user returns to the tab after clicking the link
-      setLinkClicked(false); // Reset the state if you only want to handle it once
-    }
-  };
   const checkMembership = async () => {
     const data = user?.discordInfo?.discordId;
     const accessToken = user?.discordInfo?.accessToken;
@@ -646,10 +637,9 @@ const Popup: React.FC<{
       if (discordShip) {
         console.log("Join Successful");
         // notify("success", "Join Successful");
-        setTimeout(async () => {
         await dispatch(completeTask(datas));
-        },2000);
         onClose();
+        dispatch(fetchTaskById(questId));
       } else {
         notify("error", "Please join. Not a member");
       }
@@ -660,14 +650,10 @@ const Popup: React.FC<{
     }
   };
 
-  useEffect(() => {
-    window.addEventListener("beforeunload", handleLinkClick);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      window.removeEventListener("beforeunload", handleLinkClick);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [linkClicked]);
+  const handleDiscordJoin= async (link:string) => {
+    console.log("link:-", link);
+    window.open(link, "_blank");
+  };
 
   const handleSubmit = () => {
     if (selectedCard.type === "Opinion Scale") {
@@ -684,6 +670,7 @@ const Popup: React.FC<{
       notify("warn", "Invalid input. Please check your submission.");
     }
   };
+
 
   //Below line codes are using for to fetch the details form env for gitcoin api key, smart contract address and abi
 
@@ -1365,16 +1352,13 @@ const Popup: React.FC<{
                 {selectedCard.type === "Discord" && (
                   <div className="flex flex-col" >
                     <div className="flex justify-center items-center">
-                      <a
-                        href={selectedCard.discordLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-white bg-[#8e25ff] hover:bg-[#953ff1] font-bold py-2 px-4 rounded-full"
-                        onClick={handleLinkClick}
-                        // onClick={ () => onSubmit( selectedCard._id, { visited: "true" } ) }
+                      <Button
+                        
+                    onClick={()=>handleDiscordJoin(selectedCard.discordLink as string)}
+                        className="text-white  bg-[#8e25ff] hover:bg-[#953ff1] font-bold py-2 px-4 rounded-full"
                       >
                         Join Server
-                      </a>
+                      </Button>
                     </div>
                     <div className="flex justify-end items-center" >
                     <button onClick={()=>checkMembership()} className="px-2 py-1 rounded-full bg-famViolate-light ">Claim</button>

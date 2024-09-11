@@ -12,7 +12,7 @@ const Sidebar = () => {
   const [nav, setNav] = useState<boolean>(true);
   const router = useRouter();
   const pathname = usePathname();
-  let isLandingPage = false;
+  const [isLandingPage, setIsLandingPage] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.login?.user);
 
   const handleNav = () => {
@@ -38,7 +38,7 @@ const Sidebar = () => {
     }
     if(pathname === "/" || pathname==="" ) {
       console.log("landing page", pathname);
-      isLandingPage = true;
+      setIsLandingPage(true);
     }
     prevPathRef.current = pathname;
   }, [router]);
@@ -47,7 +47,7 @@ const Sidebar = () => {
     <>
       <div className="w-[4rem] hidden sm:flex flex-col border-r-gray-600/45 bg-[#15151557] z-50 fixed md:h-screen glass_effect top-0">
         <Link
-          href="/home"//change this to the home page
+          href="#"//change this to the home page
           className="flex justify-center items-center border-b-gray-600/45 md:border-b border-b w-full h-[5rem]"
         >
           <img
@@ -55,9 +55,9 @@ const Sidebar = () => {
             alt="logo"
           />
         </Link>
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center ">
           <button
-            className={`items-center justify-center border-none text-white text-2xl cursor-pointer ${isLandingPage && "hidden" } `}//change this to flex to show the menu icon
+            className={` ${isLandingPage?("hidden"):("flex items-center justify-center")}  border-none text-white text-2xl cursor-pointer`}//change this to flex to show the menu icon
             onClick={handleNav} 
           >
             {nav ? (

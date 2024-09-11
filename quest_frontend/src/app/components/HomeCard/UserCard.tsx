@@ -96,13 +96,13 @@ const UserCard = () => {
         <div className="flex-1 md:ml-4 ml-2">
           <div className="flex items-center md:justify-between justify-around">
             <div>
-              <div className="font-bold" style={ { letterSpacing: "5px" } }>
+              <div className="font-bold font-famFont " style={ { letterSpacing: "5px" } }>
                 { user?.displayName }
                 {user?.domain?.domainAddress}
               </div>
 
             </div>
-            <div className="text-purple-500  home-rank font-bold text-lg">
+            <div className="text-purple-500 font-famFont home-rank font-bold text-lg">
               #{ user.rank }
             </div>
           </div>

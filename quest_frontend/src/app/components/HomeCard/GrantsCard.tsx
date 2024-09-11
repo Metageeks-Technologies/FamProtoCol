@@ -42,7 +42,7 @@ const GrantsCard = () => {
     slidesToShow: 4,
     slidesToScroll: 1,
     arrows: false,
-    autoplay: true,
+    // autoplay: true,
     responsive: [
       {
         breakpoint: 1050,
@@ -92,11 +92,11 @@ const GrantsCard = () => {
             <div className="relative grant-clip bg-zinc-950 box1 w-12 ">
               <div
                 key={index}
-                className=" box2 grant-clip w-full px-5 py-3 home-g"
+                className="box2 grant-clip w-full px-5 py-3 home-g"
               >
                 <div>
                   <h1
-                    className="text-md text-center uppercase"
+                    className="text-md font-famFont text-center uppercase"
                     style={{ letterSpacing: "4px" }}
                   >
                     {grant.title}
@@ -113,7 +113,7 @@ const GrantsCard = () => {
                 </div>
 
                 <div className="ml-8 mt-3 uppercase">
-                  <p className="text-end h-[5vh] text-wrap " style={{ fontSize: "0.6rem" }}>
+                  <p className="text-end font-famFont opacity-30 h-[5vh] text-wrap " style={{ fontSize: "0.6rem" }}>
                     {grant.description}
                   </p>
                 </div>
@@ -124,14 +124,14 @@ const GrantsCard = () => {
                     alt="Image"
                     className="h-6 w-6 rounded-full object-cover"
                   />
-                  <p className="text-sm text-zinc-400 uppercase">
+                  <p className="text-sm text-zinc-400 font-famFont uppercase">
                     {grant.organizer}
                   </p>
                 </div>
 
                 <div className="flex justify-center items-center gap-2">
                   <div className="flex-1 text-center">
-                    <h2 className="text-white">
+                    <h2 className="text-white font-famFont">
                       <span className="text-zinc-400 text-sm uppercase">
                         PRIZE:{" "}
                       </span>

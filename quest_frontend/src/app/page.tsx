@@ -14,6 +14,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { notify } from "@/utils/notify";
 import { connectWallet } from "@/utils/wallet-connect";
+import Swal from "sweetalert2";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -302,6 +303,17 @@ const LandingPage = () => {
     fileInputRef.current?.click();
   };
 
+  const comingSoon = () => {
+    Swal.fire({
+      title:"Coming Soon",
+      text:"Website will be live soon. Stay tuned!",
+      width: 500,
+      padding: "2em",
+      color: "white",
+      background: "#171616",
+    });
+  }
+
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     // console.log( "file", file );
@@ -326,7 +338,7 @@ const LandingPage = () => {
               <div className="flex md:flex-row flex-col-reverse md:justify-between items-center gap-3 ">
                 <div className="flex items-center gap-1">
                   <div>
-                    <h1 className="text-[#FA00FF] font-famFont ">VIEW DOCUMENTATION</h1>
+                    <h1 onClick={()=>comingSoon()} className="text-[#FA00FF] cursor-pointer font-famFont ">VIEW DOCUMENTATION</h1>
                   </div>
                   <div className="mt-2">
                     <svg
@@ -432,17 +444,17 @@ const LandingPage = () => {
                 <div className="mt-8 flex justify-center gap-4">
                   <Button
                     // onClick={() => handleOpen()}
+                    onClick={() => comingSoon()}
                     className="bg-[#5538CE] text-white font-semibold py-2 px-6 rounded-lg hover:bg-[#6243dd] transition duration-300"
                   >
                     Get Onboarded
                   </Button>
-                  <Link
-                    // href="/home"
-                    href='#'
+                  <Button
+                    onClick={() => comingSoon()}
                     className="bg-white text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
                   >
                     Explore
-                  </Link>
+                  </Button>
                 </div>
               </div>
              )}
@@ -452,7 +464,7 @@ const LandingPage = () => {
           </div>
           </div>
          
-    <footer className="flex justify-center md:w-1/2 items-center font-famFont text-white">
+    {/* <footer className="flex justify-center md:w-1/2 items-center font-famFont text-white">
   
   <div className="flex flex-col w-1/3 md:h-[20vh] items-start">
     <img src="https://clusterprotocol2024.s3.amazonaws.com/others/left.png" alt="Right Facing Arrow" className="object-contain relative" />
@@ -474,7 +486,7 @@ const LandingPage = () => {
   <div className="flex flex-col md:h-[20vh] item-end">
     <img className="object-contain relative md:top-[10vh] " src="https://clusterprotocol2024.s3.amazonaws.com/others/right-element.png" alt="Left Facing Arrow"  />
   </div>
-</footer>
+</footer> */}
 
         </div>
     </div>

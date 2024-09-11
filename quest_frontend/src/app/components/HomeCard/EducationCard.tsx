@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { truncateToNWords } from "@/utils/helper";
 
 
 // this will suffle and only provide randam 3 quests
@@ -64,6 +65,7 @@ const EducationCardList: React.FC = () =>
     ).slice(0, 3)
   : [];
 
+  console.log("Kol quest:->",kolQuests);
 
   useEffect( () =>
   {
@@ -188,11 +190,9 @@ const EducationCardList: React.FC = () =>
                     </div>
                   </div>
 
-                  <div className="mt-2 flex gap-3  justify-center">
-                   
-                    <div>
-                      <p className="text-small text-slate-300">{ data.title }</p>
-                    </div>
+                  <div className="mt-2 flex flex-col items-center gap-3 justify-center">
+                    <div className="text-sm font-famFont text-white opacity-50 capitalize ">{ data.title }</div>
+                    <div className="text-xs text-center text-wrap font-famFont text-white capitalize" >{truncateToNWords(data.description,4)}</div>
                   </div>
                   <div>
                   </div>
@@ -203,7 +203,7 @@ const EducationCardList: React.FC = () =>
         </div>
 
         {/* pending */ }
-          <div className="w-1/2">
+          <div className="">
             <div className="flex items-center justify-start">
              <div> <img src="https://clusterprotocol2024.s3.amazonaws.com/others/Group+44.png" alt="seprator" /></div>
               <div>
@@ -232,10 +232,9 @@ const EducationCardList: React.FC = () =>
                     </div>
                   </div>
 
-                  <div className="mt-2 flex gap-3 justify-center">
-                    <div>
-                      <p className="text-small text-slate-300">{ data.title }</p>
-                    </div>
+                  <div className="mt-2 flex flex-col items-center gap-3 justify-center">
+                    <div className="text-sm font-famFont text-white opacity-50 capitalize ">{ data.title }</div>
+                    <div className="text-xs text-center text-wrap font-famFont text-white capitalize" >{truncateToNWords(data.description,4)}</div>
                   </div>
                 </div>
               </div>

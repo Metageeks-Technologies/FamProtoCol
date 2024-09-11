@@ -28,9 +28,9 @@ const CommunityCard: React.FC<{ data: CommunityCardData }> = ({ data }) => {
           </div>
 
           <div className="md:w-2/3 w-2/3 flex flex-col justify-start gap-2 ">
-            <div className="flex w-full flex-col items-start ">
+            <div className="flex w-full flex-col justify-start items-start ">
               <div className="flex w-full md:h-[5rem] bg_eco_div border-b-4 border-[#8c71ff] gap-2 md:gap-2  p-2 bg-[#28223d] flex-col lg:flex-row items-center md:items-end lg:items-end justify-between ">
-                <div className="md:w-4/5  w-4/5 truncate text-[12px] md:text-[10px] lg:text-[10px] md:ml-3 md:text-start text-center card-title">
+                <div className="md:w-4/5 w-4/5 truncate text-[1rem] md:ml-3 md:text-start text-center font-famFont">
                   {data.title}
                 </div>
 
@@ -68,11 +68,14 @@ const CommunityCard: React.FC<{ data: CommunityCardData }> = ({ data }) => {
         </div>
 
         <div>
-          <div className="flex flex-row text-xs h-[5vh] m-1 gap-2 justify-start">
-            <span className="descText">Bio:</span>
-            <span className="descdata text-wrap break-words overflow-hidden line-clamp-2">
+          <div className="flex flex-row h-[5vh] gap-2 justify-start">
+          <div className="px-6 py-2 flex justify-start items-start gap-1 ">
+          <span className="font-famFont text-white text-[0.8rem] ">Bio:</span>
+            <span className="break-words text-white opacity-30 text-[0.8rem] overflow-hidden line-clamp-2 font-famFont">
               {data.description}
             </span>
+          </div>
+            
           </div>
         </div>
       </div>
