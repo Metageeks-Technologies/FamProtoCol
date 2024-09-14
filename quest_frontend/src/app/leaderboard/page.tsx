@@ -73,7 +73,7 @@ const GlobalLeaderboard = () =>
                     />
                   </div>
                   <div className=" flex flex-col   m-auto justify-center items-end">
-                    <div className=" w-full justify-center m-auto text-lg sm:text-xl text-center sm:my-2">{ topUsers[ 1 ]?.displayName }</div>
+                    <div className=" w-full justify-center m-auto text-lg sm:text-xl font-famFont text-center sm:my-2">{ topUsers[ 1 ]?.displayName }</div>
                     <div className="">
                       <div className="  flex gap-2 justify-center items-center">
                         <span>XPS</span>
@@ -98,7 +98,7 @@ const GlobalLeaderboard = () =>
                     />
                   </div>
                   <div className=" flex flex-col   m-auto justify-center items-end">
-                    <div className=" w-full justify-center m-auto text-lg sm:text-xl text-center sm:my-2">{ topUsers[ 0 ]?.displayName }</div>
+                    <div className=" w-full justify-center m-auto text-lg sm:text-xl font-famFont text-center sm:my-2">{ topUsers[ 0 ]?.displayName }</div>
                     <div className="">
                       <div className="  flex gap-2 justify-center items-center">
                           <span>
@@ -126,7 +126,7 @@ const GlobalLeaderboard = () =>
                     />
                   </div>
                   <div className=" flex flex-col   m-auto justify-center items-end">
-                    <div className=" w-full justify-center m-auto text-lg sm:text-xl text-center sm:my-2">{ topUsers[ 2 ]?.displayName }</div>
+                    <div className=" w-full justify-center m-auto text-lg sm:text-xl font-famFont text-center sm:my-2">{ topUsers[ 2 ]?.displayName }</div>
                     <div className="">
                       <div className="  flex gap-2 justify-center items-center">
                           <span>

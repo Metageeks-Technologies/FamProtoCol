@@ -115,7 +115,7 @@ const Navbar: React.FC = () =>
                                     <div className="ticker">
                                         { feedItems && feedItems.length > 0 ? (
                                             feedItems.map( ( item: any, index: number ) => (
-                                                <div key={ index } className="ticker__item">{ item?.title }</div>
+                                                <div key={ index } className="ticker__item font-famFont">{ item?.title }</div>
                                             ) )
                                         ) : (
                                             <div className="ticker__item">No news available at the moment</div>

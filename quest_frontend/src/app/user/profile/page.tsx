@@ -156,7 +156,7 @@ const onGenerateReferral = async () => {
 
   return (
     <>
-      <div className="min-h-screen mb-8">
+      <div className="min-h-screen mb-8 ">
         <div className="text-white">
           {/* user info */}
           <section className="w-[90%] lg:w-[80%] mx-auto mt-20">
@@ -181,9 +181,9 @@ const onGenerateReferral = async () => {
                   </div>
 
                   <div className="lg:w-[16rem] flex lg:justify-start  mt-6 lg:mt-1">
-                    <div className=" flex flex-col lg:items-start items-center gap-[0.75rem]">
-                      <div className="flex justify-start gap-[1rem] row items-stretch">
-                        <div className="username">{user?.displayName}</div>
+                    <div className=" flex flex-col lg:items-start items-center ">
+                      <div className="flex justify-start gap-[1rem] row items-center">
+                        <div className="text-[2rem] font-famFont">{user?.displayName}</div>
                         <div className="user-rank">
                           {/* Follow */}#{user?.rank}
                         </div>
@@ -371,7 +371,7 @@ const onGenerateReferral = async () => {
                
               </div>
               {/* badges */}
-              <div className="lg:w-1/2 ">
+              <div className="lg:w-1/2 font-famFont ">
                 <div className="flex flex-col lg:justify-start justify-center lg:items-start items-center">
                   <div className="badgesBox mt-5 lg:mt-0">
                     <div className="w-full h-full innerbox2 ">

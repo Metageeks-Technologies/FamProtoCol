@@ -55,8 +55,8 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
         );
       case "name":
         return (
-          <div className="capitalize flex justify-start items-center px-2">
-            <span className="lvl text-end text-xl mr-2 px-2">{ user.id || '' }</span>
+          <div className="flex justify-start items-center px-2 font-famFont uppercase">
+            <span className="lvl text-end text-xl  mr-2 px-2">{ user.id || '' }</span>
             <User
               avatarProps={ { radius: "md", src: user.image || '', size: "sm" } }
               name={ user.displayName || user.name || '' }
@@ -74,7 +74,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
         return (
           <div className="capitalize flex gap-2 items-center justify-start">
             <div>
-              <span className="user-leaderboard-text px-2">Xps :  </span>
+              <span className="uppercase px-2 font-famFont text-neutral-500">XPS :  </span>
               <span>{ user.rewards?.xp || cellValue || 0 }</span>
             </div>
 
@@ -83,7 +83,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
       case "fampoints":
         return (
           <div className="capitalize flex justify-start items-center gap-1">
-            <span className="user-leaderboard-text px-2">Fampoints : </span>
+            <span className=" text-neutral-500 px-2 font-famFont">fampoints : </span>
             <span className="flex justify-center items-center">{ user.rewards?.coin || cellValue || 0 }</span>
           </div>
         );
