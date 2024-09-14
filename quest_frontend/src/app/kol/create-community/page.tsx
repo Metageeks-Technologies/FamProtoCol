@@ -181,9 +181,8 @@ const CreateCommunity: React.FC = () =>
   return (
     <div className="min-h-screen bg-[#14141494] flex items-center justify-center p-8 font-[ProFontWindow] text-white">
       <div className="bg-[#00000064] border border-gray-800 shadow-xl w-full max-w-2xl p-6 md:p-8">
-        <h1 className="text-2xl md:text-3xl mx-4 font-bold font-qanelas text-center mb-2">LET'S CREATE YOUR COMMUNITY</h1>
-        <p className="text-gray-400 mx-4 font-qanelas mb-6 md:mb-8 text-sm md:text-base text-center">Our users like to know more about a community before they get involved. Please include any information they may need.</p>
-
+        <h1 className="text-2xl md:text-3xl mx-4 font-bold font-sans text-center mb-2">LET'S CREATE YOUR COMMUNITY</h1>
+        <p className="text-neutral-500 mx-4 font-semibold mb-6 md:mb-8 text-sm md:text-base font-sans text-center uppercase">Our users like to know more about a community before they get involved. Please include any information they may need.</p>
         <form onSubmit={ handleSubmit } className="space-y-4 md:space-y-6">
           <div className="flex flex-col md:flex-row md:space-x-4">
             <div className="w-full md:w-1/5 mb-4 md:mb-0">
@@ -200,7 +199,7 @@ const CreateCommunity: React.FC = () =>
             </div>
 
             <div className="w-full md:w-4/5">
-              <label className="block font-famFont mb-1 text-sm">DESCRIPTION</label>
+              <label className="block font-famFont font-semibold mb-1 text-sm text-neutral-200">DESCRIPTION</label>
               <textarea
                 placeholder="DESC..."
                 value={ description }
@@ -213,7 +212,7 @@ const CreateCommunity: React.FC = () =>
 
           <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
             <div className="mb-4 md:mb-0 md:w-1/3">
-              <h1 className="font-normal mb-1 font-famFont text-sm">NAME</h1>
+              <h1 className="font-normal font-famFont mb-1 text-sm text-neutral-200">NAME</h1>
               <input
                 type="text"
                 value={ title }
@@ -224,7 +223,7 @@ const CreateCommunity: React.FC = () =>
             </div>
 
             <div className="flex items-center justify-between md:justify-end md:flex-1">
-              <span className="text-xs uppercase font-famFont mr-2 md:mr-4">Is your project blockchain related?</span>
+              <span className="text-sm uppercase mr-2 md:mr-4 font-famFont text-neutral-500">Is your project blockchain related?</span>
               <div className="flex">
                 <button
                   type="button"

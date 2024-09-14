@@ -195,7 +195,7 @@ export default function CommunityProject ( {
   }
 
   return (
-    <div className="bg-black  min-h-screen lg:mx-16 ">
+    <div className="bg-black  min-h-screen lg:mx-16 font-famFont uppercase ">
       <div className="container mx-auto px-4 py-8">
         <div className=" rounded-lg shadow-lg overflow-hidden">
           {/* <div className="relative h-64 bg-blue-600">

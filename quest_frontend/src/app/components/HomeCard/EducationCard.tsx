@@ -190,9 +190,9 @@ const EducationCardList: React.FC = () =>
                     </div>
                   </div>
 
-                  <div className="mt-2 flex flex-col items-center gap-3 justify-center">
-                    <div className="text-sm font-famFont text-white opacity-50 capitalize ">{ data.title }</div>
-                    <div className="text-xs text-center text-wrap font-famFont text-white capitalize" >{truncateToNWords(data.description,4)}</div>
+                  <div className="mt-2 flex flex-col items-center gap-1 justify-center">
+                    <div className="text-sm font-famFont text-white opacity-50  uppercase ">{ data.title }</div>
+                    <div className="text-xs text-center text-wrap font-famFont text-white uppercase" >{truncateToNWords(data.description,4)}</div>
                   </div>
                   <div>
                   </div>
@@ -232,9 +232,9 @@ const EducationCardList: React.FC = () =>
                     </div>
                   </div>
 
-                  <div className="mt-2 flex flex-col items-center gap-3 justify-center">
-                    <div className="text-sm font-famFont text-white opacity-50 capitalize ">{ data.title }</div>
-                    <div className="text-xs text-center text-wrap font-famFont text-white capitalize" >{truncateToNWords(data.description,4)}</div>
+                  <div className="mt-2 flex flex-col items-center gap-1 justify-center">
+                    <div className="text-sm font-famFont text-white opacity-50 uppercase ">{ data.title }</div>
+                    <div className="text-xs text-center text-wrap font-famFont text-white uppercase" >{truncateToNWords(data.description,4)}</div>
                   </div>
                 </div>
               </div>

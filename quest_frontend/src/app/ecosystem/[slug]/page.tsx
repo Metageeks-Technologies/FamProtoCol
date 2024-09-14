@@ -44,7 +44,7 @@ const EcosystemPage = ( params: { params: { slug: any; }; } ) =>
 
 
     return (
-        <div className=' pt-[5rem] w-[90%] mx-auto min-h-screen font-[ProFontWindows]'>
+        <div className=' pt-[5rem] w-[90%] mx-auto min-h-screen font-famFont uppercase'>
             <div className='flex-col lg:flex-row items-center flex justify-between md:gap-32 mb-16'>
                 <div className='flex sm:w-2/5 flex-row text-xl items-center justify-around'>
                     <div className='p-3'>
