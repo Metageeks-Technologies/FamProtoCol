@@ -34,6 +34,7 @@ const config: Config = {
       },
       fontFamily: {
         'famFont':['var(--font-proFont)'],
+        'qanelasFont': ['var(--font-qanelas)']
       },
     },
   },

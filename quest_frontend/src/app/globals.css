@@ -278,7 +278,7 @@ text-transform: uppercase;
 
 .username{
     color: #FFF;
-    font-family: sans-serif;
+    font-family: 'ProFontWindows';
     font-size: 2rem;
     font-style: normal;
     font-weight: 400;
@@ -567,7 +567,7 @@ border-left: 1px solid #ffffff00;
 /* community css end*/
 .card-title{
   color: #FFF;
-font-family: sans-serif;
+  font-family: var(--font-proFont);
 
 font-style: normal;
 font-weight: 400;

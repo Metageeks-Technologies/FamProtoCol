@@ -4,7 +4,7 @@ import React from 'react';
 const PointsParlor = () =>
 {
   return (
-    <div className='bg-[#111111] pt-[5rem] md:pl-[5rem] h-full pb-5 font-[ProFontWindows]'>
+    <div className='bg-[#111111] pt-[5rem] md:pl-[5rem] h-full pb-5 font-[ProFontWindows] '>
       <div className='flex-col  lg:flex-row items-center gap-y-10 py-5 flex justify-between'>
         <div className='flex flex-row  sm:h-[7rem] h-fit w-[20rem] sm:w-[30rem]  items-center justify-around m-auto'>
 
@@ -14,9 +14,9 @@ const PointsParlor = () =>
               <img src='https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg' alt='' className='styled-image ' />
             </div>
           </div>
-          <div className='flex w-full h-full pl-[5%]  points_main_div   flex-col  '>
+          <div className='flex w-full h-full pl-[5%]  points_main_div   flex-col font-famFont  '>
             <div className='flex flex-row items-center justify-center gap-x-5  w-full m-auto'>
-              <div className='sm:text-xl text-lg'>LINEA</div>
+              <div className='sm:text-xl text-lg '>LINEA</div>
               <div className='flex flex-col'>
                 <div>
                   3/123

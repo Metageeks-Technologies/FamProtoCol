@@ -96,7 +96,7 @@ const GrantsCard = () => {
               >
                 <div>
                   <h1
-                    className="text-md font-famFont text-center uppercase"
+                    className="text-md font-famFont h-8 text-center uppercase"
                     style={{ letterSpacing: "4px" }}
                   >
                     {grant.title}

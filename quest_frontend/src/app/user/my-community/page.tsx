@@ -75,7 +75,7 @@ const MyCommunities: React.FC = () =>
   }, [ dispatch, userCommunityIds ] );
 
   return (
-    <div className="bg-black text-white min-h-screen">
+    <div className="bg-black text-white min-h-screen ">
       <div className="container w-[90%] mx-auto px-4 py-10">
         <header className="mb-12">
           <h1 className="text-3xl font-bold mb-4">My Communities</h1>
@@ -110,7 +110,7 @@ const MyCommunities: React.FC = () =>
                 <div
                   key={ index }
                   onClick={ () => router.push( `/user/community-project/${ card?._id }` ) }
-                  className="overflow-hidden cursor-pointer outer-div bg-white/5 rounded-md relative flex md:gap-6 lg:gap-6 sm:gap-4 gap-4 hover:bg-[#8c71ff] hover:text-[#111111] border-[#282828] border md:p-4 lg:p-4 p-2 flex-col  justify-center w-full sm:w-full"
+                  className="overflow-hidden cursor-pointer  outer-div bg-white/5 rounded-md relative flex md:gap-6 lg:gap-6 sm:gap-4 gap-4 hover:bg-[#8c71ff] hover:text-[#111111] border-[#282828] border md:p-4 lg:p-4 p-2 flex-col  justify-center w-full sm:w-full"
                 >
 
                   <div className="flex  flex-col md:flex-row lg:flex-row text-xl items-center justify-around ">
@@ -124,16 +124,16 @@ const MyCommunities: React.FC = () =>
                       <div className="flex w-full flex-col items-start ">
                         <div className="flex w-full md:h-[5rem] bg_eco_div border-b-4 border-[#8c71ff] gap-2 md:gap-2  p-2 bg-[#28223d] flex-col lg:flex-row items-center md:items-end lg:items-end justify-between ">
 
-                          <div className="md:w-4/5 p truncate text-[12px] md:text-[10px] lg:text-[10px] md:ml-3 md:text-start text-center card-title">{ card.title }</div>
+                          <div className="md:w-4/5 p truncate text-[12px] md:text-[10px] lg:text-[15px] md:ml-3 md:text-start text-center card-title ">{ card.title }</div>
 
                           <div className="md:1/5 flex flex-row rounded-lg justify-center md:justify-end">
                             <div className="flex gap-1 mr-2 items-center flex-col">
-                              <span className="card-white-text ">{ card.quests.length }</span>
-                              <span className=" card-gray-text ">QUESTS</span>
+                              <span className="card-white-text  ">{ card.quests.length }</span>
+                              <span className=" card-gray-text font-famFont ">QUESTS</span>
                             </div>
                             <div className="flex gap-1 items-center flex-col">
                               <span className="card-white-text ">{ card.members.length }</span>
-                              <span className=" card-gray-text ">FOLLOWERS</span>
+                              <span className=" card-gray-text font-famFont ">FOLLOWERS</span>
                             </div>
                           </div>
                         </div>
@@ -159,7 +159,7 @@ const MyCommunities: React.FC = () =>
                   </div>
                   <div className="flex flex-row text-xs m-1 gap-2 justify-start  ">
                     <span className=" descText">Bio: </span>
-                    <span className="descdata text-wrap ">
+                    <span className="break-words text-white opacity-30 text-[0.8rem] overflow-hidden line-clamp-2 font-famFont uppercase ">
                       { card.description.slice( 0, 20 ) }
                     </span>
                   </div>
@@ -236,7 +236,7 @@ const MyCommunities: React.FC = () =>
                       <div className="flex w-full flex-col items-start ">
                         <div className="flex w-full md:h-[5rem] bg_eco_div border-b-4 border-[#8c71ff] gap-2 md:gap-2  p-2 bg-[#28223d] flex-col lg:flex-row items-center md:items-end lg:items-end justify-between ">
 
-                          <div className="md:w-4/5 p truncate text-[12px] md:text-[10px] lg:text-[10px] md:ml-3 md:text-start text-center card-title">{ card.title }</div>
+                          <div className="md:w-4/5 p truncate text-[12px] md:text-[10px] lg:text-[15px] md:ml-3 md:text-start text-center card-title">{ card.title }</div>
 
                           <div className="md:1/5 flex flex-row rounded-lg justify-center md:justify-end">
                             <div className="flex gap-1 mr-2 items-center flex-col">
@@ -271,7 +271,7 @@ const MyCommunities: React.FC = () =>
                   </div>
                   <div className="flex flex-row text-xs m-1 gap-2 justify-start  ">
                     <span className=" descText">Bio: </span>
-                    <span className="descdata text-wrap ">
+                    <span className="break-words text-white opacity-30 text-[0.8rem] overflow-hidden line-clamp-2 font-famFont uppercase  ">
                       { card.description.slice( 0, 20 ) }
                     </span>
                   </div>
