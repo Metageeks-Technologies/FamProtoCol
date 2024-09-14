@@ -44,7 +44,7 @@ const LandingPage = () => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/domains`);
       if(response.data.success){
         setExistingDomain(response.data.filteredDomain);
-        console.log(response.data.filteredDomain);
+        // console.log(response.data.filteredDomain);
       }
       else{
         console.log("error");
@@ -112,7 +112,7 @@ const LandingPage = () => {
       return;
     }
     const updatedDomain = domain + ".fam";
-    console.log(updatedDomain);
+    // console.log(updatedDomain);
     if (!logo )
         {
            setLoader(false);
@@ -128,7 +128,7 @@ const LandingPage = () => {
         }
     try {
       const uploadSuccess = await handleUpload();
-      console.log(uploadSuccess);
+      // console.log(uploadSuccess);
         if ( !uploadSuccess )
         {
             setLoader(false);
@@ -244,7 +244,7 @@ const LandingPage = () => {
  }
      
   
-      console.log("Domain minted successfully with referral", tx);
+      // console.log("Domain minted successfully with referral", tx);
       setAlertMessage(`Domain ${updatedDomain} minted successfully with referral code!`);
       setHash(tx.hash);
       setShowPasswordField(true);
@@ -279,7 +279,7 @@ const LandingPage = () => {
 
   const handleUpload = async (): Promise<boolean> => {
     if (!logo) return false;
-    console.log(logo);
+    // console.log(logo);
     
     try {
       const logoName=logo.name as string;

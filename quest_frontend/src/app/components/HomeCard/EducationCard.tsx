@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { truncateToNWords } from "@/utils/helper";
+import { truncateToNWords } from "@/utils/helper/helper";
 
 
 // this will suffle and only provide randam 3 quests
@@ -65,7 +65,7 @@ const EducationCardList: React.FC = () =>
     ).slice(0, 3)
   : [];
 
-  console.log("Kol quest:->",kolQuests);
+  // console.log("Kol quest:->",kolQuests);
 
   useEffect( () =>
   {

@@ -1,7 +1,6 @@
 // userSlice.ts
-
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Quest } from './questSlice';
+import {Quest} from '@/types/types';
 import { persistor } from '../store';
 import Cookies from 'js-cookie';
 import axios from 'axios';

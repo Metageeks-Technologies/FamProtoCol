@@ -10,7 +10,7 @@ const CallBackPageContent = () => {
   const searchParams = useSearchParams();
   const state = searchParams.get("state");
   const code = searchParams.get("code");
-  console.log(state, code);
+  // console.log(state, code);
 
   const handleLogin = async () => {
     try {
