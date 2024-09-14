@@ -1,11 +1,9 @@
 "use client";
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dropdown, Avatar, DropdownItem, DropdownMenu, DropdownTrigger, Input, Badge, Button } from "@nextui-org/react";
 import axios from 'axios';
-import Cookies from 'js-cookie';
-
 import { logoutUser } from '@/redux/reducer/authSlice';
 import { AppDispatch, persistor, RootState } from '@/redux/store';
 import { notify } from '@/utils/notify';

@@ -115,7 +115,7 @@ const Sidebar = () => {
               onClick={() => handleLinkClick("/user/my-community")}
             >
               <div className="md:w-full border-t w-full hover:bg-opacity-15 hover:bg-[#5638ce40] border-b p-3 hover:border-b-4 hover:border-b-voilet-700 cursor-pointer">
-                <button> My Community </button>
+                <button> MY COMMUNITY </button>
               </div>
             </div>
             <div

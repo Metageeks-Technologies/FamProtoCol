@@ -1,6 +1,7 @@
 import { notify } from '@/utils/notify';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { SweetAlert } from '@/utils/sweetAlert';
 
 // Base interface for all task types
 interface ITaskBase extends Document
@@ -149,7 +150,10 @@ export const completeTask = createAsyncThunk(
       const response = await axios.post( `${ API_BASE_URL }/complete`,
          { taskId, userId, submission, userName }
       );
-      notify("success",response.data.message)
+      console.log("response in complete task:-",response.data)
+
+      const {coins,xps}=response.data;
+      SweetAlert("taskCompleted","Task Completed",`Congratulations! You've earned ${coins} coins and ${xps} XPs for completing the task!`);
       return response.data;
     }
     catch ( error:any )

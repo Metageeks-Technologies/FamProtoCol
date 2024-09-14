@@ -19,8 +19,15 @@ const proFontWindows = localFont({
 },
 );
 
-
-
+const qanelas = localFont({
+  src:[
+    {
+      path:'../../public/fonts/qanelas/QanelasRegular.otf',
+      weight:"400",
+    },
+  ],
+    variable:"--font-qanelas",
+});
 
 export const metadata: Metadata = {
   title: "FamProtocol",
@@ -36,7 +43,7 @@ export default function RootLayout ( {
 }> )
 {
   return (
-    <html lang="en" className={`${proFontWindows.variable}`} >
+    <html lang="en" className={`${proFontWindows.variable} ${qanelas.variable}`} >
       <head>
         <meta charSet="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>

@@ -92,7 +92,7 @@ const QuestPage = ( { params }: { params: { slug: string; }; } ) =>
 
   return (
     <div className="text-white min-h-screen">
-      <div className="w-[80%] mx-auto py-10">
+      <div className="w-[95%] mx-auto py-10">
         <h1 className="text-2xl font-bold mb-4">Quest Monitoring</h1>
         {/* progress bar */}
          {/* <div className="my-5">
@@ -155,7 +155,7 @@ const QuestPage = ( { params }: { params: { slug: string; }; } ) =>
           </div>
         ) }
 
-        <div className="grid gap-4 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 my-4">
+        <div className="px-4 grid gap-4 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 my-4">
 
           { tasks?.map( ( task: CardData, index: number ) => (
             <div

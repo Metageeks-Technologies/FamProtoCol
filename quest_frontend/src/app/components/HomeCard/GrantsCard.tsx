@@ -42,7 +42,7 @@ const GrantsCard = () => {
     slidesToShow: 4,
     slidesToScroll: 1,
     arrows: false,
-    // autoplay: true,
+    autoplay: true,
     responsive: [
       {
         breakpoint: 1050,

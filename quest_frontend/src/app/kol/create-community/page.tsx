@@ -116,6 +116,9 @@ const CreateCommunity: React.FC = () =>
   const handleSubmit = async ( e: React.FormEvent ) =>
   {
     e.preventDefault();
+
+    if(!title || !description || !categories || !ecosystems || !file) return notify("warn", "Please fill all the fields");
+
     setLoader( true );
 
     if ( !file )
@@ -178,8 +181,8 @@ const CreateCommunity: React.FC = () =>
   return (
     <div className="min-h-screen bg-[#14141494] flex items-center justify-center p-8 font-[ProFontWindow] text-white">
       <div className="bg-[#00000064] border border-gray-800 shadow-xl w-full max-w-2xl p-6 md:p-8">
-        <h1 className="text-2xl md:text-3xl mx-4 font-bold font-sans text-center mb-2">LET'S CREATE YOUR COMMUNITY</h1>
-        <p className="text-gray-400 mx-4 mb-6 md:mb-8 text-sm md:text-base text-center">Our users like to know more about a community before they get involved. Please include any information they may need.</p>
+        <h1 className="text-2xl md:text-3xl mx-4 font-bold font-qanelas text-center mb-2">LET'S CREATE YOUR COMMUNITY</h1>
+        <p className="text-gray-400 mx-4 font-qanelas mb-6 md:mb-8 text-sm md:text-base text-center">Our users like to know more about a community before they get involved. Please include any information they may need.</p>
 
         <form onSubmit={ handleSubmit } className="space-y-4 md:space-y-6">
           <div className="flex flex-col md:flex-row md:space-x-4">
@@ -197,7 +200,7 @@ const CreateCommunity: React.FC = () =>
             </div>
 
             <div className="w-full md:w-4/5">
-              <label className="block font-sans font-semibold mb-1 text-sm">DESCRIPTION</label>
+              <label className="block font-famFont mb-1 text-sm">DESCRIPTION</label>
               <textarea
                 placeholder="DESC..."
                 value={ description }
@@ -210,18 +213,18 @@ const CreateCommunity: React.FC = () =>
 
           <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
             <div className="mb-4 md:mb-0 md:w-1/3">
-              <h1 className="font-normal mb-1 text-sm">NAME</h1>
+              <h1 className="font-normal mb-1 font-famFont text-sm">NAME</h1>
               <input
                 type="text"
                 value={ title }
                 onChange={ ( e ) => setTitle( e.target.value ) }
-                className="px-3 py-2 bg-black border border-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full md:w-28 text-sm"
+                className="px-3 py-2 bg-black border font-famFont border-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full md:w-28 text-sm"
                 required
               />
             </div>
 
             <div className="flex items-center justify-between md:justify-end md:flex-1">
-              <span className="text-xs uppercase mr-2 md:mr-4">Is your project blockchain related?</span>
+              <span className="text-xs uppercase font-famFont mr-2 md:mr-4">Is your project blockchain related?</span>
               <div className="flex">
                 <button
                   type="button"
@@ -238,7 +241,7 @@ const CreateCommunity: React.FC = () =>
                       </linearGradient>
                     </defs>
                   </svg>
-                  <span className="absolute inset-0 flex items-center justify-center font-bold text-xs">
+                  <span className="absolute inset-0 font-famFont flex items-center justify-center text-xs">
                     YES
                   </span>
                 </button>
@@ -258,7 +261,7 @@ const CreateCommunity: React.FC = () =>
                       </linearGradient>
                     </defs>
                   </svg>
-                  <span className="absolute inset-0 flex items-center justify-center font-bold text-xs">
+                  <span className="absolute font-famFont inset-0 flex items-center justify-center text-xs">
                     NO
                   </span>
                 </button>
@@ -355,8 +358,7 @@ const CreateCommunity: React.FC = () =>
             { !loader ? (
               <button
                 type="submit"
-                className={ `px-6 py-2 rounded-lg transition-colors duration-300  text-sm ${ isDisable ? "bg-famViolate-light" : "bg-famViolate hover:bg-famViolate-dark" }` }
-                disabled={ isDisable }
+                className={ `px-6 py-2 rounded-lg transition-colors font-famFont duration-300  text-sm bg-famViolate hover:bg-famViolate-dark` }
               >
                  Submit
               </button>

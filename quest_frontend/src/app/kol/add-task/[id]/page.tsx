@@ -407,7 +407,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
   };
 
   const ConnectDiscordServer= async()=>{
-    console.log("connect server")
+    // console.log("connect server")
     setModalView(false);
     const connectUrl =`https://discord.com/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_ID}&permissions=8&integration_type=0&scope=bot`;
     window.open(connectUrl, "_blank");
@@ -446,7 +446,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                 <div className="p-4 md:p-5 flex flex-col gap-4 bg-[#141414] text-white w-full md:w-1/3">
                   {categories.map(
                     (category: string) =>
-                      category === "Answers" && (
+                      (category === "Answers") && (
                         <div key={category}>
                           <div className="mx-4">
                             <h4 className="text-xl font-medium mb-2 text-gray-400 ">
@@ -538,7 +538,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                 <div className="p-4 md:p-5 flex flex-col gap-4 bg-[#141414] text-white w-full md:w-1/3">
                   {categories.map(
                     (category: string) =>
-                      category === "On-chain action" && (
+                      (category === "On-chain action") && (
                         <div key={category}>
                           <div className="mx-4">
                             <h4 className="text-xl font-medium mb-2 text-gray-400 ">

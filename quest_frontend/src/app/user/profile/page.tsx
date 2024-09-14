@@ -92,31 +92,8 @@ const Profile: React.FC = () => {
   };
 
   const handleSwal=()=>{
-    SweetAlert("error","hello","djadfnas");
+    SweetAlert("taskCompleted");
   }
-
-  // const onGenerateReferral = async () => {
-
-  //   try {
-      
-  //     const response =await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/generateRefferalCode`,{
-  //    withCredentials: true, 
-  //   });
-
-  //   if(response.data.success){
-  //      setIsReferral(true);
-  //     setReferral(response.data.referralCode);
-  //     notify("success", "Referral code generated successfully!");
-      
-  //   }
-
-  //   } catch (error) {
-  //     console.error(error);
-  //     notify("error", "Failed to generate referral code!");
-  //     return ;
-  //   }
-  // }
- 
 
 const onGenerateReferral = async () => {
   try {

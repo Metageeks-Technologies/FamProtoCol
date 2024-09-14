@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createQuest1, Reward } from '@/redux/reducer/questSlice';
+import { createQuest1} from '@/redux/reducer/questSlice';
 import { RootState, AppDispatch } from '@/redux/store';
 import { useParams, useRouter } from 'next/navigation';
 import { notify } from '@/utils/notify';
@@ -10,6 +10,7 @@ import axios from 'axios';
 import Multiselect from 'multiselect-react-dropdown';
 import { getCommunitySuccess } from '@/redux/reducer/adminCommunitySlice';
 import { BallTriangleLoader } from '@/app/components/loader';
+import { Reward } from '@/types/types';
 
 interface Category
 {

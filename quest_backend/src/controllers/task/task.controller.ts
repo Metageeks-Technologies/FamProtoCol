@@ -240,7 +240,7 @@ export const taskController = {
               
             await user.save();
 
-            res.status( 200 ).json( { message: "Task completed successfully" } );
+            res.status( 200 ).json( { message: "Task completed successfully",coins:task.rewards.coins,xps:task.rewards.xp } );
         } catch ( error )
         {
             console.error( error );
@@ -334,7 +334,7 @@ export const taskController = {
         try
         {  
             console.log( "req.user", req.user );
-             const {ids} =req.user;
+            const {ids} =req.user;
             const taskId = req.params.id;
             console.log( "task id",taskId );
 

@@ -152,6 +152,7 @@ export const CommunityController = {
         try
         {
             const communityIds = req.body.communityIds;
+            console.log("communiyt ids:", communityIds );
 
             if ( !Array.isArray( communityIds ) )
             {
@@ -160,7 +161,7 @@ export const CommunityController = {
             }
 
             const communities = await CommunityModel.find( { _id: { $in: communityIds } } ).sort( { createdAt: -1 } );
-
+            console.log("communities:", communities );
             res.status( 200 ).json( {
                 message: "Communities fetched successfully",
                 communities

@@ -58,7 +58,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
           <div className="capitalize flex justify-start items-center px-2">
             <span className="lvl text-end text-xl mr-2 px-2">{ user.id || '' }</span>
             <User
-              avatarProps={ { radius: "none", src: user.image || '', size: "md" } }
+              avatarProps={ { radius: "md", src: user.image || '', size: "sm" } }
               name={ user.displayName || user.name || '' }
 
             />
@@ -156,7 +156,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
             total={ pages }
             onChange={ ( page ) => setPage( page ) }
             classNames={ {
-              cursor: "bg-[#FA00FF] text-white font-bold",
+              cursor: "bg-[#5538CE]",
             } }
           />
         </div>

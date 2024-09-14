@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCommunity } from "@/redux/reducer/communitySlice";
 import { RootState, AppDispatch } from "@/redux/store";
-
 import { fetchQuests } from "@/redux/reducer/questSlice";
 import UserTable from "@/app/components/table/userTable";
 import { User } from "@/app/leaderboard/data";
@@ -12,6 +11,7 @@ import axios from "axios";
 import { notify } from "@/utils/notify";
 import { useRouter } from "next/navigation";
 import { Button } from "@nextui-org/react";
+import Swal from "sweetalert2";
 
 export default function CommunityProject ( {
   params,
@@ -46,7 +46,7 @@ export default function CommunityProject ( {
 
   useEffect( () =>
   {
-    if ( questIds && questIds.length > 0 )
+    if ( questIds && questIds.length >= 0 )
     {
       dispatch( fetchQuests( questIds ) );
     }
@@ -86,15 +86,27 @@ export default function CommunityProject ( {
 
   const deleteCommunity = async () =>
   {
-    try {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this community!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+      }).then(async (result:any) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await axios.delete( `${ process.env.NEXT_PUBLIC_SERVER_URL }/community/${ id }` );
+            notify( 'success', "Community has deleted successfully" )
+            router.push( `/user/my-community`)
+          } catch (error) {
+            console.error( error )
+            notify('error', 'There is some server error in deleting the community')
+          }
+        }
+      })
+
       
-      const response = await axios.delete( `${ process.env.NEXT_PUBLIC_SERVER_URL }/community/${ id }` );
-      notify( 'success', "Community has deleted successfully" )
-      router.push( `/user/my-community`)
-    } catch (error) {
-      console.error( error )
-      notify('error', 'There is some server error in deleting the community')
-    }
   }
 
   if ( loading )
@@ -402,12 +414,12 @@ export default function CommunityProject ( {
                     </div>
                   </div>
 
-                  <Button
+                  {/* <Button
                     className=' lg:py-3 lg:px-4 sm:py-3 lg:mt-2 px-4 py-2 bg-famViolate text-white rounded-lg hover:bg-famViolate-light transition duration-300'
                     onClick={ deleteCommunity }
                   >
                     Delete the Community
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>
@@ -427,7 +439,7 @@ export default function CommunityProject ( {
                 className=''
               >
                 <div>
-                  <div className={`box1 education-clip p-[2px] ${(index%4==0 && "bg-red-500")} ${(index%4==2 && "bg-blue-500")} ${(index%4==2 && "bg-green-500")} ${(index%4==3 && "bg-yellow-500")} `}>
+                  <div className={`box1 education-clip p-[1px] ${(index%4==0 && "bg-red-500")} ${(index%4==1 && "bg-[#4E46D6]")} ${(index%4==2 && "bg-green-500")} ${(index%4==3 && "bg-yellow-500")} `}>
                     <div className='education-clip box2 h-28 w-48 bg-black flex justify-center items-center p-4'>
                       <div>
                         <img
