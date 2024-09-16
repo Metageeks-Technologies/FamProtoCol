@@ -24,6 +24,7 @@ import {
   getFileTypeInfo,
   validateFileType,
   isValidTweetUrl,
+  validateSubmission
 } from "@/utils/helper/helper";
 import {
   CardData,
@@ -66,7 +67,7 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
     dispatch(fetchTaskById(questId));
     dispatch(fetchTasks());
     dispatch(fetchQuestById(questId));
-  }, [dispatch, questId]);
+  }, [questId]);
 
   useEffect(() => {
     const completedTasks = tasks.filter((task) => isTaskCompleted(task)).length;
@@ -151,64 +152,7 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
     setSubmissions((prev) => ({ ...prev, [taskId]: file }));
   }, []);
 
-  const validateSubmission = (
-    taskType: string | undefined,
-    submission: any
-  ): any => {
-    switch (taskType) {
-      case "Text":
-        return typeof submission === "string" && submission.trim().length > 0;
-      case "Number":
-        return !isNaN(Number(submission)) && submission !== "";
-      case "URL":
-        const urlPattern = /^(http)/;
-        return urlPattern.test(submission);
-      case "File upload":
-        return submission instanceof File && submission.size > 0;
-      case "Invites":
-        return typeof submission === "string" && submission.trim().length > 0;
-      case "Visit Link":
-        return true;
-      case "Poll":
-      case "Quiz":
-        return (
-          typeof submission === "object" && Object.keys(submission).length > 0
-        );
-      case "Opinion Scale":
-        return (
-          typeof submission === "object" &&
-          typeof submission.opinionRating === "string" &&
-          submission.opinionRating >= 1 &&
-          submission.opinionRating <= 5
-        );
-      case "Connect wallet":
-        return true;
-      case "Gitcoin passport":
-        return true;
-      case "Civic pass verification":
-        return true;
-      case "Ens holder":
-        return true;
-      case "Eth holder":
-        return true;
-      case "Connect multiple wallet":
-        return true;
-      case "Twitter Follow":
-        return true;
-      case "Tweet Like":
-        return true;
-      case "Tweet":
-        return true;
-      case "Tweet Retweet":
-        return true;
-      case "Telegram":
-        return true;
-
-      default:
-        console.log("validation is complete, no matches found");
-        return false;
-    }
-  };
+ 
 
   const handleGenerateReferral = useCallback(async () => {
     try {

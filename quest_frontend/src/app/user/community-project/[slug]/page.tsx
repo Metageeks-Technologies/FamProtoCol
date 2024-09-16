@@ -198,20 +198,6 @@ export default function CommunityProject ( {
     <div className="bg-black  min-h-screen lg:mx-16 font-famFont uppercase ">
       <div className="container mx-auto px-4 py-8">
         <div className=" rounded-lg shadow-lg overflow-hidden">
-          {/* <div className="relative h-64 bg-blue-600">
-            <img
-              src={`https://dummyimage.com/1200x400/000/fff&text=${community.title[0]}`}
-              alt={community.title}
-              className="w-full h-full object-cover opacity-50"
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black to-transparent">
-              
-              <p className="text-xl text-gray-200">
-                {community.members?.length || 0} Members
-              </p>
-            </div>
-          </div> */}
-
           <div className="flex">
             <div className="lg:w-48 lg:h-48 sm:h-40 sm:w-44 h-20 w-28  ">
               <div className="box1 right-trapezium p-[2px] bg-zinc-800 ">
@@ -260,10 +246,10 @@ export default function CommunityProject ( {
             </div>
           </div>
 
-          <div className=" flex lg:flex-row sm:flex-row flex-col gap-4 lg:mt-4 sm:mt-0 mt-4">
+          <div className=" flex lg:flex-row sm:flex-row flex-col gap-4 lg:mt-4 mb-4 sm:mt-0 mt-4">
             <div className="flex items-center group-hover:bg-[#735dcf]">
               <div className="flex row gap-1">
-                <div className="box1 right-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-700 ">
+                <div className="box1 right-trapezium w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                   <svg
                     className="box2 bg-black right-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 h-2 w-2  sm:p-1 "
                     xmlns="http://www.w3.org/2000/svg"
@@ -276,7 +262,7 @@ export default function CommunityProject ( {
                     />
                   </svg>
                 </div>
-                <div className="box1 left-right-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-700 ">
+                <div className="box1 left-right-trapezium w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                   <svg
                     className="box2 bg-black left-right-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 sm:p-1 h-3 w-4 "
                     xmlns="http://www.w3.org/2000/svg"
@@ -289,7 +275,7 @@ export default function CommunityProject ( {
                     />
                   </svg>
                 </div>
-                <div className="box1 left-trapezium w-[2rem] h-[2rem] p-[2px] bg-zinc-700 ">
+                <div className="box1 left-trapezium w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                   <svg
                     className="box2 bg-black p-2 left-trapezium lg:p-2 lg:w-10 lg:h-10 sm:w-6 sm:h-6 sm:p-1 h-3 w-4"
                     xmlns="http://www.w3.org/2000/svg"
@@ -317,13 +303,19 @@ export default function CommunityProject ( {
             <div className="flex gap-2 lg:mt-0 sm:mt-4">
               <h1 className="text-neutral-200">BIO:</h1>
               <p className="text-sm text-neutral-500">
-                Leading lending market on zkSync, Manta Network, Blast &
-                Linea. Audited by Halborn Security, Immunefi and Mundus
-                Security. Incubated by MahaDAO. - Earn Zero Points Complete
-                below tasks to earn Zero Points. Jump in daily to earn more!
+                { community.description }
               </p>
             </div>
           </div>
+
+           <div className="flex justify-end items-center mb-4">
+        <button
+          className="bg-gray-900 hover:bg-gray-700 text-white font-medium w-full md:w-auto px-5 py-2 rounded-full"
+          onClick={() => router.back()}
+        >
+          Go Back
+        </button>
+      </div>
         </div>
 
         <div className="mai div flex  lg:flex-row sm:flex-col flex-col mt-16 gap-24 justify-end ">
@@ -340,7 +332,7 @@ export default function CommunityProject ( {
                   <path d="M5.5 5L10.5 10" stroke="#FA00FF" strokeLinecap="round" />
                 </svg>
               </div>
-              <div className="listOfFriends">Leaderboard</div>
+              <div className="text-md capitalize">Leaderboard</div>
             </div>
             <div className="w-[90%] lg:w-[80%] flex userTable justify-center items-center bg-[#040404] ">
               <UserTable<User> data={ users } columns={ columns } rowsPerPage={ 5 } />
@@ -415,7 +407,7 @@ export default function CommunityProject ( {
 
 
 
-                  <button className=' lg:py-3 lg:px-4 sm:py-3 lg:mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300'
+                  <button className=' lg:py-2 lg:px-4 sm:py-2 lg:mt-2 px-4 py-2 bg-famViolate text-white rounded-md hover:bg-violet-700 transition duration-300'
                     onClick={ handleLeaveCommunity }
                   >
                     Leave the Community

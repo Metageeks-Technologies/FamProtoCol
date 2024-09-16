@@ -1,19 +1,29 @@
 import { Progress } from "@nextui-org/react";
-import {HeaderProps} from "@/types/types"
+import {HeaderProps} from "@/types/types";
+import { ShimmerDiv } from "shimmer-effects-react";
+
 
 export const Header: React.FC<HeaderProps> = ({quest}) => (
   <>
-    <div className="flex justify-start items-center gap-2 mt-10" >
-    <div className="w-8 h-8">
-      <img className="w-full h-full object-cover" src={quest?.logo}/>
-    </div>
-    <div className="text-2xl font-bold capitalize ">
-      <h1>{quest?.title}</h1>
-    </div>
-    </div>
-    <div className="pt-4 text-white capitalize opacity-30">
-      <p>{quest?.description}</p>
-    </div>
+   <div className="flex gap-4 justify-start mb-2 items-start px-4">
+          {!quest && <ShimmerDiv mode="dark" height={100} width={100} />}
+          {quest && (
+            <div className="w-20 h-20 rounded-lg overflow-hidden">
+              <img
+                className="w-full h-full object-cover"
+                src={quest?.logo}
+                alt={quest?.title}
+              />
+            </div>
+          )}
+
+          <div className="flex flex-col ">
+            <div className="text-2xl font-bold capitalize">{quest?.title}</div>
+            <div className="w-full text-white opacity-40 flex justify-start ">
+              {quest?.description || "Monitor your tasks here"}
+            </div>
+          </div>
+        </div>
   </>
 );
 
@@ -36,7 +46,7 @@ export const StatusBar: React.FC<{ progress: number }> = ({ progress }) => (
     </div>
 
     <div className="banner ">
-      <h1 className="text-2xl inline mr-8 pb-10 ">Getting started</h1>
+      <h1 className="text-2xl inline mr-8 pb-10 mb-2 ">Progress Bar</h1>
       <span className="text-sm font-medium text-green-700 pb-10 dark:text-white">
         {progress}%
       </span>

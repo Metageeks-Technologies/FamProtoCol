@@ -34,12 +34,12 @@ export interface CardData {
   _id: string;
   image: string;
   name: string;
+  description: string;
   taskName: string;
   guild?: string;
   discord?: string;
   discordLink?: string;
   taskDescription: string;
-  description: string;
   type: string;
   category: string;
   visitLink?: string;
@@ -93,4 +93,14 @@ export interface CreateQuestPayload {
 
 export interface HeaderProps {
   quest: Quest;
+}
+
+export interface CommunityCardType
+{
+  _id: string,
+  title: string,
+  logo: string,
+  description: string,
+  members: [],
+  quests: [];
 }

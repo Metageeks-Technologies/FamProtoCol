@@ -12,6 +12,7 @@ import { notify } from "@/utils/notify";
 import { useRouter } from "next/navigation";
 import { Button } from "@nextui-org/react";
 import Swal from "sweetalert2";
+import { TailSpinLoader } from "@/app/components/loader";
 
 export default function CommunityProject ( {
   params,
@@ -112,9 +113,9 @@ export default function CommunityProject ( {
   if ( loading )
   {
     return (
-      <div className='flex items-center justify-center min-h-screen bg-gray-100'>
+      <div className='flex items-center justify-center min-h-screen bg-zinc-800'>
         <div className='text-center'>
-          <div className='inline-block animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500'></div>
+          <TailSpinLoader/>
           <p className='mt-4 text-xl font-semibold text-gray-700'>Loading...</p>
         </div>
       </div>
@@ -239,7 +240,7 @@ export default function CommunityProject ( {
                         onClick={ () =>
                           ( window.location.href = `/kol/add-quest/${ id }` )
                         }
-                        className='px-4 py-2 bg-famViolate text-white rounded-lg hover:bg-famViolate-light transition duration-300'
+                        className='px-4 py-2 bg-famViolate text-white rounded-md hover:bg-famViolate-light transition duration-300'
                       >
                         Create A New Quest
                       </Button>
@@ -311,8 +312,16 @@ export default function CommunityProject ( {
               </p>
             </div>
           </div>
-        </div>
 
+           <div className="flex justify-end items-center mb-4">
+        <button
+          className="bg-gray-900 hover:bg-gray-700 text-white font-medium w-full md:w-auto px-5 py-2 rounded-full"
+          onClick={() => router.back()}
+        >
+          Go Back
+        </button>
+      </div>
+        </div>
         <div className='mai div flex  lg:flex-row sm:flex-col flex-col mt-16 gap-24 justify-end '>
           <section className='w-full flex flex-col justify-center items-center'>
             <div className='flex flex-row justify-center my-2 gap-3 text-pink-950 lg:text-5xl'>
@@ -425,8 +434,6 @@ export default function CommunityProject ( {
             </div>
           </div>
         </div>
-
-        <div>
           <div className='p-2 edu  mt-10  grid lg:gap-10 sm:gap-10 gap-4  mx-8  lg:mx-0 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'>
             { currentQuests?.map( ( quest: any, index: number ) => (
               <div
@@ -471,7 +478,6 @@ export default function CommunityProject ( {
               </div>
             ) ) }
           </div>
-        </div>
       </div>
     </div>
   );

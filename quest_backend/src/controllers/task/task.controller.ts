@@ -361,8 +361,17 @@ export const taskController = {
                     quest.tasks = quest?.tasks?.filter( ( task ) => task.toString() !== taskId );
                     await quest.save();
                 }
+
+                const creatorId=  task.creator;
+
+                const creator = await UserDb.findById( creatorId );
+                if(creator){
+                    creator.createdTasks = creator?.createdTasks?.filter( ( task ) => task.toString() !== taskId );
+                    await creator.save();
+                }
                 
                 await TaskModel.findByIdAndDelete( taskId );
+                
                 res.status( 200 ).json( { message: "Task deleted successfully" } );
             }
         } catch ( error )
