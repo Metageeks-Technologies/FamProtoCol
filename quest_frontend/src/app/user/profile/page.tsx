@@ -183,7 +183,7 @@ const onGenerateReferral = async () => {
                   <div className="lg:w-[16rem] flex lg:justify-start  mt-6 lg:mt-1">
                     <div className=" flex flex-col lg:items-start items-center ">
                       <div className="flex justify-start gap-[1rem] row items-center">
-                        <div className="text-[2rem] font-famFont">{user?.displayName}</div>
+                        <div className="text-2xl font-famFont">{user?.displayName}</div>
                         <div className="user-rank">
                           {/* Follow */}#{user?.rank}
                         </div>

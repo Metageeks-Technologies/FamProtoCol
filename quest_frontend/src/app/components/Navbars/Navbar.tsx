@@ -159,7 +159,7 @@ const Navbar: React.FC = () =>
                                 </DropdownMenu>
                             </Dropdown>
                         ) : (
-                            <button className='rounded bg-blue-700' onClick={ signup }>
+                            <button className='rounded bg-famViolate ' onClick={ signup }>
                                 <div className="py-1 px-4 rounded">
                                     <div className='m-1 w-full'>Sign in / up</div>
                                 </div>

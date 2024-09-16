@@ -52,7 +52,7 @@ clip-path: polygon(60% 100%, 75% 90%, 100% 90%, 100% 0%, 0% 0%, 0% 90%, 25% 90%,
 }
 .h_image-container {
   position: relative;
-  clip-path: polygon(0 0, 100% 0, 100% 86%, 70% 86%, 65% 100%, 35% 100%, 30% 86%, 0 86%);
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 75% 90%, 65% 100%, 35% 100%, 25% 90%, 0 90%);
 }
 .h_bg_eco_div {
   clip-path: polygon(3% 0, 93% 0, 100% 24%, 100% 100%, 0 100%, 3% 85%);  
@@ -82,10 +82,6 @@ clip-path: polygon(60% 100%, 75% 90%, 100% 90%, 100% 0%, 0% 0%, 0% 90%, 25% 90%,
 .h_icon {
   clip-path: inherit;
    
-}
-.h_styled-image {
-  object-fit: cover;
-  clip-path: inherit;
 }
 
 .clip-trapezium-bottom-left {
@@ -275,15 +271,6 @@ text-transform: uppercase;
 }
 /* Points palor css end */
 
-
-.username{
-    color: #FFF;
-    font-family: 'ProFontWindows';
-    font-size: 2rem;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-}
 .user-rank{
   color: #FA00FF;
   font-family: sans-serif;
@@ -318,16 +305,6 @@ text-transform: uppercase;
     line-height: normal;
     text-transform: uppercase;
     opacity: 0.5;
-}
-
-.lvl{
-    color: #FA00FF;
-    font-family: sans-serif;
-    font-size: 0.75rem;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    text-transform: uppercase;
 }
 
 .listOfFriends,.listOfUsers{

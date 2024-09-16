@@ -44,7 +44,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
   const renderCell = useCallback( ( user: T, columnKey: string ): ReactNode =>
   {
     const cellValue = user[ columnKey ];
-    // console.log( cellValue, user, columnKey );
+    console.log( "user",user );
     switch ( columnKey )
     {
       case "id":
@@ -56,11 +56,12 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
       case "name":
         return (
           <div className="flex justify-start items-center px-2 font-famFont uppercase">
-            <span className="lvl text-end text-xl  mr-2 px-2">{ user.id || '' }</span>
+          {
+            user?.rank && (<span className="font-famFont text-famPurple text-end text-md px-2">#{user?.rank}</span>)
+          }
             <User
-              avatarProps={ { radius: "md", src: user.image || '', size: "sm" } }
-              name={ user.displayName || user.name || '' }
-
+              avatarProps={ { radius: "md", src: user?.image || '', size: "sm" } }
+              name={ user?.displayName || user?.name || '' }
             />
           </div>
         );
@@ -74,7 +75,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
         return (
           <div className="capitalize flex gap-2 items-center justify-start">
             <div>
-              <span className="uppercase px-2 font-famFont text-neutral-500">XPS :  </span>
+              <span className="uppercase px-2 font-famFont text-neutral-500">Xps :  </span>
               <span>{ user.rewards?.xp || cellValue || 0 }</span>
             </div>
 
@@ -82,9 +83,9 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
         );
       case "fampoints":
         return (
-          <div className="capitalize flex justify-start items-center gap-1">
-            <span className=" text-neutral-500 px-2 font-famFont">fampoints : </span>
-            <span className="flex justify-center items-center">{ user.rewards?.coin || cellValue || 0 }</span>
+          <div className="capitalize flex justify-center items-center gap-1">
+            <span className=" text-neutral-500 px-2 font-famFont">Fampoints : </span>
+            <span className="flex justify-center items-center">{ user.rewards?.coins || cellValue || 0 }</span>
           </div>
         );
       case "actions":
@@ -110,7 +111,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
       case "level":
         return (
           <div>
-            <span className="lvl"> LVL: { user.level || 0 }</span>
+            <span className="text-[#FA00FF] uppercase font-famFont "> LVL: { user.level || 0 }</span>
           </div>
         );
       default:
@@ -148,15 +149,15 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
       { data.length > 0 && (
         <div className="flex w-full justify-center ">
           <Pagination
-            isCompact
             showControls
             showShadow
-            color="secondary"
             page={ page }
             total={ pages }
             onChange={ ( page ) => setPage( page ) }
             classNames={ {
               cursor: "bg-[#5538CE]",
+              prev: "bg-[#5538CE] text-white hover:text-gray-500",
+              next: "bg-[#5538CE] text-white hover:text-gray-500",
             } }
           />
         </div>

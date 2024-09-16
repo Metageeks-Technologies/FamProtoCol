@@ -48,7 +48,7 @@ const Sidebar = () => {
       <div className="w-[4rem] hidden sm:flex flex-col border-r-gray-600/45 bg-[#15151557] z-50 fixed md:h-screen glass_effect top-0">
         <Link
           href="#"//change this to the home page
-          className="flex justify-center items-center border-b-gray-600/45 md:border-b border-b w-full h-[5rem]"
+          className="fixed top-0 left-0 flex justify-center items-center border-b-gray-600/45 md:border-b border-b w-full h-[5rem]"
         >
           <img
             src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png"
@@ -138,7 +138,7 @@ const Sidebar = () => {
               className="justify-center items-center m-auto border-l border-r flex h-12 md:h-40 md:border-r w-[12rem] md:w-full border-r-white"
               onClick={() => handleLinkClick("/user/rate-kols")}
             >
-              <div className="md:w-full border-t w-full hover:bg-opacity-15 hover:bg-[#5638ce40] border-white border-b md:border-r-transparent md:border-r hover:border-b-4 hover:border-b-violet-700 p-3">
+              <div className="md:w-full border-t w-full hover:bg-opacity-15 hover:bg-[#5638ce40] border-b p-3 hover:border-b-4 hover:border-b-voilet-700 cursor-pointer">
                 <button>RANK KOLS</button>
               </div>
             </div>
