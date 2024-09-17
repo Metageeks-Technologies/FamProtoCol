@@ -15,6 +15,7 @@ import { TailSpinLoader } from "@/app/components/loader";
 import { SweetAlert } from "@/utils/sweetAlert";
 import { ethers } from "ethers";
 import { connectWallet } from "@/utils/wallet-connect"; // Import your wallet connect utility
+import upgradeableContractAbi from '@/utils/abi/upgradableContract.json';
 
 const columns = [
   { name: "NAME", uid: "name" },
@@ -120,9 +121,7 @@ const onGenerateReferral = async () => {
       const signer = await provider.getSigner();
 
       const contractAddress = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
-      const contractABI = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ABI
-        ? JSON.parse(process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ABI)
-        : null;
+      const contractABI = upgradeableContractAbi
 
       // Initialize contract instance
       const contract = new ethers.Contract(contractAddress, contractABI, signer);

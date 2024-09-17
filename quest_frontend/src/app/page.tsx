@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 import { notify } from "@/utils/notify";
 import { connectWallet } from "@/utils/wallet-connect";
 import Swal from "sweetalert2";
+import upgradeableContractAbi from '@/utils/abi/upgradableContract.json';
+import usdc from '@/utils/abi/usdc.json';
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -190,12 +192,8 @@ const LandingPage = () => {
   
     const ArbicontractAddress = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
     const usdcContractAddress = process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS!;
-    const contractABI = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ABI
-      ? JSON.parse(process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ABI)
-      : null;
-    const usdcABI = process.env.NEXT_PUBLIC_USDC_ABI
-      ? JSON.parse(process.env.NEXT_PUBLIC_USDC_ABI)
-      : null;
+    const contractABI = upgradeableContractAbi;
+    const usdcABI = usdc;
   
     if (!ArbicontractAddress || !contractABI || !address) {
       const walletInfo = await connectWallet();

@@ -4,8 +4,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { BsFillShieldLockFill } from "react-icons/bs";
 import { CgSpinner } from "react-icons/cg";
 import { toast, Toaster } from "react-hot-toast";
-import Cookies from "js-cookie";
-import { isPossiblePhoneNumber } from "react-phone-number-input";
 import "react-phone-input-2/lib/style.css";
 import {
   ConfirmationResult,
@@ -13,10 +11,10 @@ import {
   signInWithPhoneNumber,
   User,
 } from "firebase/auth";
-import { auth } from "../../../firebase";
+import { auth } from "@/utils/firebase/firebase";
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
 import { fetchUserData } from "@/redux/reducer/authSlice";
 import axios from "axios";
 import { notify } from "@/utils/notify";

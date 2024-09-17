@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { randomBytes } from "crypto";
 import User from "../../models/user/user";
+import { generateReferral } from "../../utils/helper/helper";
 
 export const createUserByDomain = async (req: Request, res: Response) => {
   try {
@@ -71,7 +71,9 @@ export const getFriendsByIds = async (
         .json({ message: "Invalid input: friendsId must be an array" });
       return;
     }
-    const friends = await User.find({ _id: { $in: friendsId } });
+    const friends = await User.find({ _id: { $in: friendsId } }).sort({
+      rank: 1,
+    });
 
     res.status(200).json({
       message: "friendsId fetched successfully",
@@ -158,53 +160,48 @@ export const getAllUser = async (req: Request, res: Response) => {
   }
 };
 
-const generateReferral = (length: number): string => {
-  if (length <= 0) {
-    throw new Error("Length must be a positive number.");
+const generateUniqueReferralCode = async (userId: string) => {
+  let referralCode = generateReferral(8);
+  let isUnique = false;
+
+  while (!isUnique) {
+    try {
+      const result = await User.updateOne(
+        { _id: userId },
+        { $set: { inviteCode: referralCode } }
+      );
+
+      if (result.modifiedCount === 1) {
+        isUnique = true;
+      } else {
+        referralCode = generateReferral(8);
+      }
+    } catch (error: any) {
+      if (error.code === 11000) {
+        referralCode = generateReferral(8);
+      } else {
+        throw error;
+      }
+    }
   }
-  const byteLength = Math.ceil(length / 2);
-  const randomBuffer = randomBytes(byteLength);
-  const referralCode = randomBuffer.toString("hex").slice(0, length);
 
   return referralCode;
 };
 
-const referralExits = async (referralCode: string) => {
-  const user = await User.find({ inviteCode: referralCode });
-
-  if (user) {
-    return true;
-  }
-  return false;
-};
-
 export const generateReferralCode = async (req: any, res: Response) => {
-  console.log(generateReferral, req.user);
   try {
     const { ids } = req.user;
-    console.log(ids);
+    // console.log(ids);
 
     const user = await User.findById(ids);
-    console.log(user);
+    // console.log(user);
     if (!user) {
       return res
         .status(400)
         .json({ success: false, message: "User not found" });
     }
+    const referralCode = await generateUniqueReferralCode(ids);
 
-    let referralCode = generateReferral(6);
-    let flag = true;
-    while (flag) {
-      let checkReferral = await referralExits(referralCode);
-      if (checkReferral) {
-        referralCode = generateReferral(6);
-      } else {
-        flag = false;
-      }
-    }
-
-    user.inviteCode = referralCode;
-    await user.save();
     return res.status(200).json({ success: true, referralCode });
   } catch (err) {
     console.log(err);

@@ -32,6 +32,7 @@ import {
 } from "@/types/types";
 import { SweetAlert } from "@/utils/sweetAlert";
 import { fetchQuestById } from "@/redux/reducer/questSlice";
+import contractAbi from "@/utils/abi/contract.json";
 // types.ts
 declare global {
   interface Window {
@@ -80,7 +81,7 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
   }, [tasks, allTasksCompletedCalled]);
 
   const quest=useSelector((state: RootState) => state.quest.quest);
-  console.log("quest:-", quest);
+  // console.log("quest:-", quest);
   const handleCardClick = useCallback((card: CardData) => {
     setSelectedCard(card);
     setSubmissions({});
@@ -239,6 +240,7 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
         }
       );
       console.log("All tasks completed response:", response.data);
+      // SweetAlert("success", "All tasks completed successfully", "You have claimed your rewards");
       // Reset the flag if you want to allow future calls
       // setAllTasksCompletedCalled(false);
     } catch (error) {
@@ -403,9 +405,7 @@ const Popup: React.FC<{
   const APIKEY = process.env.NEXT_PUBLIC_GC_API_KEY; //API key for the access of gitcoin API
   const SCORERID = process.env.NEXT_PUBLIC_GC_SCORER_ID; //Scorer Id using to fectch the user score on behalf of stamp verification activity
   const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
-  const contractABI = process.env.NEXT_PUBLIC_CONTRACT_ABI
-    ? JSON.parse(process.env.NEXT_PUBLIC_CONTRACT_ABI)
-    : null;
+  const contractABI = contractAbi;
 
   // below line using for access gitcoin passport data and connectection
   const SUBMIT_PASSPORT_URI =
