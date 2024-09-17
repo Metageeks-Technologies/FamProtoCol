@@ -104,8 +104,3 @@ export interface CommunityCardType
   members: [],
   quests: [];
 }
-
-export interface CelebrateType {
-  run : boolean;
-  recycle : boolean;
-}
