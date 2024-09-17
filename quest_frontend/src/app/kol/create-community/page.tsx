@@ -10,7 +10,7 @@ import axios from "axios";
 import { Select, SelectItem } from "@nextui-org/react";
 import Multiselect from 'multiselect-react-dropdown';
 import { notify } from "@/utils/notify";
-import { BallTriangleLoader } from "@/app/components/loader";
+import { BallTriangleLoader, TailSpinLoader } from "@/app/components/loader";
 
 interface Category
 {
@@ -173,8 +173,8 @@ const CreateCommunity: React.FC = () =>
   };
 
   if ( !isClient ) return (
-    <div className="flex justify-center items-center">
-      <BallTriangleLoader />
+    <div className="flex justify-center items-center min-h-[50vh]">
+      <TailSpinLoader/>
     </div>
   );
 
@@ -199,7 +199,7 @@ const CreateCommunity: React.FC = () =>
             </div>
 
             <div className="w-full md:w-4/5">
-              <label className="block font-famFont font-semibold mb-1 text-sm text-neutral-200">DESCRIPTION</label>
+              <label className="block font-famFont mb-1 text-sm text-neutral-200">DESCRIPTION</label>
               <textarea
                 placeholder="DESC..."
                 value={ description }
@@ -271,10 +271,11 @@ const CreateCommunity: React.FC = () =>
           { isBlockchainRelated && (
             <div className="flex flex-col md:flex-row md:space-x-4 bg-black text-white">
               <div className="md:w-1/2 mb-4 md:mb-0 bg-black text-white">
-                <label className="block font-semibold mb-1 text-sm">
+                <label className="block font-famFont mb-1 text-sm">
                   Categories (Select multiple)*
                 </label>
                 <Multiselect
+                  
                   options={ communityData?.categories?.map( category => ( {
                     name: category?.name,
                     id: category._id
@@ -293,62 +294,45 @@ const CreateCommunity: React.FC = () =>
                   placeholder="Select Categories"
                   style={ {
                     chips: {
-                      background: '#FA00FF',  
-                      color: '#fff',
-                      fontSize: '12px',
-                      fontWeight: 'bold',
-                      fontFamily: 'arial',
+                      background: '#9333ea',
+                      color: 'white'
                     },
                     searchBox: {
-                      border: '1px solid #1f1f1f',
-                      borderRadius: '8px',
+                      border:'0px solid #1f2937',
                       background: 'black',
                       color: 'white',
-
+                      padding: '5px 14px',
+                      fontSize: '14px',
                     },
                     option: {
                       color: 'white',
                       background: 'black',
-                      height: '25px',
-                      fontSize: '12px',
-                      fontFamily: 'arial',
-                      // borderBottom:"1px solid #fff",
-                      padding: '10px 10px',
                     },
                     optionContainer: {
-                      background: 'black'
+                      background: 'black',
+                      height: '200px',
+                      overflow: 'hidden'
                     },
                     groupHeading: {
                       background: 'black',
                       color: 'white'
                     }
                   } }
-                  className="w-full rounded-lg focus:outline-none focus:ring-2 transition-colors duration-300 text-sm text-white"
+                  className="bg-black border font-famFont border-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full text-sm"
                   showCheckbox={ false }
                   avoidHighlightFirstOption={ true }
                   hideSelectedList={ false }
                 />
               </div>
               <div className="md:w-1/2">
-                <label className="block font-semibold mb-1 text-sm">Ecosystem</label>
-                <Select
-                  placeholder="Select Ecosystem"
-                  selectionMode="single"
-                  classNames={{
-                    
-                    listbox: 'bg-black text-white',
-                    listboxWrapper: 'bg-black',
-                    popoverContent: 'bg-black border border-gray-800',
-                  }}
-                  onChange={ ( e ) => setEcosystems( e.target.value ) }
-                  className="w-full shadow-none border border-gray-800 rounded-lg text-sm text-white"
-                >
-                  { communityData?.ecosystems?.map( ( ecosystem: any ) => (
-                    <SelectItem key={ ecosystem._id } value={ ecosystem } className="bg-black px-4 py-2 text-white">
-                      { ecosystem?.name }
-                    </SelectItem>
+                <label className="block  mb-1 font-famFont text-sm">Ecosystem</label>
+                <select id="ecosystem" value={ecosystems} onChange={ ( e ) => setEcosystems( e.target.value ) } className="px-3 py-2 bg-black border font-famFont text-gray-400 border-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full text-sm">
+                   { communityData?.ecosystems?.map( ( ecosystem: any) => (
+                    <option key={ ecosystem._id } value={ecosystem.name} className="bg-zinc-950 hover:bg-famViolate cursor-pointer px-4 py-2 text-white">
+                      { ecosystem.name}
+                    </option>
                   ) ) }
-                </Select>
+                </select>
               </div>
             </div>
           ) }

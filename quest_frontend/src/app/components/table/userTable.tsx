@@ -156,8 +156,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
             onChange={ ( page ) => setPage( page ) }
             classNames={ {
               cursor: "bg-[#5538CE]",
-              prev: "bg-[#5538CE] text-white hover:text-gray-500",
-              next: "bg-[#5538CE] text-white hover:text-gray-500",
+              
             } }
           />
         </div>

@@ -4,7 +4,15 @@ import QuestModel, { Quest } from "../../models/quest/quest.model";
 import UserDb, { IUser } from "../../models/user/user";
 import { Badge, ReferralDb } from "../../models/other models/models";
 import CommunityModel from "../../models/community/community.model";
-import mongoose from "mongoose";
+import mongoose,{Types} from "mongoose";
+
+interface IBadge {
+    _id: Types.ObjectId;
+    level: number;
+    questCriteria: number;
+    taskCriteria: number;
+    name: string;
+}
 
 const generateReferralCode = async ( randomLength: number ) =>
 {
@@ -291,14 +299,25 @@ export const taskController = {
             user.quest.push( questId );
 
             // Fetch and sort badges
-            const badges = await Badge.find();
+            const badges: IBadge[] = await Badge.find();
             const sortedBadges = badges.sort( ( a, b ) => b.level - a.level );
 
+            console.log("sortedBadges",sortedBadges)
             // Check for new badge
             for ( const badge of sortedBadges )
             {
-                // console.log( badge.level, badge.questCriteria, badge.taskCriteria )
+                console.log("badge",user.badges)
+                const isBadgeAlreadyAdded= user.badges?.some( ( userBadge:any ) => 
+                {
+                    console.log("userBadge",userBadge._id.toString(),badge._id.toString());
+                    userBadge._id.toString() === badge._id.toString();
+                }
+                );
 
+                console.log("isBadgeAlreadyAdded",badge.name,isBadgeAlreadyAdded)
+
+                if(isBadgeAlreadyAdded) break;
+                
                 if ( user.quest.length >= badge.questCriteria && user.completedTasks.length >= badge.taskCriteria )
                 {
                     user.badges?.push( badge );

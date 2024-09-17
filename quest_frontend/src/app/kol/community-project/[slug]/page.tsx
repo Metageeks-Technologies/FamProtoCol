@@ -113,11 +113,8 @@ export default function CommunityProject ( {
   if ( loading )
   {
     return (
-      <div className='flex items-center justify-center min-h-screen bg-zinc-800'>
-        <div className='text-center'>
+      <div className='flex items-center justify-center min-h-screen bg-zinc-950'>
           <TailSpinLoader/>
-          <p className='mt-4 text-xl font-semibold text-gray-700'>Loading...</p>
-        </div>
       </div>
     );
   }

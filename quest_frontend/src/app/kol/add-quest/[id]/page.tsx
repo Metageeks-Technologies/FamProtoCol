@@ -37,11 +37,8 @@ function CreateQuest ()
   const [ logoPreview, setLogoPreview ] = useState<string | null>( null );
   const [ logo, setLogo ] = useState<File | null>( null );
   const [ categories, setCategories ] = useState<[]>( [] );
-  const { loading, error } = useSelector( ( state: RootState ) => state.quest );
   const creator = useSelector<RootState>( ( state ) => state?.login.user?._id );
   const communityData = useSelector<RootState, CommunityData>( ( state: any ) => state.adminCommunity );
-
-
   const [ title, setTitle ] = useState<string>( '' );
   const [ description, setDescription ] = useState<string>( '' );
   const [ rewards, setRewards ] = useState<Reward[]>( [

@@ -145,8 +145,6 @@ const MyCommunities: React.FC = () =>
             initialPage={1} 
              classNames={{
               cursor:'bg-[#5538CE]',
-              prev:'bg-[#5538CE] text-white hover:text-zinc-950',
-              next:'bg-[#5538CE] text-white hover:text-zinc-950',
              }}
              />
             </div>
@@ -217,8 +215,6 @@ const MyCommunities: React.FC = () =>
             initialPage={1} 
              classNames={{
               cursor:'bg-[#5538CE]',
-              prev:'bg-[#5538CE] text-white hover:text-zinc-950',
-              next:'bg-[#5538CE] text-white hover:text-zinc-950',
              }}
              />
             </div>
