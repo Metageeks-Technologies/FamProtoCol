@@ -855,11 +855,10 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                     <input
                       type="url"
                       className="w-full p-3 bg-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:outline-none"
-                      placeholder="https://"
+                      placeholder="https://discord.gg/MBgk8JP3"
                       onChange={(e)=>{setInviteUrl(e.target.value)}}
                       value={inviteUrl}
                     />
-
                     <div className="flex justify-between gap-4 items-center">
                       <Button onClick={checkDiscordInvite}>
                         Check Discord Invite
