@@ -81,10 +81,10 @@ const UserCard = () => {
   const renderUserCard = ( user: any ) => (
     <div
       key={ user._id }
-      className="main outer-home border border-gray-700 bg-black p-4 rounded shadow-lg group cursor-pointer"
+      className="outer-home border border-zinc-800 bg-black p-4 shadow-lg group cursor-pointer"
       onClick={()=> router.push(`/user/profile/${user._id}`)}
     >
-      <div className="rounded-md flex">
+      <div className="flex">
         <div className="flex-col justify-center">
           <div className="image-container md:h-20 md:w-20 w-14 h-14 items-center flex">
             {user?.image && <img src={ user?.image } alt="" className="styled-image" />}
@@ -96,14 +96,15 @@ const UserCard = () => {
         <div className="flex-1 md:ml-4 ml-2">
           <div className="flex items-center md:justify-between justify-around">
             <div>
-              <div className="font-bold font-famFont " style={ { letterSpacing: "5px" } }>
+              <div className="font-semibold font-famFont " style={ { letterSpacing: "2px" } }>
                 { user?.displayName }
                 {user?.domain?.domainAddress}
               </div>
 
             </div>
-            <div className="text-purple-500 font-famFont home-rank font-bold text-lg">
-              #{ user.rank }
+            <div className="text-famPurple font-famFont text-lg flex items-start">
+            <span><i className="bi bi-hash"></i></span>
+            <span>{ user.rank }</span>
             </div>
           </div>
           <hr className="border-gray-700 my-2 mt-5" />
@@ -134,7 +135,7 @@ const UserCard = () => {
 
   return (
     <div className="container mx-auto ">
-      <div className="flex items-center gap-1 mt-10 mb-8">
+      <div className="flex justify-center sm:justify-start items-center gap-1 mt-10 mb-8">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -151,15 +152,19 @@ const UserCard = () => {
           <path d="M6 5L11 10" stroke="#FA00FF" strokeLinecap="round" />
         </svg>
         <div>
-          <p>User Profile</p>
+          <p className="font-qanelas" >User profile</p>
         </div>
       </div>
 
+      <div className="px-4 sm:px-2">
       <Slider { ...settings }>
         { data?.map( ( user: any ,index: number) => (
-          <div key={ index }>{ renderUserCard( user ) }</div>
+          <div key={ index } className="p-2" >{ renderUserCard( user ) }</div>
         ) ) }
       </Slider>
+      </div>
+
+      
 
     </div>
   );

@@ -13,24 +13,21 @@ import {
 } from "firebase/auth";
 import { auth } from "@/utils/firebase/firebase";
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
+import { useDispatch,useSelector } from "react-redux";
 import { fetchUserData } from "@/redux/reducer/authSlice";
 import axios from "axios";
 import { notify } from "@/utils/notify";
+import { toggleNav,selectNavState } from "@/redux/reducer/navSlice";
+import {RootState,AppDispatch} from "@/redux/store";
 
-interface LoginPageProps {
-  setNav: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({ setNav }) => {
+const LoginPage= () => {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [otp, setOtp] = useState("");
   const [ph, setPh] = useState("");
-  const [confirmationResult, setConfirmationResult] =
-    useState<ConfirmationResult | null>(null);
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
   const [user, setuser] = useState<User | null>(null);
@@ -39,7 +36,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ setNav }) => {
   const [profilePic, setProfilePic] = useState("");
   const [isExistingUser, setIsExistingUser] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
-  const router = useRouter();
+  const navState = useSelector((state: RootState) => selectNavState(state));
+  
 
   const validateName = (value: string) => {
     if (value.trim().length < 2) {
@@ -230,7 +228,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setNav }) => {
         if (response.ok) {
           setLoading(false);
           dispatch(fetchUserData());
-          setNav(true);
+          dispatch(toggleNav(true));
           router.push("/home");
         } else {
           toast.error("Invalid otp");

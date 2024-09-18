@@ -8,6 +8,7 @@ import adminCommunityReducer from './reducer/adminCommunitySlice';
 import userReducer from './reducer/authSlice'
 import taskReducer from './reducer/taskSlice';
 import taskOptionReducer from './reducer/taskOptionSlice';
+import navSlice from './reducer/navSlice';
 
 const rootReducer = combineReducers({
   community: communityReducer,
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
   adminCommunity: adminCommunityReducer,
   login: userReducer,
   task: taskReducer,
-  taskOption : taskOptionReducer
+  taskOption : taskOptionReducer,
+  nav: navSlice,
 });
 
 const persistConfig = { 
