@@ -40,6 +40,10 @@ const LandingPage = () => {
   const [thankYou, setThankYou] = useState<boolean>(false);
   const router = useRouter();
 
+  useEffect(() => {
+    router.push("/home");
+  },[router]);
+
 
   const fetchDomains= async () => {
     try {
