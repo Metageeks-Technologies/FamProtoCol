@@ -62,8 +62,8 @@ const GrantsCard = () => {
   };
 
   return (
-    <div className="mb-8 lg:mt-10 md:mt-5 mt-5">
-      <div className="flex items-center gap-1 mb-5 ">
+    <div className="mb-8 lg:mt-10 md:mt-5 mt-8">
+      <div className="flex justify-center sm:justify-start items-center gap-1 mb-8 ">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -79,8 +79,8 @@ const GrantsCard = () => {
           />
           <path d="M6 5L11 10" stroke="#FA00FF" strokeLinecap="round" />
         </svg>
-        <div>
-          <h1>Grants</h1>
+        <div className="text-md">
+         Grants
         </div>
       </div>
 

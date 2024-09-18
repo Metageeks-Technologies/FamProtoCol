@@ -167,36 +167,21 @@ const MyCommunities = () =>
         <div className="mb-4">
           <form onSubmit={ handleSubmit }>
             <div className="flex flex-col lg:flex-row lg:justify-between justify-center gap-2 lg:gap-0 p-4">
-              <div className="relative md:block">
-                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <svg
-                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                    />
-                  </svg>
-                  <span className="sr-only">Search icon</span>
+              <div className="flex justify-start px-2 py-1 gap-2 items-center bg-zinc-950 text-white border border-zinc-800 focus:ring-cyan-500 focus:border-cyan-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500">
+                <div className="flex justify-center items-center ">
+                 <i className="bi bi-search"></i>
                 </div>
                 <input
                   type="text"
                   id="search-navbar"
-                  className="block w-full p-2 ps-10  text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-cyan-500 focus:border-cyan-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500"
+                  className="w-full p-2 ps-2 sm:ps-10 text-sm bg-zinc-950 text-white border-l border-l-white"
                   placeholder="Search..."
                   value={ search }
                   onChange={ ( e ) => setSearch( e.target.value ) }
                 />
               </div>
-              <div className="flex flex-col items-center justify-center gap-2 lg:flex-row">
-                <div className="grid grid-cols-2 ">
+              <div className="flex flex-col items-center justify-center gap-2 mb-2 lg:flex-row">
+                <div className="grid grid-cols-2 mb-2">
                   <div className="text-white lg:bg-slate-800 sm:bg-slate-800  rounded-xl mx-4 ">
                     <Dropdown className="bg-slate-800">
                       <DropdownTrigger>
@@ -256,13 +241,13 @@ const MyCommunities = () =>
                 <div className="flex justify-center items-center gap-4">
                   <button
                     type="submit"
-                    className="px-6 py-2 border-2 border-blue-500 text-blue-500 font-semibold rounded-xl transition duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    className="px-6 py-2 border-1 border-blue-500 text-blue-500 font-semibold rounded-xl transition duration-300 ease-in-out hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                   >
                     Apply
                   </button>
                   <button
                     onClick={ rest }
-                    className="px-6 py-2 border-2 border-red-500 text-red-500 font-semibold rounded-xl transition duration-300 ease-in-out hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                    className="px-6 py-2 border-1 border-red-500 text-red-500 font-semibold rounded-xl transition duration-300 ease-in-out hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                   >
                     Reset
                   </button>
@@ -273,18 +258,17 @@ const MyCommunities = () =>
         </div>
         
           <div className="flex justify-end items-center my-2">
-              <div className="flex items-center justify-end border-white border-1 rounded-xl gap-2 bg-slate-900 p-2 text-white">
-              <label htmlFor="itemPerPage" className="text-sm font-medium ">Items Per Page</label>
+              <div className="flex items-center justify-center border-white border-1 rounded-xl gap-2 bg-slate-900 p-2 text-white">
               <select className="text-white bg-slate-900" name="itemPerPage" id="itemPerPage" value={itemsPerPage.toString()} onChange={(e) => setItemsPerPage(parseInt(e.target.value))}>
-              <option value="12">12</option>
-              <option value="24">24</option>
-              <option value="36">36</option>
+              <option className="bg-zinc-900 text-white text-xs w-[30px]" value="12">12 Per Page</option>
+              <option className="bg-zinc-900 text-white text-xs w-[30px]" value="24">24 Per Page</option>
+              <option className="bg-zinc-900 text-white text-xs w-[30px]" value="36">36 Per Page</option>
               </select>
             </div>
             </div>
         { ( communities && communities.length ) ?
           <>
-            <div className="grid gap-4 sm:gap-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 pt-8 ">
+            <div className="grid gap-4 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 pt-8 ">
               { communities?.map( ( card: any, index: number ) => (
                 <div
                   key={ index }
@@ -305,21 +289,21 @@ const MyCommunities = () =>
                 >
                   <div className="flex  flex-row md:flex-row lg:flex-row text-xl items-center justify-around ">
                     <div className="p-1">
-                      <div className="image-container h-[4rem] w-[4rem] md:h-[5rem] md:w-[5rem] items-center flex ">
+                      <div className="image-container h-[5rem] w-[5rem] md:h-[5rem] md:w-[5rem] items-center flex ">
                         <img
                           src={ card.logo }
                           alt="style image"
-                          className="styled-image"
+                          className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className="bg_Div_Down h-[1rem] md:h-[2rem] bg-gray-800">
+                      <div className="bg_Div_Down h-[2rem] md:h-[2rem] bg-gray-800">
                         { " " }
                       </div>
                     </div>
 
                     <div className="md:w-2/3 w-2/3 flex flex-col justify-start gap-2 ">
                       <div className="flex w-full flex-col items-start ">
-                        <div className="flex w-full md:h-[5rem] bg_eco_div border-b-4 border-[#8c71ff] gap-2 md:gap-2  p-2 bg-[#28223d] flex-col lg:flex-row items-center md:items-end lg:items-end justify-between ">
+                        <div className="flex w-full h-[5rem] md:h-[5rem] bg_eco_div border-b-4 border-[#8c71ff] gap-2 p-2 bg-[#28223d] items-end lg:items-end justify-between ">
                           <div className="md:w-4/5  w-4/5 truncate text-[12px] md:text-[10px] lg:text-[10px] md:ml-3 md:text-start text-center card-title">
                             { card.title }
                           </div>
@@ -346,28 +330,25 @@ const MyCommunities = () =>
                       </div>
                       <div className="flex w-full flex-row justify-end gap-2">
                         <div className="flex bg-[#8C71FF] py-1 px-2 items-center">
-                          <FaUser className="md:w-4 w-2 h-2 md:h-4" />
+                          <FaUser className="md:w-4 w-4 h-4 md:h-4" />
                           <div className="pl-1 text-sm">{ card.members.length }</div>
                         </div>
                         <div className="flex bg-[#8C71FF] py-1 px-2 items-center">
-                          <FaBolt className="md:w-4 w-2 h-2 md:h-4" />
+                          <FaBolt className="md:w-4 w-4 h-4 md:h-4" />
                           <div className="pl-1 text-sm">{ card.quests.length }</div>
                         </div>
                         <div className="flex bg-[#8C71FF] py-1 px-2 items-center">
-                          <FaTwitter className="md:w-4 w-2 h-2 md:h-4" />
+                          <FaTwitter className="md:w-4 w-4 h-4 md:h-4" />
                           <div className="pl-1 text-sm"></div>
                         </div>
-                        {/* <div className="eco_box w-5 h-5 bg-[#8c71ff]" />
-              <div className="eco_box w-5 h-5 bg-[#8c71ff]" />
-              <div className="eco_box w-5 h-5 bg-[#8c71ff]" /> */}
                       </div>
                     </div>
                   </div>
                   <div className="flex flex-row text-xs m-1 gap-2 justify-start  ">
-                    <span className=" descText">Bio: </span>
-                    <span className="descdata text-wrap ">
-                      { card.description.slice( 0, 20 ) }
-                    </span>
+                    <span className="descText">Bio: </span>
+                    <span className="break-words text-white opacity-30 text-[0.8rem] overflow-hidden line-clamp-2 font-famFont uppercase ">
+          {card.description.slice(0, 20)}
+        </span>
                   </div>
 
                   { card.members.includes( memberId ) ? (
@@ -420,7 +401,10 @@ const MyCommunities = () =>
 
             <div className="flex justify-center items-center my-16">
               <Pagination
-                onChange={ handlePageChange } page={ page }initialPage={ 1 } total={ totalPages } isCompact showControls
+                onChange={ handlePageChange } page={ page } initialPage={ 1 } total={ totalPages } showControls
+                 classNames={{
+              cursor:'bg-[#5538CE]',
+             }}
                
               />
               </div>

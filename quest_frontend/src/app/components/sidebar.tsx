@@ -3,27 +3,29 @@ import React, { useEffect, useRef, useState } from "react";
 import { RiMenu2Fill } from "react-icons/ri";
 import { GiCrossMark } from "react-icons/gi";
 import Link from "next/link";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { useSelector,useDispatch } from "react-redux";
 import LoginPage from "./mob-login";
 import { useRouter, usePathname } from "next/navigation";
+import { toggleNav,selectNavState } from "@/redux/reducer/navSlice";
+import {RootState,AppDispatch} from "@/redux/store";
 
 const Sidebar = () => {
-  const [nav, setNav] = useState<boolean>(true);
   const router = useRouter();
+   const dispatch = useDispatch<AppDispatch>(); 
   const pathname = usePathname();
   const [isLandingPage, setIsLandingPage] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.login?.user);
+   const navOpen = useSelector((state: RootState) => selectNavState(state));
 
   const handleNav = () => {
     if(isLandingPage){
       return;
     }
-    setNav(!nav);
+    dispatch(toggleNav(!navOpen));
   };
 
   const handleLinkClick = (path: string) => {
-    setNav(true);
+    dispatch(toggleNav(false));
     router.push(path);
   };
 
@@ -31,7 +33,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (pathname === "/login" || prevPathRef.current === "/login") {
-      setNav(false);
+      dispatch(toggleNav(false));
       if (pathname === "/login") {
         router.push("/home");
       }
@@ -60,7 +62,7 @@ const Sidebar = () => {
             className={` ${isLandingPage?("hidden"):("flex items-center justify-center")}  border-none text-white text-2xl cursor-pointer`}//change this to flex to show the menu icon
             onClick={handleNav} 
           >
-            {nav ? (
+            {!navOpen ? (
               <RiMenu2Fill
                 size={40}
                 className="text-[#e2dcdcb3] cursor-pointer"
@@ -76,14 +78,14 @@ const Sidebar = () => {
       </div>
       <div
         className={`top-0 flex flex-col w-screen md:w-full bg-[#5638ce40] z-40 h-screen glass_effect fixed ${
-          nav ? "transform -translate-x-full" : ""
+          !navOpen ? "transform -translate-x-full" : ""
         } transition-transform duration-500 ease-in-out`}
       >
-        <button
+        {/* <button
           className="block md:hidden border-none text-white text-2xl cursor-pointer"
           onClick={handleNav}
         >
-          {nav ? (
+          {!navOpen ? (
             <div className="px-2 m-auto">
               <RiMenu2Fill
                 size={40}
@@ -98,10 +100,11 @@ const Sidebar = () => {
               />
             </div>
           )}
-        </button>
+        </button> */}
 
         {user ? (
-          <div className="flex-col border-none justify-between md:flex-row items-center flex m-auto md:ml-5 w-screen text-center text-white">
+          <>
+          <div className="hidden sm:flex flex-col border-none justify-between sm:flex-row items-center m-auto md:ml-5 w-screen text-center text-white">
             <div
               className="justify-center items-center m-auto border-l border-r flex h-12 md:h-40 md:border-r w-[12rem] md:w-full border-r-white"
               onClick={() => handleLinkClick("/user/profile")}
@@ -143,8 +146,60 @@ const Sidebar = () => {
               </div>
             </div>
           </div>
+          <div className="sm:hidden flex flex-col gap-8 justify-center items-center w-[90%] mx-auto h-[90vh] " >
+           <div className="flex flex-col gap-6 mb-4 border-none justify-between w-full items-center text-center text-white">
+            <div
+              className="flex w-full h-12 md:h-40 justify-center items-center m-auto border-x-1 p-4 border-x-[#ffffff47] "
+              onClick={() => handleLinkClick("/user/profile")}
+            >
+              <div className=" hover:bg-opacity-15 hover:bg-[#5638ce48] w-full px-8 py-6 border-b-1 border-b-[#ffffff47] cursor-pointer">
+              PROFILE
+              </div>
+            </div>
+            <div
+              className="flex w-full h-12 md:h-40 justify-center items-center m-auto border-x-1 p-4 border-x-[#ffffff47] "
+              onClick={() => handleLinkClick("/user/my-community")}
+            >
+              <div className="hover:bg-opacity-15 hover:bg-[#5638ce48] w-full px-8 py-6 border-b-1 border-b-[#ffffff47] cursor-pointer">
+               MY COMMUNITY 
+              </div>
+            </div>
+            <div
+              className="flex w-full h-12 md:h-40 justify-center items-center m-auto border-x-1 p-4 border-x-[#ffffff47] "
+              onClick={() => handleLinkClick("/leaderboard")}
+            >
+              <div className="hover:bg-opacity-15 hover:bg-[#5638ce48] w-full px-8 py-6 border-b-1 border-b-[#ffffff47] cursor-pointer">
+                LEADERBOARD
+              </div>
+            </div>
+            <div
+              className="flex w-full h-12 md:h-40 justify-center items-center m-auto border-x-1 p-4 border-x-[#ffffff47] "
+              onClick={() => handleLinkClick("/")}
+            >
+              <div className="hover:bg-opacity-15 hover:bg-[#5638ce48] w-full px-8 py-6 border-b-1 border-b-[#ffffff47] cursor-pointer">
+                REWARDS
+              </div>
+            </div>
+            <div
+              className="flex w-full h-12 md:h-40 justify-center items-center m-auto border-x-1 p-4 border-x-[#ffffff47] "
+              onClick={() => handleLinkClick("/user/rate-kols")}
+            >
+              <div className="hover:bg-opacity-15 hover:bg-[#5638ce48] w-full px-8 py-6 border-b-1 border-b-[#ffffff47] cursor-pointer">
+                RANK KOLS
+              </div>
+            </div>
+            </div>
+            <div className="flex justify-center items-center gap-4" >
+              <div className="border-1 border-[#ffffff59] bg-[#ffffff17] p-2 w-12 h-12 ">
+              <img src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png" className="w-full h-full object-cover" alt="logo" />
+              </div>
+              <div className="border-1 border-[#ffffff59] bg-[#ffffff17]  flex justify-center items-center w-12 h-12" onClick={handleNav} ><i className="bi bi-x-lg"></i></div>
+            </div>
+          </div>
+          </>
+          
         ) : (
-          <LoginPage setNav={setNav} />
+          <LoginPage />
         )}
       </div>
     </>
