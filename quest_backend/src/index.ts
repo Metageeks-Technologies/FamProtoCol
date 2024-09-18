@@ -24,6 +24,10 @@ import twitterRouter from "./routes/twitter/twitter";
 dotenv.config();
 const port = process.env.PORT || 8080;
 const databaseUrl: string = process.env.DB_URL || "";
+const allowedOrigins = [
+  process.env.PUBLIC_CLIENT_URL || "", // Use an empty string or some default value if it's undefined
+  process.env.PUBLIC_CLIENT_URL2 || "", // Use an empty string or some default value if it's undefined
+];
 
 const app: Express = express();
 
@@ -35,7 +39,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.PUBLIC_CLIENT_URL,
+    origin: allowedOrigins.filter(Boolean),
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
     // allowedHeaders: ['Content-Type', 'Authorization'] // Ensure these headers are allowed
