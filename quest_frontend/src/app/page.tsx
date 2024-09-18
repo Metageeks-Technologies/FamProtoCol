@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import {
   Button,
@@ -11,7 +10,6 @@ import {
 import { ethers } from "ethers";
 import { Spinner } from "@nextui-org/react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { notify } from "@/utils/notify";
 import { connectWallet } from "@/utils/wallet-connect";
 import Swal from "sweetalert2";
@@ -26,7 +24,6 @@ const LandingPage = () => {
   const [referralCode, setReferralCode] = useState('');
   const [error, setError] = useState("");
   const [address, setAddress] = useState<string>("");
-  const [balance, setBalance] = useState<string>("");
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [loader, setLoader] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -38,12 +35,6 @@ const LandingPage = () => {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [logo, setLogo] = useState<any>(null);
   const [thankYou, setThankYou] = useState<boolean>(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    router.push("/home");
-  },[router]);
-
 
   const fetchDomains= async () => {
     try {
