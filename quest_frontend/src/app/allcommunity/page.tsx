@@ -154,19 +154,16 @@ const MyCommunities = () =>
   return (
     <div className="bg-black text-white min-h-screen">
       <div className="mx-4 lg:mx-20 sm:ml-20">
-        <div className="text-2xl pt-10 font-bold text-center lg:text-start ">
-          <h1>All Communities</h1>
+        <div className="text-2xl mb-4 pt-10 font-bold text-center lg:text-start font-qanelas">
+          All Communities
         </div>
-        <div className="max-w-[600px] pt-4 text-gray-400">
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolore
-            neque magni dolorum dignissimos enim delectus velit ut aspernatur.
-          </p>
+        <div className="w-full mb-4 flex justify-start items-center text-white opacity-70">
+            Explore the communities and join the one that interests you.
         </div>
 
         <div className="mb-4">
           <form onSubmit={ handleSubmit }>
-            <div className="flex flex-col lg:flex-row lg:justify-between justify-center gap-2 lg:gap-0 p-4">
+            <div className="flex flex-col lg:flex-row lg:justify-between justify-center gap-2 lg:gap-0">
               <div className="flex justify-start px-2 py-1 gap-2 items-center bg-zinc-950 text-white border border-zinc-800 focus:ring-cyan-500 focus:border-cyan-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500">
                 <div className="flex justify-center items-center ">
                  <i className="bi bi-search"></i>
@@ -174,8 +171,8 @@ const MyCommunities = () =>
                 <input
                   type="text"
                   id="search-navbar"
-                  className="w-full p-2 ps-2 sm:ps-10 text-sm bg-zinc-950 text-white border-l border-l-white"
-                  placeholder="Search..."
+                  className="w-full p-2 text-sm bg-zinc-950 text-white"
+                  placeholder="Search Communities"
                   value={ search }
                   onChange={ ( e ) => setSearch( e.target.value ) }
                 />
@@ -183,7 +180,9 @@ const MyCommunities = () =>
               <div className="flex flex-col items-center justify-center gap-2 mb-2 lg:flex-row">
                 <div className="grid grid-cols-2 mb-2">
                   <div className="text-white lg:bg-slate-800 sm:bg-slate-800  rounded-xl mx-4 ">
-                    <Dropdown className="bg-slate-800">
+                    <Dropdown 
+                    className="bg-slate-800"
+                    >
                       <DropdownTrigger>
                         <Button
                           variant="bordered"
@@ -209,7 +208,7 @@ const MyCommunities = () =>
                       </DropdownMenu>
                     </Dropdown>
                   </div>
-                  <div className="text-black lg:bg-slate-800 sm:bg-slate-800  rounded-xl mx-4 ">
+                  <div className="text-black lg:bg-slate-800 sm:bg-slate-800 rounded-xl mx-4 ">
                     <Dropdown className="bg-slate-800">
                       <DropdownTrigger>
                         <Button

@@ -87,8 +87,8 @@ const UserCard = () => {
       <div className="flex">
         <div className="flex-col justify-center">
           <div className="image-container md:h-20 md:w-20 w-14 h-14 items-center flex">
-            {user?.image && <img src={ user?.image } alt="" className="styled-image" />}
-            {user?.domain?.image && <img src={ user?.domain?.image } alt="" className="styled-image" />}
+            {user?.image && <img src={ user?.image } alt="" className="w-full h-full object-cover" />}
+            {user?.domain?.image && <img src={ user?.domain?.image } alt="" className="w-full h-full object-cover" />}
           </div>
           <div className="bg_Div_Down-h h-[2rem] mt-2 bg-[#281a28]" />
         </div>

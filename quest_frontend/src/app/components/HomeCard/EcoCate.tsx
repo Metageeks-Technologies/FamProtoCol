@@ -109,9 +109,9 @@ const EcoCate: React.FC = () =>
         </div>
 
         {/* pending */ }
-        <div>
-          <div className="relative sm:mx-10 lg:mx-0 mx-10 ">
-            <div className="flex items-center gap-1 pt-1  absolute bottom-6 left-0 lg:mt-0 sm:pt-10 ">
+        <div className="flex flex-col" >
+          <div className="relative flex justify-start items-center">
+            <div className="flex items-center gap-1 pt-1 absolute bottom-6 left-0 lg:mt-0 sm:pt-10 ">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -179,8 +179,8 @@ const EcoCate: React.FC = () =>
               </div>
             </div>
           </div>
-
-          <div className="grid items-center lg:grid-cols-5 sm:grid-cols-5 sm:mx-10 mx-auto lg:gap-8 grid-cols-3 mt-16 shadow-2xl rounded-md lg:mx-auto basis-[50%]">
+          <div className="mx-5 sm:mx-0 ">
+          <div className="grid mx-auto lg:grid-cols-5 sm:grid-cols-5 sm:mx-10 lg:gap-8 grid-cols-3 mt-16 shadow-2xl rounded-md lg:mx-auto basis-[50%]">
             { categories.map( ( card: data, index: number ) => (
               <div
                 key={ index }
@@ -198,17 +198,18 @@ const EcoCate: React.FC = () =>
                     <img
                       src={ card.imageUrl }
                       alt={ card.name }
-                      className="w-full h-full object-cover"   
+                      className="w-full h-full object-contain"   
                     />
                   </div>
                   <div
-                    className=" mt-1 text-center font-famFont text-xs sm:text-sm "
+                    className=" mt-1 text-center font-famFont text-xs sm:text-sm tracking-widest "
                   >
                     { card.name }
                   </div>
                 </div>
               </div>
             ) ) }
+          </div>
           </div>
         </div>
       </div>

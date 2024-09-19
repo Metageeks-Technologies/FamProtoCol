@@ -1,14 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
 import UserTable from "@/app/components/table/userTable";
-import { columns,User } from "./data";
 import axios from "axios";
 import Link from "next/link";
+import { LeaderBoardColumn,LeaderBoardUser } from "@/types/types";
+ 
+// Sample columns data
+const columns: LeaderBoardColumn[] = [
+  { name: 'Name', uid: 'name' },
+  { name: 'Fampoints', uid: 'fampoints' },
+  { name: 'XPS', uid: 'xps' },
+];
 
 const GlobalLeaderboard = () =>
 {
-  const [ data, setData ] = useState<User[]>( [] );
-  const [ topUsers, setTopUsers ] = useState<User[]>( [] );
+  const [ data, setData ] = useState<LeaderBoardUser[]>( [] );
+  const [ topUsers, setTopUsers ] = useState<LeaderBoardUser[]>( [] );
 
   const getLeaderBoard = async () =>
   {
@@ -59,7 +66,7 @@ const GlobalLeaderboard = () =>
       <section className="w-full ">
         <div className="lg:my-4 my-8 flex items-center gap-8 justify-center">
           <div className=" grid sm:grid-cols-2 lg:grid-cols-3 lg:gap-0 sm:gap-8 gap-2 m-auto w-full justify-center ">
-            <Link href={`/user/profile/${topUsers[1]?._id}`} className="relative p-[1px] lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  bg-[#282828] outer_leader_div">
+            <Link href={`/user/profile/${topUsers[1]?._id}`} className="order-2 sm:order-1 relative p-[1px] lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem] bg-[#282828] outer_leader_div">
               <div className="absolute z-10 top-0 right-1 font-famFont text-famPurple text-2xl"
               >#2</div>
 
@@ -87,7 +94,7 @@ const GlobalLeaderboard = () =>
                 </div>
               </div>
             </Link>
-            <Link href={`/user/profile/${topUsers[0]?._id}`} className="relative lg:my-16 p-[1px] lg:w-[26rem] lg:h-[13rem]  sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  bg-[#282828] outer_leader_div">
+            <Link href={`/user/profile/${topUsers[0]?._id}`} className="order-1 sm:order-2 relative p-[1px] lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  bg-[#282828] outer_leader_div lg:my-16">
               <div className="absolute z-10 top-0 right-1 font-famFont text-famPurple text-2xl"
               >#1</div>
               <div className=" lg:w-[26rem] lg:h-[13rem]  sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  rank-box  ">
@@ -117,7 +124,7 @@ const GlobalLeaderboard = () =>
                 </div>
               </div>
             </Link>
-            <Link href={`/user/profile/${topUsers[2]?._id}`}  className="relative p-[1px] lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  bg-[#282828] outer_leader_div">
+            <Link href={`/user/profile/${topUsers[2]?._id}`} className="order-3 sm:order-3 relative p-[1px] lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  bg-[#282828] outer_leader_div">
                <div className="absolute z-10 top-0 right-1 font-famFont text-famPurple text-2xl"
               >#3</div>
               <div className="lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  rank-box  ">
@@ -176,7 +183,7 @@ const GlobalLeaderboard = () =>
           <div className="listOfFriends">Leaderboard</div>
         </div>
         <div className="w-[90%] lg:w-[80%] flex userTable justify-center items-center bg-[#040404] ">
-          <UserTable<User> data={ data } columns={ columns } rowsPerPage={ 5 } />
+          <UserTable<LeaderBoardUser> data={ data } columns={ columns } rowsPerPage={ 5 } />
         </div>
       </section>
     </div>

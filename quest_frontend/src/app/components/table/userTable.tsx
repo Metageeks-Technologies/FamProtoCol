@@ -55,11 +55,15 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
         );
       case "name":
         return (
-          <div className="flex justify-start items-center px-2 font-famFont uppercase">
+          <div className="flex justify-start items-center gap-2 sm:px-2 font-famFont uppercase">
           {
-            user?.rank && (<span className="font-famFont text-famPurple text-end text-md px-2">#{user?.rank}</span>)
+            user?.rank && (<span className="font-famFont text-famViolate text-end text-md sm:px-2">#{user?.rank}</span>)
           }
             <User
+              
+              classNames={{
+                base:"px-0"
+              }}
               avatarProps={ { radius: "md", src: user?.image || '', size: "sm" } }
               name={ user?.displayName || user?.name || '' }
             />
@@ -73,19 +77,16 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
         );
       case "xps":
         return (
-          <div className="capitalize flex gap-2 items-center justify-start">
-            <div>
-              <span className="uppercase px-2 font-famFont text-neutral-500">Xps :  </span>
+          <div className="flex gap-2 items-center justify-start">
+              <span className="uppercase sm:px-2 font-famFont text-white opacity-30">Xps </span>
               <span>{ user.rewards?.xp || cellValue || 0 }</span>
-            </div>
-
           </div>
         );
       case "fampoints":
         return (
-          <div className="capitalize flex justify-center items-center gap-1">
-            <span className=" text-neutral-500 px-2 font-famFont">Fampoints : </span>
-            <span className="flex justify-center items-center">{ user.rewards?.coins || cellValue || 0 }</span>
+          <div className="flex gap-2 items-center justify-start">
+            <span className=" uppercase sm:px-2 font-famFont text-white opacity-30">Fampoints </span>
+            <span >{ user.rewards?.coins || cellValue || 0 }</span>
           </div>
         );
       case "actions":

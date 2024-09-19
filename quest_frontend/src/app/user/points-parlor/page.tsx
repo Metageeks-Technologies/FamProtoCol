@@ -11,7 +11,7 @@ const PointsParlor = () =>
           <div className=' p-3 '>
             <div
               className='points_main_div_right_svg h-[5rem] sm:h-[7rem] w-[6rem]  sm:w-32 items-center flex'>
-              <img src='https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg' alt='' className='styled-image ' />
+              <img src='https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg' alt='' className='w-full h-full object-cover ' />
             </div>
           </div>
           <div className='flex w-full h-full pl-[5%]  points_main_div   flex-col font-famFont  '>

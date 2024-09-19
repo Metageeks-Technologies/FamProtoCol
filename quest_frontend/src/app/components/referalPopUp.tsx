@@ -53,9 +53,9 @@ interface ReferralFormProps {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   return (<>
     <Button
-      className={ `px-2 py-1 bg-white/10 hover:bg-white/25 text-neutral-400 descdata text-center text-medium rounded-lg transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg ` }
+      className={ `px-2 py-1 bg-white/10 hover:bg-white/25 text-neutral-400 descdata text-center rounded-lg transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg ` }
         onPress={onOpen}>Join with referral</Button>
-    <Modal className='bg-slate-800' isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal className='border-1 border-zinc-800 bg-zinc-950' isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
         {(onClose) => (
           <>
@@ -69,12 +69,13 @@ interface ReferralFormProps {
         name="referral"
         value={formData.referral}
         onChange={handleChange}
-        className="mt-1 block w-full px-3 py-2 border text-black border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        placeholder='Referral Code'
+        className="mt-1 block w-full px-3 py-2 border bg-zinc-950 text-white border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-famViolate focus:border-famViolate sm:text-sm"
       />
       </div>
       <button
         type="submit"
-        className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-famViolate hover:bg-famViolate-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
       >
         join 
       </button>

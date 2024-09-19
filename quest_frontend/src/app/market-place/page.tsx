@@ -19,7 +19,7 @@ const Profile: React.FC<ProfileProps> = ( { name, quests, followers, bio, imageU
         <div className='group flex flex-col sm:flex-row border-[#333333] border p-4 w-full max-w-md bg-[#111111] text-white m-auto my-5 rounded-lg shadow-xl hover:bg-[#8c71ff] hover:text-[#000000]'>
             <div className='w-full sm:w-1/3 flex flex-col items-center mb-4 sm:mb-0 justify-between '>
                 <div className='h_image-container  w-28 h-28 overflow-hidden rounded-lg'>
-                    <img src={imageUrl} alt={name} width={100} height={ 100 } className='h_styled-image object-cover' />
+                    <img src={imageUrl} alt={name} width={100} height={ 100 } className='h_w-full h-full object-cover' />
                 </div>
                 <div className='h_bg_Div_Down bg-gray-800 group-hover:bg-[#735dcf] ' />
                 <div>

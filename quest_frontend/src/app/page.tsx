@@ -38,10 +38,6 @@ const LandingPage = () => {
   const [thankYou, setThankYou] = useState<boolean>(false);
   const router = useRouter();
 
-  useEffect(() => {
-    router.push("/home");
-  }, [router]);
-
   const fetchDomains = async () => {
     try {
       const response = await axios.get(
@@ -487,14 +483,15 @@ const LandingPage = () => {
                       </p>
                       <div className="mt-8 flex justify-center gap-4">
                         <Button
-                          // onClick={() => handleOpen()}
-                          onClick={() => comingSoon()}
+                          onClick={() => handleOpen()}
+                          // onClick={() => comingSoon()}
                           className="bg-[#5538CE] text-white font-semibold py-2 px-6 rounded-lg hover:bg-[#6243dd] transition duration-300"
                         >
                           Get Onboarded
                         </Button>
                         <Button
-                          onClick={() => comingSoon()}
+                          // onClick={() => comingSoon()}
+                          onClick={()=>router.push('/home')}
                           className="bg-white text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
                         >
                           Explore

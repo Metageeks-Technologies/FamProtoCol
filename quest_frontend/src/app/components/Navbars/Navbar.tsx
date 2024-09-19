@@ -73,9 +73,9 @@ const Navbar: React.FC = () => {
     }
   }, [dispatch, router]);
 
-  const signup = useCallback(() => {
-    router.push("/login");
-  }, [router]);
+  const signup = () => {
+    dispatch(toggleNav(true));
+  }
 
   const handleToggleNav=async()=>{
     console.log("nav toggled",navOpen)

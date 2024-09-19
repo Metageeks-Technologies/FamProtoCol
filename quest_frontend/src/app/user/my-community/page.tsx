@@ -102,28 +102,25 @@ const MyCommunities: React.FC = () =>
 
   return (
     <div className="bg-black text-white min-h-screen">
-      <div className="container w-[95%] mx-auto px-4 py-10">
-        <header className="mb-12">
-          <h1 className="text-3xl font-bold mb-4">My Communities</h1>
-          <div className="flex justify-between items-center">
-            <p className="text-gray-400 max-w-2xl">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolore
-              neque magni dolorum dignissimos enim delectus velit ut aspernatur.
-            </p>
+      <div className="container px-2">
+        <header className="mb-12 px-4 mt-4">
+          <h1 className="text-xl sm:text-3xl font-bold mb-2 sm:mb-4">My Communities</h1>
+          <div className="text-start text-gray-400">
+              Here you can see the communities you have joined and created so far. You can also join more communities by clicking the button below.
           </div>
         </header>
 
         <section className="mb-16">
-          <div className="flex justify-between items-center mb-4 px-4">
+          <div className="flex justify-between items-center px-4 mb-4">
             <h2 className="text-md font-bold text-center">
-              Your Joined Communities
+              Joined Communities
             </h2>
             { userCommunities.length > 0 &&
               <button
                 onClick={ handleJoinMore }
-                className="bg-[#5538CE] hover:bg-[#7c5bff] text-white text-sm font-bold py-2 px-4 rounded-full flex items-center"
+                className="bg-famViolate hover:bg-[#7c5bff] text-white text-xs sm:text-sm font-bold py-2 px-4 rounded-full flex justify-center items-center"
               >
-                <FaPlus className="mr-2" /> Join More
+                <span><FaPlus className="mr-2" /></span> <span>Join More</span>
               </button> }
           </div>
 
@@ -133,7 +130,7 @@ const MyCommunities: React.FC = () =>
 
               { filteredJoinedCommunity.map( ( card: CommunityCardType, index ) => (
 
-               <CommunityCard key={index} data={card} />
+               <CommunityCard key={index} data={card}  />
               ) ) }
             </div>
             <div className="flex justify-center items-center" >
@@ -187,14 +184,14 @@ const MyCommunities: React.FC = () =>
         <section>
           <div className="flex justify-between items-center mb-4 px-4">
             <h2 className="text-md font-bold ">
-              Your Created Communities
+              Created Communities
             </h2>
             { ( createdCommunity && createdCommunity.length > 0 ) &&
               <button
                 onClick={ () => router.push( '/kol/create-community' ) }
-                className="bg-[#5538CE] hover:bg-[#7c5bff] text-white text-sm font-bold py-2 px-4 rounded-full flex items-center"
+                className="bg-[#5538CE] hover:bg-[#7c5bff] text-white text-sm font-bold py-2 px-4 rounded-full flex justify-center items-center"
               >
-                <FaPlus className="mr-2" /> Add Community
+                <span><FaPlus className="mr-2"/></span><span>Create</span>
               </button> }
           </div>
 

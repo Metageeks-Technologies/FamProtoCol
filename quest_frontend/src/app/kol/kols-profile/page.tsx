@@ -133,7 +133,7 @@ const KolsProfile = ( props: Props ) =>
                               <img
                                 src={ community.logo }
                                 alt=""
-                                className="styled-image"
+                                className="w-full h-full object-cover"
 
                               />
                             </div>
