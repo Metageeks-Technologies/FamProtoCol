@@ -43,7 +43,7 @@ const Sidebar = () => {
       setIsLandingPage(true);
     }
     prevPathRef.current = pathname;
-  }, [router]);
+  }, [router,pathname]);
 
   return (
     <>
@@ -104,6 +104,7 @@ const Sidebar = () => {
 
         {user ? (
           <>
+          {/* desktop sidebar */}
           <div className="hidden sm:flex flex-col border-none justify-between sm:flex-row items-center m-auto md:ml-5 w-screen text-center text-white">
             <div
               className="justify-center items-center m-auto border-l border-r flex h-12 md:h-40 md:border-r w-[12rem] md:w-full border-r-white"
@@ -146,8 +147,17 @@ const Sidebar = () => {
               </div>
             </div>
           </div>
+          {/* mobile sidebar */}
           <div className="sm:hidden flex flex-col gap-8 justify-center items-center w-[90%] mx-auto h-[90vh] " >
-           <div className="flex flex-col gap-6 mb-4 border-none justify-between w-full items-center text-center text-white">
+           <div className="flex flex-col gap-6 mb-4 border-none justify-between w-full items-center text-center text-white font-qanelas ">
+             <div
+              className="flex w-full h-12 md:h-40 justify-center items-center m-auto border-x-1 p-4 border-x-[#ffffff47] "
+              onClick={() => handleLinkClick("/home")}
+            >
+              <div className=" hover:bg-opacity-15 hover:bg-[#5638ce48] w-full px-8 py-6 border-b-1 border-b-[#ffffff47] cursor-pointer">
+              HOME
+              </div>
+            </div>
             <div
               className="flex w-full h-12 md:h-40 justify-center items-center m-auto border-x-1 p-4 border-x-[#ffffff47] "
               onClick={() => handleLinkClick("/user/profile")}

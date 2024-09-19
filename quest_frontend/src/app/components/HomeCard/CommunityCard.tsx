@@ -5,22 +5,29 @@ import { CommunityCardType } from "@/types/types";
 
 const CommunityCard: React.FC<{ data: CommunityCardType,type?:string }> = ({ data,type='user'}) => {
   const router = useRouter();
+
+ const generateDots = (count: number) => {
+  return Array.from({ length: count }, (_, index) => (
+    <i key={index} className="bi bi-dot"></i>
+  ));
+};
+
   return (
     <div
-      onClick={() => router.push(`/${type==="kol"?"kol":"user"}/community-project/${data?._id}`)}
-      className="overflow-hidden cursor-pointer  outer-div bg-white/5 rounded-md relative flex md:gap-6 lg:gap-6 sm:gap-4 gap-4 hover:bg-[#8c71ff] hover:text-[#111111] border-[#282828] border md:p-4 lg:p-4 p-2 flex-col  justify-center w-full sm:w-full"
+      onClick={() => router.push(`/${type}/community-project/${data?._id}`)}
+      className="overflow-hidden cursor-pointer outer-div bg-white/5 relative flex md:gap-6 lg:gap-6 sm:gap-4 gap-4 hover:bg-[#8c71ff] hover:text-[#111111] border-[#282828] border md:p-4 lg:p-4 p-2 flex-col  justify-center w-full sm:w-full"
     >
       <div className="flex flex-row text-xl items-center justify-around ">
-        <div className="w-1/3 p-1">
-          <div className="image-container h-[5rem] w-[5rem] md:h-[5rem] md:w-[5rem]">
+        <div className="w-1/4 p-1">
+          <div className="image-container w-full h-[5rem] md:h-[5rem]">
             <img src={data.logo} alt={data.title} className="w-full h-full object-cover" />
           </div>
           <div className="bg_Div_Down h-[2rem] md:h-[2rem] bg-gray-800"/>
         </div>
-        <div className="w-2/3 flex flex-col justify-start gap-2 ">
+        <div className="w-3/4 flex flex-col justify-start gap-2 ">
           <div className="flex w-full flex-col items-start ">
             <div className="flex w-full h-[5rem] bg_eco_div border-b-4 border-[#8c71ff] gap-2 md:gap-2 p-2 bg-[#28223d] items-end justify-between ">
-              <div className="md:w-4/5 p text-wrap  truncate text-[12px] md:text-[10px] lg:text-[15px] md:ml-3 md:text-start text-center card-title ">
+              <div className="md:w-4/5 p text-wrap  truncate text-[12px] md:text-[10px] lg:text-[15px] px-2 md:ml-3 md:text-start text-center card-title ">
                 {data.title}
               </div>
 
@@ -58,12 +65,13 @@ const CommunityCard: React.FC<{ data: CommunityCardType,type?:string }> = ({ dat
           </div>
         </div>
       </div>
-      <div className="flex flex-row text-xs m-1 gap-2 justify-start  ">
+      <div className="flex flex-row text-xs gap-2 justify-start  ">
         <span className="descText">Bio: </span>
         <span className="break-words text-white opacity-30 text-[0.8rem] overflow-hidden line-clamp-2 font-famFont uppercase ">
           {data.description.slice(0, 20)}
         </span>
       </div>
+      <div className="w-full flex text-white opacity-30 justify-between items-center shadow-md">{generateDots(15)}</div>
     </div>
   );
 };

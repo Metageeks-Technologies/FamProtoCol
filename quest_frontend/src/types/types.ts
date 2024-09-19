@@ -104,3 +104,23 @@ export interface CommunityCardType
   members: [],
   quests: [];
 }
+
+// leaderboard
+export interface LeaderBoardUser
+{
+  _id: string;
+  avatar: string;
+  image?: string;
+  displayName?: string;
+  rewards?: any;
+  rank?: number;
+  name: string;
+  xps: number;
+  level: number;
+  fampoints: number;
+}
+// Define Column type
+export interface LeaderBoardColumn {
+  name: string;
+  uid: keyof LeaderBoardUser ;
+}

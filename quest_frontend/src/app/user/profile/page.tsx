@@ -19,10 +19,8 @@ import upgradeableContractAbi from '@/utils/abi/upgradableContract.json';
 
 const columns = [
   { name: "NAME", uid: "name" },
-  { name: "STARS", uid: "stars" },
   { name: "FAMPOINTS", uid: "fampoints" },
   { name: "XPS", uid: "xps" },
-  { name: "level", uid: "level" },
 ];
 
 const Profile: React.FC = () => {
