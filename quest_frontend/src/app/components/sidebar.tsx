@@ -59,7 +59,8 @@ const Sidebar = () => {
         </Link>
         <div className="flex-1 flex items-center justify-center ">
           <button
-            className={` ${isLandingPage?("hidden"):("flex items-center justify-center")}  border-none text-white text-2xl cursor-pointer`}//change this to flex to show the menu icon
+            className={` hidden border-none text-white text-2xl cursor-pointer`}//comment this and uncomment below 
+            // className={` ${isLandingPage?("hidden"):("flex items-center justify-center")}  
             onClick={handleNav} 
           >
             {!navOpen ? (
