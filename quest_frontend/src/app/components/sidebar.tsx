@@ -18,9 +18,6 @@ const Sidebar = () => {
    const navOpen = useSelector((state: RootState) => selectNavState(state));
 
   const handleNav = () => {
-    if(isLandingPage){
-      return;
-    }
     dispatch(toggleNav(!navOpen));
   };
 
@@ -59,7 +56,7 @@ const Sidebar = () => {
         </Link>
         <div className="flex-1 flex items-center justify-center ">
           <button
-            className={` ${isLandingPage?("hidden"):("flex items-center justify-center")}  border-none text-white text-2xl cursor-pointer`}//change this to flex to show the menu icon
+            className="flex items-center justify-center border-none text-white text-2xl cursor-pointer"
             onClick={handleNav} 
           >
             {!navOpen ? (
