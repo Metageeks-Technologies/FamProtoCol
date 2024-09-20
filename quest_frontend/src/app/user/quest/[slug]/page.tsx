@@ -5,7 +5,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import {
   fetchTaskById,
   completeTask,
-  connetToWallets,
+  connectToWallets,
   fetchTasks,
 } from "@/redux/reducer/taskSlice";
 import { AppDispatch, RootState } from "@/redux/store";
@@ -373,6 +373,8 @@ const Popup: React.FC<{
   const user = useSelector((state: RootState) => state.login.user);
   const authToken = `Bearer ${Cookies.get("_fam_token")}`;
 
+  console.log("selectedCard",selectedCard);
+
   const handleSubmit = () => {
     if (selectedCard.type === "Opinion Scale") {
       if (selectedValue) {
@@ -478,7 +480,7 @@ const Popup: React.FC<{
       // Update the backend and refresh task data
       await Promise.all([
         dispatch(
-          connetToWallets({
+          connectToWallets({
             taskId: selectedCard?._id,
             address: accountAddress,
           })
@@ -1491,7 +1493,7 @@ const Popup: React.FC<{
                             className="text-center justify-center"
                             disabled
                           >
-                            Connected to wallet {index + 1}
+                            Connected
                           </Button>
                         </div>
                       ) : (

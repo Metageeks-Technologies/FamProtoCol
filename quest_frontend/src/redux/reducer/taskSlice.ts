@@ -33,7 +33,7 @@ interface IPoll {
 export type TaskOrPoll = ITaskBase & {
   visitLink?: string;
   visitor?: string[];
- quizzes?: IQuiz[];
+  quizzes?: IQuiz[];
   polls?: IPoll[];
   correctAnswer?: string;
   inviteLink?: string;
@@ -122,19 +122,19 @@ export const createTask = createAsyncThunk(
 );
 
 // connect to walllet
-export const connetToWallets = createAsyncThunk(
-  'tasks/create',
-  async ({ taskId,  address }: { taskId: string, address: string }) : Promise<any> => {
+export const connectToWallets = createAsyncThunk(
+  'tasks/connectToWallets',
+  async ({ taskId,  address }: { taskId: string, address: string },{rejectWithValue}) : Promise<any> => {
     try {
       const response = await axios.post( `${ API_BASE_URL }/connect-wallet`, {taskId,address} );
       console.log( "wallet connect response:-", response )
-      notify("success","Wallet connect successfully")
+      notify("success","Wallet connect successfully");
       return response.data;
     } catch ( error )
     {
       console.log( "error in connecting to wallet:-", error )
       notify("error","Wallet address is already connected to this task")
-      // return rejectWithValue('Failed to create task');
+      return rejectWithValue('Failed to create task');
     }
   }
 );
@@ -236,7 +236,7 @@ const taskSlice = createSlice({
       .addCase(deleteTask.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });
+      })
   },
 });
 

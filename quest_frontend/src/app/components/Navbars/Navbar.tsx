@@ -121,8 +121,8 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* news */}
-          <div className="bg-gradient-to-r from-[#FA00FF] via-[#FF7B7B] to-[#5538CE] text-white h-[40px]">
-            <div className=" flex flex-row max-w-lg min-w-[200px] xl:min-w-[300px] justify-center items-center">
+          <div className="bg-gradient-to-r from-[#FA00FF] via-[#FF7B7B] to-[#5538CE] text-white w-[40%] lg:w-[60%] h-[40px]">
+            <div className=" flex flex-row w-full justify-center items-center">
               {/* linear-gradient(90deg, #FA00FF 0.03%, #FF7B7B 23.93%, #5538CE 118.3%); */}
 
               <div className="py-1 px-4 rounded overflow-hidden relative w-full ">
@@ -215,7 +215,7 @@ const Navbar: React.FC = () => {
               </button>
             )}
             {/* notification */}
-            <div className="relative px-2">
+            {/* <div className="relative px-2">
               <Badge content="99+" shape="circle" color="danger">
                 <Button
                   radius="full"
@@ -226,7 +226,7 @@ const Navbar: React.FC = () => {
                   <i className="bi bi-bell-fill text-white text-xl"></i>
                 </Button>
               </Badge>
-            </div>
+            </div> */}
           </div>
         </div>
         {/* Mobile and Tablet menu */}
