@@ -490,6 +490,9 @@ const Popup: React.FC<{
       setLocalConnectedWallets((prev: any) => [...prev, accountAddress]);
       setConnectWalletIndex((prev:any)=>[...prev,index]);
 
+      console.log("localconnect wallet",localConnectedWallets);
+      console.log("index",connectWalletIndex);
+
       // const connectedWalletsCount = Number(selectedCard?.connectedWallets?.length) ?? 0;
       const newConnectedWalletsCount = localConnectedWallets?.length + 1;
       if (newConnectedWalletsCount === selectedCard?.walletsToConnect) {
