@@ -368,6 +368,7 @@ const Popup: React.FC<{
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [localConnectedWallets, setLocalConnectedWallets] = useState<any>([]);
+  const [connectWalletIndex,setConnectWalletIndex]=useState<any>([]);
   const [stampArray, setStampArray] = useState<Array<Stamp>>([]);
   const user = useSelector((state: RootState) => state.login.user);
   const authToken = `Bearer ${Cookies.get("_fam_token")}`;
@@ -440,7 +441,7 @@ const Popup: React.FC<{
     }
   }, []);
 
-  const connectMultipleWallet = async () => {
+  const connectMultipleWallet = async (index:number) => {
     try {
       if (typeof window.ethereum === "undefined") {
         if (
@@ -465,7 +466,7 @@ const Popup: React.FC<{
       }
 
       if (selectedCard?.connectedWallets?.includes(accountAddress)) {
-        notify("warn", "This wallet is already connected.");
+        notify("warn", "This account is already connected.Please connect another account from metamask. ");
         return;
       }
 
@@ -487,6 +488,7 @@ const Popup: React.FC<{
 
       // Update local state immediately
       setLocalConnectedWallets((prev: any) => [...prev, accountAddress]);
+      setConnectWalletIndex((prev:any)=>[...prev,index]);
 
       // const connectedWalletsCount = Number(selectedCard?.connectedWallets?.length) ?? 0;
       const newConnectedWalletsCount = localConnectedWallets?.length + 1;
@@ -1475,7 +1477,7 @@ const Popup: React.FC<{
                 {selectedCard.type === "Connect multiple wallet" &&
                   [...Array(selectedCard.walletsToConnect)].map((_, index) => (
                     <div key={index}>
-                      {localConnectedWallets[index] ? (
+                      {connectWalletIndex.includes(index) ? (
                         <div className="flex justify-between py-4">
                           <label htmlFor="">
                             Connected your wallet {index + 1}
@@ -1495,7 +1497,7 @@ const Popup: React.FC<{
                             Connect your wallet {index + 1}
                           </label>
                           <Button
-                            onClick={connectMultipleWallet}
+                            onClick={()=>connectMultipleWallet(index)}
                             variant="solid"
                             color="primary"
                             className="text-center justify-center"

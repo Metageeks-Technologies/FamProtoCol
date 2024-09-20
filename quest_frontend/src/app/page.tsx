@@ -171,7 +171,7 @@ const LandingPage = () => {
   const handleDomainMinting = async () => {
     setLoader(true);
 
-    if (!domain || domain === "" || domain.length > 3) {
+    if (!domain || domain === "" || domain.length < 3) {
       setError("Domain name must be atleast 4 characters long");
       setLoader(false);
       return;
