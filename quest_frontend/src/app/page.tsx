@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
 import usdc from "@/utils/abi/usdc.json";
 import { useRouter } from "next/navigation";
-import Link from "next/link"
+import Link from "next/link";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -358,13 +358,11 @@ const LandingPage = () => {
               <div className="w-full md:mt-0 mt-4">
                 <div className="flex md:flex-row flex-col-reverse md:justify-between items-center gap-3 ">
                   <div className="flex items-center gap-1">
-                    <div>
-                      <h1
-                        onClick={() => comingSoon()}
-                        className="text-[#FA00FF] cursor-pointer font-famFont "
-                      >
-                        VIEW DOCUMENTATION
-                      </h1>
+                    <div
+                      onClick={() => comingSoon()}
+                      className="text-[#FA00FF] cursor-pointer font-famFont "
+                    >
+                      VIEW DOCUMENTATION
                     </div>
                     <div className="mt-2">
                       <svg
@@ -382,20 +380,18 @@ const LandingPage = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-6">
-                    <div className="flex items-center">
-                      <h1 className="text-white opacity-30 font-famFont ">
-                        SOCIAL MEDIA:
-                      </h1>
+                  <div className="flex items-center gap-4">
+                    <div className="text-white opacity-30 font-famFont ">
+                      SOCIAL MEDIA:
                     </div>
-                    <div className="flex row gap-1">
-                    {/* twitter */}
-                    <Link target="_blank" href="https://x.com/famprotocol" >
-                      <div className="box1 right-trapezium bg-zinc-700 p-[1px]">
-                        <div className="box2 right-trapezium p-2 bg-[#111111]" >
-                          <i className="bi bi-twitter-x"></i>
+                    <div className="flex items-center gap-1">
+                      {/* twitter */}
+                      <Link target="_blank" href="https://x.com/famprotocol">
+                        <div className="box1 right-trapezium bg-zinc-700 p-[1px]">
+                          <div className="box2 right-trapezium p-2 bg-[#111111]">
+                            <i className="bi bi-twitter-x"></i>
+                          </div>
                         </div>
-                      </div>
                       </Link>
                       {/* telegram */}
                       <Link target="_blank" href="https://t.me/FamProtocol">
