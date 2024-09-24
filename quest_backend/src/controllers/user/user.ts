@@ -1,27 +1,52 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import User from "../../models/user/user";
+import User, { IUser } from "../../models/user/user";
 import { generateReferral } from "../../utils/helper/helper";
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import mongoose, { ObjectId } from "mongoose";
 
-export const createUserByDomain = async (req: Request, res: Response) => {
+dotenv.config();
+
+const JWT_SECRET_Token = process.env.JWT_SECRET as string;
+
+export const signUpDomain = async (req: Request, res: Response) => {
   try {
-    const { domainAddress, password, hashCode, walletAddress, image } =
-      req.body;
+    const {
+      domainAddress,
+      password,
+      hashCode,
+      walletAddress,
+      image,
+      referralCode,
+    } = req.body;
 
-    if (!domainAddress || !hashCode || !walletAddress || !password) {
-      return res
-        .status(400)
-        .json({ message: "Domain address and password are required" });
+    if (!domainAddress || !domainAddress.endsWith(".fam")) {
+      return res.status(400).json({ message: "Invalid domain address" });
+    }
+    if (!hashCode || !walletAddress) {
+      return res.status(400).json({ message: "Invalid wallet address." });
+    }
+    if (!password) {
+      return res.status(400).json({ message: "Password is required" });
     }
 
     const existingUser = await User.findOne({
       "domain.domainAddress": domainAddress,
     });
     if (existingUser) {
-      return res.status(400).json({ message: "Domain address already exists" });
+      return res
+        .status(400)
+        .json({ message: "Username address already exists.Try another" });
+    }
+
+    let referrer = null;
+    if (referralCode) {
+      referrer = await User.findOne({ inviteCode: referralCode });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = new User({
       domain: {
         domainAddress,
@@ -30,18 +55,139 @@ export const createUserByDomain = async (req: Request, res: Response) => {
         walletAddress,
         password: hashedPassword,
       },
+      image: image,
+      referredBy: referrer ? referrer._id : undefined,
     });
 
-    // Save the user to the database
     await newUser.save();
 
-    // Respond with success message
-    return res
-      .status(200)
-      .json({ message: "User created successfully", user: newUser });
+    if (referrer) {
+      referrer.referredUsers = referrer.referredUsers || [];
+      referrer.referredUsers.push(newUser?._id as mongoose.Types.ObjectId);
+
+      // Ensure rewards and coins are properly initialized
+      referrer.rewards = referrer.rewards || { coins: 0, xp: 0 }; // Initialize rewards if undefined
+      referrer.rewards.coins = referrer.rewards.coins || 0; // Initialize coins if undefined
+
+      // Increment coins
+      referrer.rewards.coins += 5;
+
+      // Save the referrer object to persist changes
+      await referrer.save();
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: newUser._id, domain: newUser.domain.domainAddress },
+      JWT_SECRET_Token,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    // Set JWT in cookie
+    res.cookie("_fam_token", token, {
+      httpOnly: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production",
+      sameSite:
+        process.env.NODE_ENV === "production"
+          ? "none"
+          : ("lax" as "none" | "strict" | "lax" | undefined),
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      user: newUser,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const loginDomain = async (req: Request, res: Response) => {
+  const { domainAddress, password, walletAddress } = req.body;
+  console.log("req.body", req.body);
+  try {
+    if (!domainAddress && !password && !walletAddress) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    if (domainAddress && password) {
+      const user = await User.findOne({
+        "domain.domainAddress": domainAddress,
+      });
+
+      if (!user) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      // Check if password matches
+
+      const isMatch = await bcrypt.compare(password, user.domain.password);
+
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+
+      // Generate JWT token
+      const token = jwt.sign(
+        { id: user._id, domain: user.domain.domainAddress },
+        JWT_SECRET_Token,
+        {
+          expiresIn: "1d",
+        }
+      );
+
+      // Set JWT in cookie
+      res.cookie("_fam_token", token, {
+        httpOnly: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production",
+        sameSite:
+          process.env.NODE_ENV === "production"
+            ? "none"
+            : ("lax" as "none" | "strict" | "lax" | undefined),
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      });
+      res
+        .status(200)
+        .json({ success: true, message: "Login successful", user });
+    }
+
+    if (walletAddress) {
+      const user = await User.findOne({
+        "domain.walletAddress": walletAddress,
+      });
+
+      if (!user) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+      // Generate JWT token
+      const token = jwt.sign(
+        { id: user._id, domain: user.domain.domainAddress },
+        JWT_SECRET_Token,
+        {
+          expiresIn: "1d",
+        }
+      );
+      console.log("token", token);
+      // Set JWT in cookie
+      res.cookie("_fam_token", token, {
+        httpOnly: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production",
+        sameSite:
+          process.env.NODE_ENV === "production"
+            ? "none"
+            : ("lax" as "none" | "strict" | "lax" | undefined),
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      });
+      res
+        .status(200)
+        .json({ success: true, message: "Login successful", user });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
@@ -190,19 +336,21 @@ const generateUniqueReferralCode = async (userId: string) => {
 
 export const generateReferralCode = async (req: any, res: Response) => {
   try {
-    const { ids } = req.user;
+    const { id } = req.user;
     // console.log(ids);
 
-    const user = await User.findById(ids);
+    const user = await User.findById(id);
     // console.log(user);
     if (!user) {
       return res
         .status(400)
         .json({ success: false, message: "User not found" });
     }
-    const referralCode = await generateUniqueReferralCode(ids);
+    const referralCode = await generateUniqueReferralCode(id);
+    const baseUrl = process.env.PUBLIC_CLIENT_URL;
+    const referralLink = `${baseUrl}/signup?referralCode=${referralCode}`;
 
-    return res.status(200).json({ success: true, referralCode });
+    return res.status(200).json({ success: true, referralCode, referralLink });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err });
@@ -220,5 +368,24 @@ export const getDomains = async (req: Request, res: Response) => {
     return res.send({ success: true, filteredDomain });
   } catch (err) {
     return res.send({ success: false, message: err });
+  }
+};
+
+export const referredByUser = async (req: any, res: Response) => {
+  const { id } = req.user;
+  // console.log("req",req.user);
+  // const id=req.user.id;
+  try {
+    const user = await User.findById(id).populate("referredUsers");
+    if (!user) {
+      return res.send({ success: false, message: "User not found" });
+    }
+    return res.send({
+      success: true,
+      message: "User fetched successfully",
+      referredUsers: user.referredUsers,
+    });
+  } catch (err: any) {
+    res.send({ success: false, message: "internal server error" });
   }
 };
