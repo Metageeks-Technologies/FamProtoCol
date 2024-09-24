@@ -20,7 +20,6 @@ import Link from "next/link";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [domain, setDomain] = useState<string>("");
   const [existingDomain, setExistingDomain] = useState<string[]>([]);
   const [isDomainAvailable, setIsDomainAvailable] = useState<string>("");
@@ -34,6 +33,7 @@ const LandingPage = () => {
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
   const [hash, setHash] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [logo, setLogo] = useState<any>(null);
   const [thankYou, setThankYou] = useState<boolean>(false);
@@ -43,7 +43,7 @@ const LandingPage = () => {
     login: false,
   });
   const router = useRouter();
-  
+
   const fetchDomains = async () => {
     try {
       const response = await axios.get(
@@ -245,6 +245,7 @@ const LandingPage = () => {
     }
     setLoaders({ ...loaders, connectWallet: false });
   };
+
   const handleDomainMinting = async () => {
     setLoader(true);
     setError("");
@@ -360,6 +361,7 @@ const LandingPage = () => {
     }
     setLoader(false);
   };
+
   const getUploadUrl = async (): Promise<string> => {
     try {
       const response = await axios.post<{ url: string }>(
