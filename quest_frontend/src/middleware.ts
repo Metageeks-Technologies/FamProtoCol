@@ -6,13 +6,13 @@ export function middleware(req: NextRequest) {
 
   console.log("pahtname:-", pathname);
   console.log("search ", searchParams);
-  // if (
-  //   pathname !== "/" &&
-  //   pathname !== "/user/profile" &&
-  //   !(pathname === "/" && searchParams.has("referralCode"))
-  // ) {
-  //   return NextResponse.redirect(new URL("/", req.url));
-  // }
+  if (
+    pathname !== "/" &&
+    pathname !== "/user/referral/dashboard" &&
+    !(pathname === "/" && searchParams.has("referralCode"))
+  ) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
   return NextResponse.next();
 }
 
