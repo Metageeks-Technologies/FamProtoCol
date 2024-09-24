@@ -246,38 +246,155 @@ const LandingPage = () => {
     setLoaders({ ...loaders, connectWallet: false });
   };
 
+  // const handleDomainMinting = async () => {
+  //   setLoader(true);
+  //   setError("");
+  //   setAlertMessage("");
+  //   if (!domain || domain === "" || domain.length < 3) {
+  //     setError("Domain name must be atleast 4 characters long");
+  //     setLoader(false);
+  //     return;
+  //   }
+
+  //   if (isDomainAvailable === "false") {
+  //     setError("Domain already exists");
+  //     setLoader(false);
+  //     return;
+  //   }
+
+  //   if (!isAlphanumericWithHyphen(domain)) {
+  //     setError(
+  //       "Invalid Username: The username must contain only alphanumeric characters and hyphens. Spaces are not allowed"
+  //     );
+  //     setLoader(false);
+  //     return;
+  //   }
+
+  //   const updatedDomain = domain + ".fam";
+
+  //   const ArbicontractAddress =
+  //     process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
+  //   const usdcContractAddress = process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS!;
+  //   const contractABI = upgradeableContractAbi;
+  //   const usdcABI = usdc;
+
+  //   if (!ArbicontractAddress || !contractABI || !address) {
+  //     const walletInfo = await connectWallet();
+  //     if (walletInfo) {
+  //       setAlertMessage("Wallet connected successfully");
+  //       setIsWalletConnected(true);
+  //       setAddress(walletInfo.address);
+  //     } else {
+  //       setError("Failed to connect wallet.");
+  //       setLoader(false);
+  //       return;
+  //     }
+  //   }
+
+  //   try {
+  //     const provider = new ethers.BrowserProvider(window.ethereum);
+  //     const signer = await provider.getSigner();
+
+  //     // Initialize USDC contract instance
+  //     const usdcContract = new ethers.Contract(
+  //       usdcContractAddress,
+  //       usdcABI,
+  //       signer
+  //     );
+
+  //     // Check the user's USDC balance
+  //     const usdcBalance = await usdcContract.balanceOf(
+  //       await signer.getAddress()
+  //     );
+  //     const usdcAmount = ethers.parseUnits("5", 6); // 5 USDC with 6 decimals
+
+  //     if (usdcBalance < usdcAmount) {
+  //       setError(
+  //         "Insufficient USDC balance. Please ensure you have at least 5 USDC in your wallet."
+  //       );
+  //       setLoader(false);
+  //       return;
+  //     }
+
+  //     // Approve the minting fee (5 USDC) for your contract
+  //     const approveTx = await usdcContract.approve(
+  //       ArbicontractAddress,
+  //       usdcAmount
+  //     );
+  //     await approveTx.wait();
+
+  //     // Initialize your upgradeable contract instance
+  //     const contract = new ethers.Contract(
+  //       ArbicontractAddress,
+  //       contractABI,
+  //       signer
+  //     );
+  //     let tx;
+  //     // Call the mintDomainWithReferral function with the domain and referral code
+  //     if (referralCode && referralCode != "") {
+  //       tx = await contract.mintDomainWithReferral(updatedDomain, referralCode);
+  //       await tx.wait();
+  //     } else {
+  //       tx = await contract.mintDomain(updatedDomain);
+  //       await tx.wait();
+  //     }
+
+  //     // console.log("Domain minted successfully with referral", tx);
+  //     setAlertMessage(`Domain ${updatedDomain} minted successfully`);
+  //     setHash(tx.hash);
+  //     setShowPasswordField(true);
+  //   } catch (error) {
+  //     if (typeof error === "object" && error !== null && "reason" in error) {
+  //       setAlertMessage("");
+  //       setError(`${(error as { reason: string }).reason}`);
+  //     } else if (
+  //       typeof error === "object" &&
+  //       error !== null &&
+  //       "message" in error
+  //     ) {
+  //       setError(`${(error as { message: string }).message}`);
+  //       setAlertMessage("");
+  //     } else {
+  //       setError("An unknown error occurred.");
+  //       setAlertMessage("");
+  //     }
+  //   }
+  //   setLoader(false);
+  // };
+
   const handleDomainMinting = async () => {
     setLoader(true);
     setError("");
     setAlertMessage("");
-    if (!domain || domain === "" || domain.length < 3) {
-      setError("Domain name must be atleast 4 characters long");
+  
+    // Validate domain name
+    if (!domain || domain.length < 3) {
+      setError("Domain name must be at least 4 characters long");
       setLoader(false);
       return;
     }
-
+  
     if (isDomainAvailable === "false") {
       setError("Domain already exists");
       setLoader(false);
       return;
     }
-
+  
     if (!isAlphanumericWithHyphen(domain)) {
       setError(
-        "Invalid Username: The username must contain only alphanumeric characters and hyphens. Spaces are not allowed"
+        "Invalid Domain: The domain must contain only alphanumeric characters and hyphens. Spaces are not allowed"
       );
       setLoader(false);
       return;
     }
-
+  
     const updatedDomain = domain + ".fam";
-
-    const ArbicontractAddress =
-      process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
+  
+    const ArbicontractAddress = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
     const usdcContractAddress = process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS!;
     const contractABI = upgradeableContractAbi;
     const usdcABI = usdc;
-
+  
     if (!ArbicontractAddress || !contractABI || !address) {
       const walletInfo = await connectWallet();
       if (walletInfo) {
@@ -290,68 +407,92 @@ const LandingPage = () => {
         return;
       }
     }
-
+  
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
-
-      // Initialize USDC contract instance
-      const usdcContract = new ethers.Contract(
-        usdcContractAddress,
-        usdcABI,
-        signer
-      );
-
-      // Check the user's USDC balance
-      const usdcBalance = await usdcContract.balanceOf(
-        await signer.getAddress()
-      );
-      const usdcAmount = ethers.parseUnits("5", 6); // 5 USDC with 6 decimals
-
-      if (usdcBalance < usdcAmount) {
-        setError(
-          "Insufficient USDC balance. Please ensure you have at least 5 USDC in your wallet."
-        );
-        setLoader(false);
-        return;
-      }
-
-      // Approve the minting fee (5 USDC) for your contract
-      const approveTx = await usdcContract.approve(
-        ArbicontractAddress,
-        usdcAmount
-      );
-      await approveTx.wait();
-
-      // Initialize your upgradeable contract instance
-      const contract = new ethers.Contract(
-        ArbicontractAddress,
-        contractABI,
-        signer
-      );
-      let tx;
-      // Call the mintDomainWithReferral function with the domain and referral code
-      if (referralCode && referralCode != "") {
-        tx = await contract.mintDomainWithReferral(updatedDomain, referralCode);
+  
+      // Initialize the contract instance
+      const contract = new ethers.Contract(ArbicontractAddress, contractABI, signer);
+  
+      // Check if the user is whitelisted for free mint
+      const isFreeMintWhitelisted = await contract.freeMintWhitelist(await signer.getAddress());
+  
+      if (isFreeMintWhitelisted) {
+        // Call free mint function
+        const tx = await contract.freeMintDomain(updatedDomain, referralCode);
         await tx.wait();
+        setAlertMessage(`Domain ${updatedDomain} minted for free successfully`);
+        setHash(tx.hash);
+        setShowPasswordField(true);
       } else {
-        tx = await contract.mintDomain(updatedDomain);
-        await tx.wait();
+        // Check if the user is whitelisted for discount mint
+        const isDiscountMintWhitelisted = await contract.discountMintWhitelist(await signer.getAddress());
+  
+        if (isDiscountMintWhitelisted) {
+          // Discounted mint fee (2.5 USDC)
+          const usdcAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDC with 6 decimals
+  
+          // Initialize USDC contract instance
+          const usdcContract = new ethers.Contract(usdcContractAddress, usdcABI, signer);
+  
+          // Check the user's USDC balance
+          const usdcBalance = await usdcContract.balanceOf(await signer.getAddress());
+          if (usdcBalance < usdcAmountDiscount) {
+            setError("Insufficient USDC balance. Please ensure you have at least 2.5 USDC.");
+            setLoader(false);
+            return;
+          }
+  
+          // Approve the discounted minting fee (2.5 USDC) for your contract
+          const approveTxDiscount = await usdcContract.approve(ArbicontractAddress, usdcAmountDiscount);
+          await approveTxDiscount.wait();
+  
+          // Call discount mint function
+          const tx = await contract.discountMintDomain(updatedDomain, referralCode);
+          await tx.wait();
+          setAlertMessage(`Domain ${updatedDomain} minted with discount successfully`);
+          setHash(tx.hash);
+          setShowPasswordField(true);
+        } else {
+          // If not whitelisted, check referral code validity and call mintDomainWithReferral
+          if (!referralCode || referralCode === "") {
+            setError("You must provide a valid referral code to mint.");
+            setLoader(false);
+            return;
+          }
+  
+          // Initialize USDC contract instance
+          const usdcContract = new ethers.Contract(usdcContractAddress, usdcABI, signer);
+  
+          // Check the user's USDC balance
+          const usdcBalance = await usdcContract.balanceOf(await signer.getAddress());
+          const usdcAmount = ethers.parseUnits("5", 6); // 5 USDC with 6 decimals
+  
+          if (usdcBalance < usdcAmount) {
+            setError("Insufficient USDC balance. Please ensure you have at least 5 USDC.");
+            setLoader(false);
+            return;
+          }
+  
+          // Approve the minting fee (5 USDC) for your contract
+          const approveTx = await usdcContract.approve(ArbicontractAddress, usdcAmount);
+          await approveTx.wait();
+  
+          // Call mintDomainWithReferral function
+          const tx = await contract.mintDomainWithReferral(updatedDomain, referralCode);
+          await tx.wait();
+  
+          setAlertMessage(`Domain ${updatedDomain} minted successfully with referral`);
+          setHash(tx.hash);
+          setShowPasswordField(true);
+        }
       }
-
-      // console.log("Domain minted successfully with referral", tx);
-      setAlertMessage(`Domain ${updatedDomain} minted successfully`);
-      setHash(tx.hash);
-      setShowPasswordField(true);
     } catch (error) {
       if (typeof error === "object" && error !== null && "reason" in error) {
         setAlertMessage("");
         setError(`${(error as { reason: string }).reason}`);
-      } else if (
-        typeof error === "object" &&
-        error !== null &&
-        "message" in error
-      ) {
+      } else if (typeof error === "object" && error !== null && "message" in error) {
         setError(`${(error as { message: string }).message}`);
         setAlertMessage("");
       } else {
@@ -359,9 +500,10 @@ const LandingPage = () => {
         setAlertMessage("");
       }
     }
+  
     setLoader(false);
   };
-
+  
   const getUploadUrl = async (): Promise<string> => {
     try {
       const response = await axios.post<{ url: string }>(
