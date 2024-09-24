@@ -507,7 +507,7 @@ const LandingPage = () => {
                       </div>
                       <div className="flex justify-center items-center">
                         <Link
-                          href="/user/profile"
+                          href="/user/referral/dashboard"
                           className="px-4 py-2 bg-famViolate rounded-lg "
                         >
                           Visit Profile

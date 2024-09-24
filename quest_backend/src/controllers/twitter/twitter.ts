@@ -115,9 +115,9 @@ export const OAuth2WithTwitterCallback = async (
 
 export const checkFollow = async (req: any, res: any) => {
   const { targetUserName } = req.body;
-  const { ids } = req.user;
+  const { id } = req.user;
   try {
-    const user = await User.findById(ids);
+    const user = await User.findById(id);
     if (!user) {
       return res
         .status(400)
@@ -140,7 +140,7 @@ export const checkFollow = async (req: any, res: any) => {
     } = await client.refreshOAuth2Token(refreshToken);
     console.log("Refreshed token:", accessToken);
     const userData = await User.findOneAndUpdate(
-      { _id: ids },
+      { _id: id },
       {
         "twitterInfo.refreshToken": newRefreshToken,
         "twitterInfo.accessToken": accessToken,
@@ -172,9 +172,9 @@ export const checkFollow = async (req: any, res: any) => {
 
 export const checkTweetLike = async (req: any, res: any) => {
   const { tweetId } = req.body;
-  const { ids } = req.user;
+  const { id } = req.user;
   try {
-    const user = await User.findById(ids);
+    const user = await User.findById(id);
     if (!user) {
       return res
         .status(400)
@@ -197,7 +197,7 @@ export const checkTweetLike = async (req: any, res: any) => {
     } = await client.refreshOAuth2Token(refreshToken);
     console.log("Refreshed token:", accessToken);
     await User.findOneAndUpdate(
-      { _id: ids },
+      { _id: id },
       {
         "twitterInfo.refreshToken": newRefreshToken,
         "twitterInfo.accessToken": accessToken,
@@ -230,9 +230,9 @@ export const checkTweetLike = async (req: any, res: any) => {
 
 export const checkTweetRetweet = async (req: any, res: any) => {
   const { tweetId } = req.body;
-  const { ids } = req.user;
+  const { id } = req.user;
   try {
-    const user = await User.findById(ids);
+    const user = await User.findById(id);
     if (!user) {
       return res
         .status(400)
@@ -256,7 +256,7 @@ export const checkTweetRetweet = async (req: any, res: any) => {
     console.log("Refreshed token:", accessToken);
 
     await User.findOneAndUpdate(
-      { _id: ids },
+      { _id: id },
       {
         "twitterInfo.refreshToken": newRefreshToken,
         "twitterInfo.accessToken": accessToken,
@@ -282,7 +282,7 @@ export const checkTweetRetweet = async (req: any, res: any) => {
 };
 
 export const sendTweet = async (req: any, res: any) => {
-  const { ids } = req.user;
+  const { id } = req.user;
   const { tweetBody } = req.body;
   if (!tweetBody) {
     return res
@@ -290,7 +290,7 @@ export const sendTweet = async (req: any, res: any) => {
       .json({ success: false, message: "Tweet body not provided" });
   }
   try {
-    const user = await User.findById(ids);
+    const user = await User.findById(id);
     if (!user) {
       return res
         .status(400)
@@ -314,7 +314,7 @@ export const sendTweet = async (req: any, res: any) => {
     console.log("Refreshed token:", accessToken);
 
     await User.findOneAndUpdate(
-      { _id: ids },
+      { _id: id },
       {
         "twitterInfo.refreshToken": newRefreshToken,
         "twitterInfo.accessToken": accessToken,

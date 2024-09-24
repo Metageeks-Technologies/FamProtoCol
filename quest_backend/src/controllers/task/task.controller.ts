@@ -349,11 +349,10 @@ export const taskController = {
     // delete the task
     deleteTask: async ( req: any, res: Response ): Promise<void> =>
     {
-
         try
         {  
             console.log( "req.user", req.user );
-            const {ids} =req.user;
+            const {id} =req.user;
             const taskId = req.params.id;
             console.log( "task id",taskId );
 
@@ -363,7 +362,7 @@ export const taskController = {
             {
                 res.status( 404 ).json( { message: "Task not found" } );
             }
-            else if ( task?.creator?.toString() !== ids?.toString() )
+            else if ( task?.creator?.toString() !== id?.toString() )
             {
                 res.status( 403 ).json( {
                     message: "You are not authorized to delete this task"

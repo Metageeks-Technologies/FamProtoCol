@@ -7,8 +7,6 @@ import UserDb, { IUser } from "../models/user/user";
 import { Request } from "express";
 import KolsDB from "../models/kols/kols";
 import { fetchGuilds } from "../controllers/discord/discord";
-import { jwtUser } from "../middleware/user/verifyToken";
-
 dotenv.config();
 
 // Google Authentication
@@ -93,7 +91,7 @@ passport.use(
         const token=req.cookies._fam_token;
         // console.log("token in discord",token)
         const data= await jwt.verify(token, secretKey);
-        const users = data as jwtUser;
+        const users = data as any;
         // console.log("sddsdds",users)
         if (!users || !users.ids) {
           return done(new Error( 'User ID not provided'));

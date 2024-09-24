@@ -3,11 +3,6 @@ import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
 dotenv.config
 
-export interface jwtUser{
-  ids:string,
-  phone_number:string,
-}
-
 const secretKey = process.env.JWT_SECRET as string;
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
@@ -19,7 +14,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
      return res.status(401).send({success: false, message: "User not authenticated.Login to continue"});
   }
   console.log("fam token",_fam_token);
-    const decoded = jwt.verify(_fam_token, secretKey) as jwtUser;
+    const decoded = jwt.verify(_fam_token, secretKey);
     console.log("user",decoded);
     req.user = decoded;
     next();
