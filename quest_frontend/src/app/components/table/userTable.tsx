@@ -210,7 +210,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
   return (
     <div className="w-full h-full">
       <Table
-        
+        hideHeader={data.length===0}
         aria-label="Example table with custom cells"
         style={ {
           boxShadow: 'rgb(29 27 27 / 62%) -5px 0px 20px 2px, inset 0px -40px 63px 5px rgb(24 24 24 / 62%)',

@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import React from 'react';
 
 const PointsParlor = () =>
@@ -31,13 +30,13 @@ const PointsParlor = () =>
                 <div className="w-full h-1   bg-[#212121]  ">
                   <div
                     className="bg-[#cb03cf]   h-1  absolute"
-                    style={ { width: `${ 40 }%` } }
+                    style={ { width: `${ 70 }%` } }
                   >
                     <div className="w-full h-full bg-[#cb03cf] progress_bar_shadow    absolute " />
                     <div className="w-full h-full bg-[#cb03cf]   absolute " />
                   </div>
                 </div>
-                <div className='text-xs text-[#cb03cf] flex w-full px-5 pt-1 justify-start'>{ 40 } Xps</div>
+                <div className='text-xs text-[#cb03cf] flex w-full px-5 pt-1 justify-start'>{ 70 } Xps</div>
               </div>
             </div>
           </div>

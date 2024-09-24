@@ -17,7 +17,7 @@ const MainLayout = ( {
 {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith( '/admin' );
-  const isLandingRoute = (pathname === '/' || pathname==="/user/profile");
+  const isLandingRoute = (pathname === '/' || pathname==="/user/referral/dashboard");
 
   return (
     <div>

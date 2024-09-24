@@ -5,7 +5,6 @@ import { auth } from "../../utils/fireAdmin";
 import {
   checkInviteLink,
 } from "../discord/discord";
-import { jwtUser } from "../../middleware/user/verifyToken";
 
 dotenv.config();
 const publicClientUrl = process.env.PUBLIC_CLIENT_URL as string;
@@ -43,9 +42,12 @@ export const loginFailed = async (
 // logout
 export const logout = async (req: Request, res: Response) => {
    res.clearCookie("_fam_token", {
-    httpOnly: true,   // Ensure the cookie is not accessible via client-side JavaScript
-    secure: process.env.NODE_ENV === 'production', // Use secure flag in production
-    sameSite: 'strict',  // Protect against CSRF
+    httpOnly: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production",
+      sameSite:
+        process.env.NODE_ENV === "production"
+          ? "none"
+          : ("lax" as "none" | "strict" | "lax" | undefined),
     path: '/',  // Specify the path where the cookie is set (usually '/')
   });
   return res.status(200).json({ message: "Logged out successfully" });
@@ -176,8 +178,8 @@ export const verifyPhone = async (req: Request, res: Response) => {
 };
 
 export const validateInviteUrl = async (req: Request, res: Response) => {
-  const user = req.user as any;
-  const userExist = await UserDb.findById(user.ids);
+  const {id}= req.user as any;
+  const userExist = await UserDb.findById(id);
   if (!userExist) {
     return res.status(401).send("User is not authenticated");
   }
@@ -221,7 +223,7 @@ export const getProfile = async (req: any, res: Response) => {
   return res.status(200).send(data);
 };
 
-export const telegramCallback = async (req: Request, res: Response) => {
+export const telegramCallback = async (req: any, res: Response) => {
   try {
     // Extract query parameters from the request
     const { id, first_name, last_name, username, photo_url } = req.query as {
@@ -235,8 +237,7 @@ export const telegramCallback = async (req: Request, res: Response) => {
     console.log("first", id, first_name, last_name, username, photo_url);
 
     // Optional user verification
-    const users = req.user as jwtUser;
-    const userId = users.ids;
+    const userId = req?.user?.id;
     console.log("second", userId);
     // Check if user exists in the database
     let userdata = await UserDb.findById(userId);
