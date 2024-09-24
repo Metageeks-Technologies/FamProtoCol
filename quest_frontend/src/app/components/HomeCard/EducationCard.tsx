@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { truncateToNWords } from "@/utils/helper/helper";
 
 
 // this will suffle and only provide randam 3 quests
@@ -64,6 +65,7 @@ const EducationCardList: React.FC = () =>
     ).slice(0, 3)
   : [];
 
+  // console.log("Kol quest:->",kolQuests);
 
   useEffect( () =>
   {
@@ -188,11 +190,9 @@ const EducationCardList: React.FC = () =>
                     </div>
                   </div>
 
-                  <div className="mt-2 flex gap-3  justify-center">
-                   
-                    <div>
-                      <p className="text-small text-slate-300">{ data.title }</p>
-                    </div>
+                  <div className="mt-2 flex flex-col items-center gap-1 justify-center">
+                    <div className="text-sm font-famFont text-white opacity-50  uppercase ">{ data.title }</div>
+                    <div className="text-xs text-center text-wrap font-famFont text-white uppercase" >{truncateToNWords(data.description,4)}</div>
                   </div>
                   <div>
                   </div>
@@ -203,13 +203,53 @@ const EducationCardList: React.FC = () =>
         </div>
 
         {/* pending */ }
-          <div className="w-1/2">
-            <div className="flex items-center justify-start">
-             <div> <img src="https://clusterprotocol2024.s3.amazonaws.com/others/Group+44.png" alt="seprator" /></div>
+          <div className="">
+            <div className="relative sm:mx-10 lg:mx-0 mx-0 ">
+            <div className="flex items-center text-gray-400 gap-1 pt-1 absolute bottom-6 pl-6 lg:mt-0 sm:pt-10 ">
+              Kol Quest
+            </div>
+            <div className="relative  items-center ">
+              <div className="absolute bottom-0 ">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="6"
+                  height="6"
+                  viewBox="0 0 4 5"
+                  fill="none"
+                >
+                  <path d="M0 4L3.5 4L3.5 0.5" stroke="#FA00FF" />
+                </svg>
+              </div>
+
+              <div className="absolute top-0 left-40 ">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="6"
+                  height="6"
+                  viewBox="0 0 5 4"
+                  fill="none"
+                >
+                  <path d="M4.5 3.5L1 3.5L1 4.17371e-08" stroke="#FA00FF" />
+                </svg>
+              </div>
+
               <div>
-                <h1 className="text-gray-400 font-thin">KOL quests</h1>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="160"
+                  height="59"
+                  viewBox="0 0 160 59"
+                  fill="none"
+                >
+                  <path
+                    d="M159 0.5L114 45.5H23L10.5 58H0"
+                    stroke="white"
+                    strokeOpacity="0.4"
+                  />
+                </svg>
               </div>
             </div>
+          </div>
           <div className="p-2 edu neo mt-5 grid lg:gap-10 sm:gap-10 gap-4 mx-8 lg:mx-0 grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 lg:basis-[50%]">
             { loading ? (
               <>
@@ -232,10 +272,9 @@ const EducationCardList: React.FC = () =>
                     </div>
                   </div>
 
-                  <div className="mt-2 flex gap-3 justify-center">
-                    <div>
-                      <p className="text-small text-slate-300">{ data.title }</p>
-                    </div>
+                  <div className="mt-2 flex flex-col items-center gap-1 justify-center">
+                    <div className="text-sm font-famFont text-white opacity-50 uppercase ">{ data.title }</div>
+                    <div className="text-xs text-center text-wrap font-famFont text-white uppercase" >{truncateToNWords(data.description,4)}</div>
                   </div>
                 </div>
               </div>

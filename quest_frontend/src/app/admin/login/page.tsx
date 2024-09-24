@@ -22,7 +22,7 @@ const LoginPage = (props: Props) => {
             
             if(response.status===200){
               notify("success",data.message);
-              localStorage.setItem('token',data.token);
+              localStorage.setItem('_fam_admin_token',data.token);
               router.push('/admin/dashboard');
             }
 

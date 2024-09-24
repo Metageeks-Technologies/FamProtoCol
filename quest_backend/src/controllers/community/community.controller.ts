@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import CommunityModel, { Community } from '../../models/community/community.model';
 import UserDb from '../../models/user/user';
 import { sendMessage } from '../../controllers/telegram/telegram';
-import { sendDiscord } from '../user/discord';
+import { sendDiscord } from '../discord/discord';
 
 export const CommunityController = {
 
@@ -35,7 +35,7 @@ export const CommunityController = {
                 res.status( 200 ).json( { newCommunity: newCommunity, msg: "Community Created Successfully" } );
             } else
             {
-                res.status( 400 ).json( { message: "Error in creating the Community" } );
+              res.status( 400 ).json( { message: "Error in creating the Community" } );
             }
         } catch ( error )
         {
@@ -152,6 +152,7 @@ export const CommunityController = {
         try
         {
             const communityIds = req.body.communityIds;
+            console.log("communiyt ids:", communityIds );
 
             if ( !Array.isArray( communityIds ) )
             {
@@ -160,7 +161,7 @@ export const CommunityController = {
             }
 
             const communities = await CommunityModel.find( { _id: { $in: communityIds } } ).sort( { createdAt: -1 } );
-
+            console.log("communities:", communities );
             res.status( 200 ).json( {
                 message: "Communities fetched successfully",
                 communities

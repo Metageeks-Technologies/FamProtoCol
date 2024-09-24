@@ -36,7 +36,7 @@ export const login = async (req: Request, res: Response) => {
     }
     // console.log("admin password",admin.password);
     const hashedPassword = await bcrypt.hash(password, 10);
-    // console.log("hashpassword",hashedPassword);
+    // console.log("hashed password",hashedPassword);
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid password' });

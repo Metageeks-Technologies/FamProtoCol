@@ -21,6 +21,20 @@ const config: Config = {
       colors: {
         black: "#000",
         white: "#fff",
+        "famPurple":{
+          "light":"",
+          "DEFAULT":"#FA00FF",
+          "dark":"",
+        } ,
+        "famViolate":{
+          "light":"#7758f0",
+          "DEFAULT":"#5538CE",
+          "dark":"#3b21a0",
+        },
+      },
+      fontFamily: {
+        'famFont':['var(--font-proFont)'],
+        'qanelas':['var(--font-qanelas)'],
       },
     },
   },

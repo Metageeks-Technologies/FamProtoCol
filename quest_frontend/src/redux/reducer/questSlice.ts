@@ -1,31 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {Quest,QuestState,CreateQuestPayload} from "@/types/types"
 import axios from "axios";
-
-export interface Reward {
-  type: string;
-  value: number;
-}
-
-export interface Quest {
-  title: string;
-  description: string;
-  type: string;
-  status: string;
-  rewards: Reward[];
-  creator: any;
-  community?: any;
-  logo?: string;
-  categories?: string[];
-}
-
-interface QuestState {
-  allQuests: Quest[];
-  addedQuest: Quest[];
-  quests: [];
-  currentQuests: [];
-  loading: boolean;
-  error: string | null;
-}
 
 const initialState: QuestState = {
   // all quests
@@ -33,15 +8,10 @@ const initialState: QuestState = {
   addedQuest: [],
   // current quests from community
   currentQuests: [],
-  quests: [],
+  quest: null,
   loading: false,
   error: null,
 };
-
-interface CreateQuestPayload {
-  communityId?: string;
-  questData?: Omit<Quest, "community">;
-}
 
 export const createQuest = createAsyncThunk(
   "quests/createQuest",
@@ -181,7 +151,7 @@ const questSlice = createSlice({
       
       .addCase(fetchQuestById.fulfilled, (state, action) => {
         state.loading = false;
-        state.quests = action.payload.quest;
+        state.quest = action.payload.quest;
       });
   },
 });

@@ -4,7 +4,15 @@ import QuestModel, { Quest } from "../../models/quest/quest.model";
 import UserDb, { IUser } from "../../models/user/user";
 import { Badge, ReferralDb } from "../../models/other models/models";
 import CommunityModel from "../../models/community/community.model";
-import mongoose from "mongoose";
+import mongoose,{Types} from "mongoose";
+
+interface IBadge {
+    _id: Types.ObjectId;
+    level: number;
+    questCriteria: number;
+    taskCriteria: number;
+    name: string;
+}
 
 const generateReferralCode = async ( randomLength: number ) =>
 {
@@ -240,7 +248,7 @@ export const taskController = {
               
             await user.save();
 
-            res.status( 200 ).json( { message: "Task completed successfully" } );
+            res.status( 200 ).json( { message: "Task completed successfully",coins:task.rewards.coins,xps:task.rewards.xp } );
         } catch ( error )
         {
             console.error( error );
@@ -291,14 +299,25 @@ export const taskController = {
             user.quest.push( questId );
 
             // Fetch and sort badges
-            const badges = await Badge.find();
+            const badges: IBadge[] = await Badge.find();
             const sortedBadges = badges.sort( ( a, b ) => b.level - a.level );
 
+            console.log("sortedBadges",sortedBadges)
             // Check for new badge
             for ( const badge of sortedBadges )
             {
-                // console.log( badge.level, badge.questCriteria, badge.taskCriteria )
+                console.log("badge",user.badges)
+                const isBadgeAlreadyAdded= user.badges?.some( ( userBadge:any ) => 
+                {
+                    console.log("userBadge",userBadge._id.toString(),badge._id.toString());
+                    userBadge._id.toString() === badge._id.toString();
+                }
+                );
 
+                console.log("isBadgeAlreadyAdded",badge.name,isBadgeAlreadyAdded)
+
+                if(isBadgeAlreadyAdded) break;
+                
                 if ( user.quest.length >= badge.questCriteria && user.completedTasks.length >= badge.taskCriteria )
                 {
                     user.badges?.push( badge );
@@ -328,19 +347,23 @@ export const taskController = {
     },
 
     // delete the task
-    deleteTask: async ( req: Request, res: Response ): Promise<void> =>
+    deleteTask: async ( req: any, res: Response ): Promise<void> =>
     {
 
         try
-        {
-            const taskId = req.params.taskId;
-            const userId = req?.body?.creator._id;
+        {  
+            console.log( "req.user", req.user );
+            const {ids} =req.user;
+            const taskId = req.params.id;
+            console.log( "task id",taskId );
+
             const task = await TaskModel.findById( taskId );
+
             if ( !task )
             {
                 res.status( 404 ).json( { message: "Task not found" } );
             }
-            else if ( task?.creator !== userId )
+            else if ( task?.creator?.toString() !== ids?.toString() )
             {
                 res.status( 403 ).json( {
                     message: "You are not authorized to delete this task"
@@ -348,7 +371,26 @@ export const taskController = {
             }
             else
             {
+                const questId=task.questId;
+
+                const quest = await QuestModel.findById( questId );
+
+                if ( quest )
+                {
+                    quest.tasks = quest?.tasks?.filter( ( task ) => task.toString() !== taskId );
+                    await quest.save();
+                }
+
+                const creatorId=  task.creator;
+
+                const creator = await UserDb.findById( creatorId );
+                if(creator){
+                    creator.createdTasks = creator?.createdTasks?.filter( ( task ) => task.toString() !== taskId );
+                    await creator.save();
+                }
+                
                 await TaskModel.findByIdAndDelete( taskId );
+                
                 res.status( 200 ).json( { message: "Task deleted successfully" } );
             }
         } catch ( error )

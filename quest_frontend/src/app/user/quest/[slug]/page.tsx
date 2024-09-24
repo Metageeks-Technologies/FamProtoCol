@@ -1,7 +1,7 @@
 "use client";
-
 import Cookies from "js-cookie";
 import QuizPollCarousel from "@/app/components/QuizPollCarousel";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   fetchTaskById,
   completeTask,
@@ -9,17 +9,30 @@ import {
   fetchTasks,
 } from "@/redux/reducer/taskSlice";
 import { AppDispatch, RootState } from "@/redux/store";
-
 import { notify } from "@/utils/notify";
-import { Button, Progress } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import axios from "axios";
-import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ethers } from "ethers";
 import { GITCOIN_PASSPORT_WEIGHTS } from "./stamp-weights";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-
+import { Header, StatusBar, NoTasks } from "@/app/components/quest/quest";
+import {
+  extractTeleGramChatId,
+  getAcceptedFileTypes,
+  getFileTypeInfo,
+  validateFileType,
+  isValidTweetUrl,
+  validateSubmission
+} from "@/utils/helper/helper";
+import {
+  CardData,
+  Quest
+} from "@/types/types";
+import { SweetAlert } from "@/utils/sweetAlert";
+import { fetchQuestById } from "@/redux/reducer/questSlice";
+import contractAbi from "@/utils/abi/contract.json";
 // types.ts
 declare global {
   interface Window {
@@ -33,58 +46,13 @@ declare global {
     walletsToConnect?: number;
   };
 }
-export interface QuizQuestion {
-  question: string;
-  options: string[];
-  correctAnswer: string;
-}
-
-export interface PollQuestion {
-  question: string;
-  options: string[];
-}
-
-export interface Completion {
-  user: string;
-  completedAt: string;
-  submission: string;
-}
-
-export interface CardData {
-  _id: string;
-  image: string;
-  name: string;
-  taskName: string;
-  guild?: string;
-  discord?: string;
-  discordLink?: string;
-  taskDescription: string;
-  description: string;
-  type: string;
-  category: string;
-  visitLink?: string;
-  quizzes?: QuizQuestion[];
-  polls?: PollQuestion[];
-  inviteLink?: string;
-  uploadLink?: string;
-  completions: Completion[];
-  uploadFileType?: string;
-  walletsToConnect?: number;
-  connectedWallets?: [string];
-  opinionQuestion?: string;
-  tweetLikeUrl?: string;
-  tweetRetweetUrl?: string;
-  tweetUsername?: string;
-  tweetWords?: string[];
-  defaultTweet?: string;
-  telegramGroupLink?: string;
-}
 
 const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
   const dispatch: AppDispatch = useDispatch();
   const questId: string = params.slug;
   const [referral, setReferral] = useState<string>("Please Generate Referral");
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
+
   const [submissions, setSubmissions] = useState<{
     [key: string]: string | File;
   }>({});
@@ -93,12 +61,14 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
     useState<boolean>(false);
 
   const user = useSelector((state: RootState) => state.login.user);
-  console.log("user:-", user);
+  
+  // console.log("user:-", user);
   const tasks = useSelector((state: RootState) => state.task.currentTask);
   useEffect(() => {
     dispatch(fetchTaskById(questId));
     dispatch(fetchTasks());
-  }, [dispatch, questId]);
+    dispatch(fetchQuestById(questId));
+  }, [questId]);
 
   useEffect(() => {
     const completedTasks = tasks.filter((task) => isTaskCompleted(task)).length;
@@ -110,6 +80,8 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
     }
   }, [tasks, allTasksCompletedCalled]);
 
+  const quest=useSelector((state: RootState) => state.quest.quest);
+  // console.log("quest:-", quest);
   const handleCardClick = useCallback((card: CardData) => {
     setSelectedCard(card);
     setSubmissions({});
@@ -128,13 +100,11 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
         if (selectedCard?.type === "Opinion Scale") {
           submission = { opinionRating: submissionData?.opinionRating };
         }
-        console.log("submission from submission", submission);
-        // Validate submission based on task type
-
+        // console.log("submission from submission", submission);
+        
         if (!validateSubmission(selectedCard?.type, submission)) {
           console.log(selectedCard);
-
-          notify("warn", "Invalid submission. Please check your input.");
+          SweetAlert("error", "Invalid submission", "Please check your input");
           return;
         }
 
@@ -146,7 +116,8 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
 
           if (!uploadSuccess) {
             console.error("File upload failed");
-            notify("error", "File upload failed");
+            // notify("error", "File upload failed");
+            SweetAlert("error", "File upload failed");
             return;
           }
 
@@ -163,14 +134,16 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
           submission: JSON.stringify(submission),
         };
         await dispatch(completeTask(data));
-        notify("success", "your rewards are added to your profile");
-        window.location.reload();
+        dispatch(fetchTaskById(questId));
+        handleClosePopup();
+        // notify("success", "your rewards are added to your profile");
       } catch (error) {
         console.log("Error in completing the task:", error);
-        notify(
-          "error",
-          "An error occurred while submitting the task. Please try again."
-        );
+        SweetAlert("error", "An error occurred while submitting the task. Please try again.");
+        // notify(
+        //   "error",
+        //   "An error occurred while submitting the task. Please try again."
+        // );
       }
     },
     [dispatch, selectedCard, submissions, user]
@@ -180,64 +153,7 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
     setSubmissions((prev) => ({ ...prev, [taskId]: file }));
   }, []);
 
-  const validateSubmission = (
-    taskType: string | undefined,
-    submission: any
-  ): any => {
-    switch (taskType) {
-      case "Text":
-        return typeof submission === "string" && submission.trim().length > 0;
-      case "Number":
-        return !isNaN(Number(submission)) && submission !== "";
-      case "URL":
-        const urlPattern = /^(http)/;
-        return urlPattern.test(submission);
-      case "File upload":
-        return submission instanceof File && submission.size > 0;
-      case "Invites":
-        return typeof submission === "string" && submission.trim().length > 0;
-      case "Visit Link":
-        return true;
-      case "Poll":
-      case "Quiz":
-        return (
-          typeof submission === "object" && Object.keys(submission).length > 0
-        );
-      case "Opinion Scale":
-        return (
-          typeof submission === "object" &&
-          typeof submission.opinionRating === "string" &&
-          submission.opinionRating >= 1 &&
-          submission.opinionRating <= 5
-        );
-      case "Connect wallet":
-        return true;
-      case "Gitcoin passport":
-        return true;
-      case "Civic pass verification":
-        return true;
-      case "Ens holder":
-        return true;
-      case "Eth holder":
-        return true;
-      case "Connect multiple wallet":
-        return true;
-      case "Twitter Follow":
-        return true;
-      case "Tweet Like":
-        return true;
-      case "Tweet":
-        return true;
-      case "Tweet Retweet":
-        return true;
-      case "Telegram":
-        return true;
-
-      default:
-        console.log("validation is complete, no matches found");
-        return false;
-    }
-  };
+ 
 
   const handleGenerateReferral = useCallback(async () => {
     try {
@@ -261,12 +177,13 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
   }, [user?._id, questId, selectedCard?._id]);
 
   const getUploadUrl = useCallback(async (fileName: string) => {
+    if(!user || !user?._id) return;
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/aws/generate-upload-url`,
         {
-          folder: "taskByUser",
-          fileName,
+          folder: 'taskByUser',
+          fileName :`${user?._id}-${fileName}`,
         }
       );
       return response.data.url;
@@ -323,6 +240,7 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
         }
       );
       console.log("All tasks completed response:", response.data);
+      // SweetAlert("success", "All tasks completed successfully", "You have claimed your rewards");
       // Reset the flag if you want to allow future calls
       // setAllTasksCompletedCalled(false);
     } catch (error) {
@@ -332,9 +250,9 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
   }, [questId, user?._id, allTasksCompletedCalled]);
 
   return (
-    <div className="bg-[#000000] text-white h-full">
-      <div className="mx-4 lg:mx-20">
-        <Header />
+    <div className="bg-[#000000] text-white h-full ">
+      <div className="mx-4 lg:mx-20 my-4 lg:my-10">
+        <Header quest={quest as Quest } />
         {tasks.length > 0 ? (
           <>
             <StatusBar progress={progress} />
@@ -360,92 +278,12 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
           onGenerateReferral={handleGenerateReferral}
           referral={referral}
           validateSubmission={validateSubmission}
+          questId={questId}
         />
       )}
     </div>
   );
 };
-
-const Header: React.FC = () => (
-  <>
-    <div className="text-2xl pt-10 font-bold">
-      <h1>My Quest</h1>
-    </div>
-    <div className="max-w-[600px] pt-4 text-white">
-      <p>Complete the following tasks to progress in your quest.</p>
-    </div>
-  </>
-);
-
-const StatusBar: React.FC<{ progress: number }> = ({ progress }) => (
-  <>
-    <div className="flex flex-col md:flex-row md:justify-between">
-      <div className="max-w-[600px] pt-4 text-gray-400 flex justify-end">
-        <p className="text-white mb-6">
-          Monitor task completions and submissions.
-        </p>
-      </div>
-      <div className="md:pt-6 md:inline-block">
-        <button
-          className="bg-gray-700 hover:bg-gray-900 text-white font-medium w-full md:w-auto px-5 py-2 rounded-3xl"
-          onClick={() => window.history.back()}
-        >
-          Go Back
-        </button>
-      </div>
-    </div>
-
-    <div className="banner ">
-      <h1 className="text-2xl inline mr-8 pb-10 ">Getting started</h1>
-      <span className="text-sm font-medium text-green-700 pb-10 dark:text-white">
-        {progress}%
-      </span>
-      <Progress
-        value={progress}
-        isStriped
-        aria-label="Loading..."
-        classNames={{
-          track: "drop-shadow-md border border-default",
-          indicator: "bg-pink-400",
-          label: "tracking-wider font-medium text-default-600",
-        }}
-      />
-    </div>
-  </>
-);
-
-const NoTasks: React.FC = () => (
-  <div className="flex flex-col items-center justify-center h-[60vh]">
-    <div className="text-center bg-white/5 p-8 rounded-xl shadow-lg max-w-md w-full">
-      <svg
-        className="mx-auto h-12 w-12 text-gray-400 mb-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-        />
-      </svg>
-      <h3 className="text-xl font-medium text-white mb-2">
-        No tasks available
-      </h3>
-      <p className="text-gray-400 mb-6">
-        Get started by creating a new task for this quest.
-      </p>
-      <button
-        className="bg-gray-700 hover:bg-gray-900 text-white font-medium w-full md:w-auto px-5 py-2 rounded-3xl"
-        onClick={() => window.history.back()}
-      >
-        Go Back
-      </button>
-    </div>
-  </div>
-);
 
 const TaskCards: React.FC<{
   tasks: CardData[];
@@ -464,10 +302,10 @@ const TaskCards: React.FC<{
         <div className="flex gap-3 items-center justify-between mx-2">
           <div className="basis-[65%]">
             <h1 className="text-lg font-semibold text-gray-200 group-hover:text-white">
-              {task.taskName || task.type}
+              {task.taskName.trim().length!=0?task.taskName:task.type}
             </h1>
-            <p className="text-sm text-gray-400">
-              {task.taskDescription || "No description"}
+            <p className="text-sm text-gray-400 truncate">
+              {task?.taskDescription?.trim()?.length!=0?task.taskDescription: "Complete the task to earn rewards"}
             </p>
           </div>
           <div className="basis-[25%]">
@@ -477,7 +315,7 @@ const TaskCards: React.FC<{
                 alt="Task Image"
                 className="w-full h-auto rounded-lg"
               />
-              <div className="absolute bottom-0 bg-purple-500 opacity-40 text-white px-2 rounded-lg flex justify-center mr-2.5">
+              <div className="absolute w-full bottom-0 opacity-60 bg-purple-500 text-white px-2 text-sm flex justify-center">
                 <p>{task?.category}</p>
               </div>
             </div>
@@ -494,6 +332,7 @@ const TaskCards: React.FC<{
 const Popup: React.FC<{
   selectedCard: CardData;
   isCompleted: boolean;
+  questId: string;
   submissions: { [key: string]: string | File };
   referral: string;
   onGenerateReferral: () => void;
@@ -519,151 +358,19 @@ const Popup: React.FC<{
   onGenerateReferral,
   referral,
   validateSubmission,
+  questId,
 }) => {
-  const [linkClicked, setLinkClicked] = useState(false);
-  const [isMember, setIsMember] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const [address, setAddress] = useState<string>("");
   const [balance, setBalance] = useState<string>("");
-  const [isENSHolder, setIsENSHolder] = useState<boolean>(false);
-  const [isETHHolder, setIsETHHolder] = useState<boolean>(false);
-  const [showStamps, setShowStamps] = useState(false);
-  const [tasks, setTasks] = useState<TaskType[]>([]); // TaskType should be replaced with your task object type
-  // const [tasks, setTasks] = useState<any[]>([]);
   const [selectedValue, setSelectedValue] = useState(3);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
+  const [localConnectedWallets, setLocalConnectedWallets] = useState<any>([]);
   const [stampArray, setStampArray] = useState<Array<Stamp>>([]);
   const user = useSelector((state: RootState) => state.login.user);
-  const router = useRouter();
-  // const tasks = useSelector( ( state: RootState ) => state.task.tasks );
-  const [localConnectedWallets, setLocalConnectedWallets] = useState<any>([]);
-  const authToken = `Bearer ${Cookies.get("authToken")}`;
-
-  useEffect(() => {
-    if (selectedCard?.type === "Connect multiple wallet") {
-      setLocalConnectedWallets(selectedCard?.connectedWallets);
-    }
-
-    // fetchData();
-  }, [selectedCard]);
-
-  console.log("selectedCard:-", selectedCard);
-
-  const connectMultipleWallet = async () => {
-    try {
-      if (typeof window.ethereum === "undefined") {
-        if (
-          confirm(
-            "MetaMask is not installed. Would you like to download it now?"
-          )
-        ) {
-          window.open("https://metamask.io/download.html", "_blank");
-        }
-        return;
-      }
-
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const [accountAddress] = await provider.send("eth_requestAccounts", []);
-
-      if (!accountAddress) {
-        notify(
-          "warn",
-          "No Ethereum account connected. Please connect your wallet."
-        );
-        return;
-      }
-
-      if (selectedCard?.connectedWallets?.includes(accountAddress)) {
-        notify("warn", "This wallet is already connected.");
-        return;
-      }
-
-      const balance = await provider.getBalance(accountAddress);
-      setBalance(ethers.formatEther(balance));
-
-      console.log("Wallet connected:", accountAddress);
-
-      // Update the backend and refresh task data
-      await Promise.all([
-        dispatch(
-          connetToWallets({
-            taskId: selectedCard?._id,
-            address: accountAddress,
-          })
-        ),
-        dispatch(fetchTaskById(selectedCard?._id)),
-      ]);
-
-      // Update local state immediately
-      setLocalConnectedWallets((prev: any) => [...prev, accountAddress]);
-
-      // const connectedWalletsCount = Number(selectedCard?.connectedWallets?.length) ?? 0;
-      const newConnectedWalletsCount = localConnectedWallets?.length + 1;
-      if (newConnectedWalletsCount === selectedCard?.walletsToConnect) {
-        onSubmit(selectedCard._id, { visit: "All required wallets connected" });
-      }
-    } catch (error) {
-      console.error("Error connecting wallet:", error);
-      notify("error", "Failed to connect wallet. Please try again.");
-    }
-  };
-
-  const handleLinkClick = () => {
-    setLinkClicked(true);
-  };
-
-  const handleVisibilityChange = () => {
-    if (!document.hidden && linkClicked) {
-      checkMembership();
-
-      // Perform actions when the user returns to the tab after clicking the link
-      setLinkClicked(false); // Reset the state if you only want to handle it once
-    }
-  };
-  const checkMembership = async () => {
-    const data = user?.discordInfo?.discordId;
-    const accessToken = user?.discordInfo?.accessToken;
-    const guildId = selectedCard?.guild;
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/check-discord-membership`,
-        {
-          data,
-          accessToken,
-          guildId,
-        }
-      );
-      const discordShip = response.data.isMember;
-      const datas = {
-        taskId: selectedCard._id,
-        userId: user?._id,
-        userName: user?.displayName,
-        submission: "Join Discord Successfully ",
-      };
-      if (discordShip) {
-        notify("success", "Join Successful");
-        await dispatch(completeTask(datas));
-        router.refresh();
-        onClose();
-      } else {
-        notify("error", "Please join Not a member");
-      }
-      setIsMember(true);
-    } catch (error) {
-      console.error("Error checking Discord membership:", error);
-      setIsMember(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("beforeunload", handleLinkClick);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      window.removeEventListener("beforeunload", handleLinkClick);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [linkClicked]);
+  const authToken = `Bearer ${Cookies.get("_fam_token")}`;
 
   const handleSubmit = () => {
     if (selectedCard.type === "Opinion Scale") {
@@ -681,14 +388,24 @@ const Popup: React.FC<{
     }
   };
 
+  // blockchain task
+  useEffect(() => {
+    if (selectedCard?.type === "Connect multiple wallet") {
+      setLocalConnectedWallets(selectedCard?.connectedWallets);
+    }
+
+    // fetchData();
+  }, [selectedCard]);
+
+  // console.log("selectedCard:-", selectedCard);
+
+
   //Below line codes are using for to fetch the details form env for gitcoin api key, smart contract address and abi
 
   const APIKEY = process.env.NEXT_PUBLIC_GC_API_KEY; //API key for the access of gitcoin API
   const SCORERID = process.env.NEXT_PUBLIC_GC_SCORER_ID; //Scorer Id using to fectch the user score on behalf of stamp verification activity
   const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
-  const contractABI = process.env.NEXT_PUBLIC_CONTRACT_ABI
-    ? JSON.parse(process.env.NEXT_PUBLIC_CONTRACT_ABI)
-    : null;
+  const contractABI = contractAbi;
 
   // below line using for access gitcoin passport data and connectection
   const SUBMIT_PASSPORT_URI =
@@ -722,6 +439,65 @@ const Popup: React.FC<{
       checkConnection();
     }
   }, []);
+
+  const connectMultipleWallet = async () => {
+    try {
+      if (typeof window.ethereum === "undefined") {
+        if (
+          confirm(
+            "MetaMask is not installed. Would you like to download it now?"
+          )
+        ) {
+          window.open("https://metamask.io/download.html", "_blank");
+        }
+        return;
+      }
+
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const [accountAddress] = await provider.send("eth_requestAccounts", []);
+
+      if (!accountAddress) {
+        notify(
+          "warn",
+          "No Ethereum account connected. Please connect your wallet."
+        );
+        return;
+      }
+
+      if (selectedCard?.connectedWallets?.includes(accountAddress)) {
+        notify("warn", "This wallet is already connected.");
+        return;
+      }
+
+      const balance = await provider.getBalance(accountAddress);
+      setBalance(ethers.formatEther(balance));
+
+      // console.log("Wallet connected:", accountAddress);
+
+      // Update the backend and refresh task data
+      await Promise.all([
+        dispatch(
+          connetToWallets({
+            taskId: selectedCard?._id,
+            address: accountAddress,
+          })
+        ),
+        dispatch(fetchTaskById(selectedCard?._id)),
+      ]);
+
+      // Update local state immediately
+      setLocalConnectedWallets((prev: any) => [...prev, accountAddress]);
+
+      // const connectedWalletsCount = Number(selectedCard?.connectedWallets?.length) ?? 0;
+      const newConnectedWalletsCount = localConnectedWallets?.length + 1;
+      if (newConnectedWalletsCount === selectedCard?.walletsToConnect) {
+        onSubmit(selectedCard._id, { visit: "All required wallets connected" });
+      }
+    } catch (error) {
+      console.error("Error connecting wallet:", error);
+      notify("error", "Failed to connect wallet. Please try again.");
+    }
+  };
 
   const checkConnection = async () => {
     if (typeof window.ethereum === "undefined") {
@@ -781,7 +557,7 @@ const Popup: React.FC<{
       // Assuming checkENS is an async function that needs the account address
       await checkENS(accountAddress);
 
-      console.log("Wallet connected:", accountAddress);
+      // console.log("Wallet connected:", accountAddress);
       // onSubmit(taskId, { visited: "wallet connected" });
 
       return accountAddress;
@@ -824,7 +600,7 @@ const Popup: React.FC<{
       // Assuming checkENS is an async function that needs the account address
       // await checkENS(accountAddress);
 
-      console.log("Wallet connected:", accountAddress);
+      // console.log("Wallet connected:", accountAddress);
       onSubmit(taskId, { visited: "wallet connected" });
 
       return accountAddress;
@@ -871,7 +647,7 @@ const Popup: React.FC<{
         throw new Error("Failed to submit passport");
       }
       const data = await response.json();
-      console.log("data:", data);
+      // console.log("data:", data);
       alert("Passport submitted successfully");
       onSubmit(taskId, { visited: "Passport verified" });
       getStamps();
@@ -884,13 +660,13 @@ const Popup: React.FC<{
   const calculateGitcoinScore = () => {
     let score = 0;
 
-    console.log("Calculating Gitcoin score...");
-    console.log("Stamp array:", stampArray);
-    console.log("Gitcoin Passport Weights:", GITCOIN_PASSPORT_WEIGHTS);
+    // console.log("Calculating Gitcoin score...");
+    // console.log("Stamp array:", stampArray);
+    // console.log("Gitcoin Passport Weights:", GITCOIN_PASSPORT_WEIGHTS);
 
     for (let i = 0; i < stampArray.length; i++) {
       const stampName = stampArray[i].name;
-      console.log(`Processing stamp: ${stampName}`);
+      // console.log(`Processing stamp: ${stampName}`);
 
       if (GITCOIN_PASSPORT_WEIGHTS.hasOwnProperty(stampName)) {
         try {
@@ -898,7 +674,7 @@ const Popup: React.FC<{
             GITCOIN_PASSPORT_WEIGHTS[
               stampName as keyof typeof GITCOIN_PASSPORT_WEIGHTS
             ];
-          console.log(`Adding ${temp_score} to score for stamp: ${stampName}`);
+          // console.log(`Adding ${temp_score} to score for stamp: ${stampName}`);
           score += temp_score;
         } catch (error) {
           console.log("Error adding element to cumulative score:", error);
@@ -908,7 +684,7 @@ const Popup: React.FC<{
       }
     }
 
-    console.log("Final score:", score);
+    // console.log("Final score:", score);
     setShowScore(true);
     setScore(score);
   };
@@ -944,8 +720,7 @@ const Popup: React.FC<{
       }
 
       setStampArray(stampProviderArray);
-      setShowStamps(true);
-      console.log("Fetched stamps:", stampProviderArray);
+      // console.log("Fetched stamps:", stampProviderArray);
     } catch (err) {
       console.log("Error fetching stamps:", err);
     }
@@ -967,7 +742,7 @@ const Popup: React.FC<{
       );
       const result = await contract.verifyCivicPass();
       if (result) {
-        console.log("User has a valid Civic Pass.");
+        // console.log("User has a valid Civic Pass.");
         // Proceed with the action
         onSubmit(taskId, { visited: "Civic Pass Verified" });
       }
@@ -997,11 +772,9 @@ const Popup: React.FC<{
       const provider = new ethers.BrowserProvider(window.ethereum);
       const ensName = await provider.lookupAddress(address); // Use 'address' instead of 'userAddress'
       if (ensName) {
-        setIsENSHolder(true);
         console.log(`ENS name found: ${ensName}`);
         onSubmit(taskId, { visited: "User address holds ENS" });
       } else {
-        setIsENSHolder(false);
         // Use a confirm dialog instead of alert
         const userConfirmed = window.confirm(
           "No ENS name found. Would you like to visit the ENS domain services to register an ENS name?"
@@ -1027,12 +800,10 @@ const Popup: React.FC<{
         }
       }
       if (parseFloat(balance) > 0) {
-        setIsETHHolder(true);
-        console.log(`ETH balance: ${balance}`);
+        // console.log(`ETH balance: ${balance}`);
         alert(`ETH balance: ${balance}`);
         onSubmit(taskId, { visited: "User address holds ETH" });
       } else {
-        setIsETHHolder(false);
         console.log("No ETH balance found");
         alert("Your account does not hold any ETH balance");
       }
@@ -1041,112 +812,78 @@ const Popup: React.FC<{
     }
   };
 
-  // validation for file upload
-  const getFileTypeInfo = (uploadFileType: any) => {
-    switch (uploadFileType) {
-      case "image":
-        return ".jpg, .png, .gif";
-      case "audio":
-        return ".mp3, .wav";
-      case "video":
-        return ".mp4, .mov";
-      case "document":
-        return ".pdf, .doc, .txt";
-      case "spreadsheet":
-        return ".xlsx, .csv";
-      case "code":
-        return ".js, .py, .html";
-      case "3d":
-        return ".obj, .fbx";
-      case "archive":
-        return ".zip, .rar";
-      default:
-        return "";
-    }
-  };
-
-  const getAcceptedFileTypes = (uploadFileType: string | any) => {
-    switch (uploadFileType) {
-      case "image":
-        return "image/jpeg,image/png,image/gif";
-      case "audio":
-        return "audio/mpeg,audio/wav";
-      case "video":
-        return "video/mp4,video/quicktime";
-      case "document":
-        return ".pdf,.doc,.docx,.txt";
-      case "spreadsheet":
-        return ".xlsx,.csv";
-      case "code":
-        return ".js,.py,.html";
-      case "3d":
-        return ".obj,.fbx";
-      case "archive":
-        return ".zip,.rar";
-      default:
-        return "";
-    }
-  };
-
-  const validateFileType = (file: any, uploadFileType: string | any) => {
-    const acceptedTypes = getAcceptedFileTypes(uploadFileType).split(",");
-    return acceptedTypes.some((type) => {
-      if (type.startsWith(".")) {
-        return file.name.toLowerCase().endsWith(type);
-      } else {
-        return file.type === type;
-      }
-    });
-  };
-
-  const isValidTweetUrl = (url: string) => {
-    const tweetUrlPattern =
-      /^https?:\/\/(www\.)?(twitter|x)\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/i;
-
-    const match = url.match(tweetUrlPattern);
-
-    if (match) {
-      const tweetId = match[5]; // Extracting the tweet ID from the matched groups
-      return {
-        isValid: true,
-        tweetId: tweetId,
-      };
-    } else {
-      return {
-        isValid: false,
-        tweetId: null,
-      };
-    }
-  };
-
-  const handleCheckTwitterFollow = async (userName: string) => {
-    try{
-      if (!user?.twitterInfo?.accessToken) {
-      notify("error", "Please connect your twitter account to proceed");
+  // discord
+  const checkMembership = async () => {
+    if (!user?.discordInfo?.discordId) {
+      notify("error", "Please connect your discord account to proceed");
       router.push("/user/profile");
       return;
     }
 
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/checkFollow`,
-      {
-        targetUserName: userName,
-      },
-      { withCredentials: true }
-    );
+    const data = user?.discordInfo?.discordId;
+    const accessToken = user?.discordInfo?.accessToken;
+    const guildId = selectedCard?.guild;
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/check-discord-membership`,
+        {
+          data,
+          accessToken,
+          guildId,
+        }
+      );
+      // console.log("response:-", response.data);
+      const discordShip = response.data.isMember;
+      const datas = {
+        taskId: selectedCard._id,
+        userId: user?._id,
+        userName: user?.displayName,
+        submission: "Join Discord Successfully ",
+      };
+      // console.log("discordShip:-", discordShip);
+      if (discordShip) {
+        // console.log("Join Successful");
+        // notify("success", "Join Successful");
+        await dispatch(completeTask(datas));
+        onClose();
+        dispatch(fetchTaskById(questId));
+      } else {
+        notify("error", "Please join. Not a member");
+      }
+    } catch (error) {
+      console.error("Error checking Discord membership:", error);
+    }
+  };
 
-    if(!response.data.success){
-      notify("error",response.data.message);
+  // twitter task
+
+  const handleCheckTwitterFollow = async (userName: string) => {
+    try {
+      if (!user?.twitterInfo?.accessToken) {
+        notify("error", "Please connect your twitter account to proceed");
+        router.push("/user/profile");
+        return;
+      }
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/checkFollow`,
+        {
+          targetUserName: userName,
+        },
+        { withCredentials: true }
+      );
+
+      if (!response.data.success) {
+        notify("error", response.data.message);
+        return;
+      }
+
+      // console.log("follow response", response.data);
       return;
-    }
-
-    console.log("follow response", response.data);
-    return ;
-    }
-    catch(error:any){
+    } catch (error: any) {
       console.log("error while checking twitter follow", error);
       notify("error", error.message);
-      return ;
+      return;
     }
   };
 
@@ -1163,7 +900,7 @@ const Popup: React.FC<{
       notify("error", "Invalid tweet URL");
       return;
     }
-    console.log("tweetId", tweetId);
+    // console.log("tweetId", tweetId);
 
     try {
       const response = await axios.post(
@@ -1171,22 +908,24 @@ const Popup: React.FC<{
         { tweetId },
         { withCredentials: true }
       );
-      console.log("like response", response.data);
+      // console.log("like response", response.data);
 
       if (!response.data.success) {
-        notify("error", "Some error occured while checking tweet retweet");
+        // notify("error", "Some error occured while checking tweet retweet");
+        SweetAlert("error", "Some error occured while checking tweet retweet");
         return;
       }
 
       if (response.data.isLiked) {
-        notify("success", "You have liked the tweet");
+        // notify("success", "You have liked the tweet");
         onSubmit(selectedCard._id, { visited: "Tweet liked" });
       } else {
         notify("error", "You have not liked the tweet");
       }
     } catch (error) {
       console.log("error while checking tweet like", error);
-      notify("error", "Error while checking tweet like");
+      SweetAlert("error", "Error while checking tweet like");
+      // notify("error", "Error while checking tweet like");
     }
   };
 
@@ -1211,19 +950,22 @@ const Popup: React.FC<{
       );
 
       if (!response.data.success) {
-        notify("error", "Some error occured while checking tweet retweet");
+        // notify("error", "Some error occured while checking tweet retweet");
+        SweetAlert("error", "Some error occured while checking tweet retweet");
         return;
       }
 
       if (response.data.isRetweeted) {
-        notify("success", "Task completed successfully");
+        // notify("success", "Task completed successfully");
         onSubmit(selectedCard._id, { visited: "Tweet retweeted" });
       } else {
-        notify("error", "You have not Retweeted the tweet");
+        // notify("error", "You have not Retweeted the tweet");
+        SweetAlert("error", "You have not Retweeted the tweet");
       }
     } catch (error) {
       console.log("error while checking tweet like", error);
-      notify("error", "Error while checking tweet like");
+      // notify("error", "Error while checking tweet like");
+      SweetAlert("error", "Error while checking tweet like");
     }
   };
 
@@ -1233,7 +975,6 @@ const Popup: React.FC<{
       router.push("/user/profile");
       return;
     }
-
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/send`,
@@ -1242,27 +983,21 @@ const Popup: React.FC<{
       );
 
       if (!response.data.success) {
-        notify("error", "Some error occured while sending tweet");
+        // notify("error", "Some error occured while sending tweet");
+        SweetAlert("error", "Some error occured while sending tweet");
         return;
       }
 
       onSubmit(selectedCard._id, { visited: "Tweet sent" });
-      notify("success", "Tweet sent successfully");
+      // notify("success", "Tweet sent successfully");
     } catch (error) {
       console.log("error while sending tweet", error);
-      notify("error", "Error while sending tweet");
+      SweetAlert("error", "Error while sending tweet");
+      // notify("error", "Error while sending tweet");
     }
   };
-  const extractChatId = (url: string) => {
-    const regex = /^https:\/\/web\.telegram\.org\/a\/#(-?\d+)$/;
-    const match = url.match(regex);
 
-    if (match) {
-      return { status: true, chatId: match[1] }; // Return the chat ID
-    } else {
-      return { status: false }; // Return false if the format is incorrect
-    }
-  };
+  // telegram task
   const handleVerifyJoinTelegramGroup = async (groupUrl: string) => {
     if (!user?.teleInfo?.telegramId) {
       notify("error", "Please connect your telegram account to proceed");
@@ -1270,9 +1005,10 @@ const Popup: React.FC<{
       return;
     }
     try {
-      const { status, chatId } = extractChatId(groupUrl);
+      const { status, chatId } = extractTeleGramChatId(groupUrl);
       if (!status) {
-        notify("error", "Invalid Telegram group URL");
+        // notify("error", "Invalid Telegram group URL");
+        SweetAlert("error", "Invalid Telegram group URL");
         return;
       }
 
@@ -1287,14 +1023,21 @@ const Popup: React.FC<{
       );
 
       if (!response.data.success) {
-        notify("error", response.data.message);
+        // notify("error", response.data.message);
+        SweetAlert("error", response.data.message);
         return;
       }
       onSubmit(selectedCard._id, { visited: "Telegram group joined" });
     } catch (error) {
       console.log("error while checking telegram group", error);
-      notify("error", "Error while checking telegram group");
+      SweetAlert("error", "Error while checking telegram group");
+      // notify("error", "Error while checking telegram group");
     }
+  };
+
+  const handleVisitLink= async (selectedCard:CardData) => {
+      window.open(selectedCard.visitLink, "_blank");
+      onSubmit(selectedCard._id, { visited: "true" });
   };
 
   return (
@@ -1304,15 +1047,14 @@ const Popup: React.FC<{
           <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
             <div className="flex items-center">
               <div className="mx-2">
-                <h3 className="text-lg font-semibold text-white">
-                  {selectedCard.taskName || "No Task Name"}
+                <h3 className="text-lg font-semibold text-white capitalize ">
+                {selectedCard.taskName.trim().length!=0?selectedCard.taskName:selectedCard.type}
                 </h3>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-white bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-            >
+              className="text-white bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
               <svg
                 className="w-3 h-3"
                 aria-hidden="true"
@@ -1338,40 +1080,18 @@ const Popup: React.FC<{
               </div>
             ) : (
               <>
-                <p className="text-sm text-gray-100 mb-4">
-                  {selectedCard.taskDescription || "No description "}
+                <p className="text-sm text-gray-100 mb-4 capitalize ">
+                  {(selectedCard.taskDescription.trim().length!=0)?selectedCard.taskDescription:"Complete the task below to earn Rewards"}
                 </p>
 
                 {selectedCard.type === "Visit Link" && (
-                  <div>
-                    <a
-                      href={selectedCard.visitLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-white underline"
-                      onClick={() =>
-                        onSubmit(selectedCard._id, { visited: "true" })
-                      }
+                  <div className="flex justify-center items-center mb-2 ">
+                    <button
+                      className="text-white px-4 py-2 bg-famViolate hover:bg-famViolate-light rounded-full"
+                      onClick={() =>{ handleVisitLink(selectedCard)}}
                     >
                       Visit this link
-                    </a>
-                  </div>
-                )}
-
-                {selectedCard.type === "Discord" && (
-                  <div>
-                    <div className="flex justify-center items-center">
-                      <a
-                        href={selectedCard.discordLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-white bg-[#8e25ff] hover:bg-[#953ff1] font-bold py-2 px-4 rounded-full"
-                        onClick={handleLinkClick}
-                        // onClick={ () => onSubmit( selectedCard._id, { visited: "true" } ) }
-                      >
-                        Join Server
-                      </a>
-                    </div>
+                    </button>
                   </div>
                 )}
 
@@ -1539,202 +1259,22 @@ const Popup: React.FC<{
                   </div>
                 )}
 
-                {selectedCard.type === "Connect wallet" && (
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    className="justify-center text-center "
-                    onClick={() => connectSingleWallet(selectedCard._id)}
-                  >
-                    Connect your wallet
-                  </Button>
-                )}
-                {selectedCard.type === "Connect wallet" &&
-                  address &&
-                  balance && (
-                    <div className="mt-4">
-                      <p className="text-white">Address: {address}</p>
-                      <p className="text-white">Balance: {balance} ETH</p>
-                    </div>
-                  )}
-
-                {selectedCard.type === "Gitcoin passport" && (
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    className="justify-center text-center "
-                    onClick={() => submitPassport(selectedCard._id)}
-                  >
-                    Submit Gitcoin passport
-                  </Button>
-                )}
-
-                {selectedCard.type === "Gitcoin passport" && showScore && (
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    className="justify-center text-center"
-                    onClick={Score}
-                  >
-                    gitcoin score
-                  </Button>
-                )}
-
-                {selectedCard.type == "Civic pass verification" && (
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    className="justify-center text-center "
-                    onClick={() => checkCivicPass(selectedCard._id)}
-                  >
-                    Verify the Civic pass
-                  </Button>
-                )}
-
-                {selectedCard.type == "Ens holder" && (
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    className="justify-center text-center "
-                    onClick={() => checkENS(selectedCard._id)}
-                  >
-                    Verify the account
-                  </Button>
-                )}
-                
-                {selectedCard.type == "Eth holder" && (
-                  <Button
-                    variant="solid"
-                    color="primary"
-                    className="text-center justify-center "
-                    onClick={() => checkETHBalance(selectedCard._id)}
-                  >
-                    Verify the account
-                  </Button>
-                )}
-
-                {selectedCard.type === "Tweet Like" && (
-                  <div className="flex flex-col mb-4">
-                    <div className="mb-4 text-start text-white">
-                      Like the following tweet{" "}
-                    </div>
-
-                    <Link
-                      target="_blank"
-                      href={selectedCard?.tweetLikeUrl as string}
-                      className="rounded-full px-4 py-2 bg-blue-500 text-white mb-4"
-                    >
-                      <div className="flex justify-center items-center gap-2">
-                        <span>
-                          <i className="bi bi-twitter"></i>
-                        </span>
-                        <span>Tweet</span>
-                      </div>
-                    </Link>
-                    <div className="flex justify-end items-center mb-2">
-                      <button
+                {selectedCard.type === "Discord" && (
+                  <div className="flex flex-col">
+                    <div className="flex justify-center items-center">
+                      <Button
                         onClick={() => {
-                          handleVerifyLike(
-                            selectedCard?.tweetLikeUrl as string
-                          );
+                          window.open(selectedCard.discordLink, "_blank");
                         }}
-                        className="bg-blue-400 px-4 py-2 rounded-full "
+                        className="text-white px-4 py-2 bg-famViolate hover:bg-famViolate-light rounded-full"
                       >
-                        Submit
-                      </button>
+                        Join Server
+                      </Button>
                     </div>
-                  </div>
-                )}
-
-                {selectedCard.type === "Tweet Retweet" && (
-                  <div className="flex flex-col mb-4">
-                    <div className="mb-4 text-start text-white">
-                      Retweet the following tweet{" "}
-                    </div>
-
-                    <Link
-                      target="_blank"
-                      href={selectedCard?.tweetRetweetUrl as string}
-                      className="rounded-full px-4 py-2 bg-blue-600 text-white mb-4"
-                    >
-                      <div className="flex justify-center items-center gap-2">
-                        <span>
-                          <i className="bi bi-twitter"></i>
-                        </span>
-                        <span>ReTweet</span>
-                      </div>
-                    </Link>
-                    <div className="flex justify-end items-center mb-2">
+                    <div className="flex justify-end items-center">
                       <button
-                        onClick={() => {
-                          handleVerifyRetweet(
-                            selectedCard?.tweetRetweetUrl as string
-                          );
-                        }}
-                        className="bg-blue-700 px-4 py-2 rounded-full "
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {selectedCard.type === "Tweet" && (
-                  <>
-                    <div className="flex flex-col ">
-                      {selectedCard?.defaultTweet && (
-                        <div className="flex flex-col">
-                          <textarea
-                            disabled
-                            value={selectedCard?.defaultTweet}
-                            className="w-full bg-gray-800 mb-4 rounded-md text-white p-2 border-1 border-gray-400"
-                          ></textarea>
-
-                          <div className="flex justify-end items-center ">
-                            <button
-                              onClick={() =>
-                                handleSendTweet(
-                                  selectedCard?.defaultTweet as string
-                                )
-                              }
-                              className="px-4 py-1 rounded-full bg-blue-500 hover:bg-blue-800 text-white"
-                            >
-                              <div className="flex justify-center items-center gap-2">
-                                <span>
-                                  <i className="bi bi-twitter"></i>
-                                </span>
-                                <span>Tweet</span>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
-
-                {selectedCard.type === "Twitter Follow" && (
-                  <div>
-                    <div className="flex justify-center items-center mb-4">
-                      <Link href={`https://twitter.com/intent/follow?screen_name=${selectedCard?.tweetUsername}`} target="_blank"
-                        className="text-white bg-blue-500 rounded-full px-4 py-2 "
-                      >
-                        <div className="flex justify-center items-center gap-2">
-                          <span>
-                            <i className="bi bi-twitter"></i>
-                          </span>
-                          <span>Follow {selectedCard?.tweetUsername}</span>
-                        </div>
-                      </Link>
-                    </div>
-                    <div className="flex justify-end items-center mb-4">
-                      <button
-                        className="px-4 py-2 rounded-full bg-blue-700 text-white"
-                        onClick={() => {
-                          handleCheckTwitterFollow(
-                            selectedCard?.tweetUsername as string
-                          );
-                        }}
+                        onClick={() => checkMembership()}
+                        className="text-white px-2 py-1 bg-famViolate hover:bg-famViolate-light rounded-full "
                       >
                         Claim
                       </button>
@@ -1775,6 +1315,163 @@ const Popup: React.FC<{
                   </div>
                 )}
 
+                {/* tweeter tasks start */}
+                {selectedCard.type === "Tweet Like" && (
+                  <div className="flex flex-col mb-4">
+                    <div className="mb-4 text-start text-white">
+                      Like the Below tweet{" "}
+                    </div>
+
+                    <Link
+                      target="_blank"
+                      href={selectedCard?.tweetLikeUrl as string}
+                      className="rounded-full px-4 py-2 bg-blue-500 text-white mb-4"
+                    >
+                      <div className="flex justify-center items-center gap-2">
+                        <span>
+                          <i className="bi bi-twitter"></i>
+                        </span>
+                        <span>Tweet</span>
+                      </div>
+                    </Link>
+                    <div className="flex justify-end items-center mb-2">
+                      <button
+                        onClick={() => {
+                          handleVerifyLike(
+                            selectedCard?.tweetLikeUrl as string
+                          );
+                        }}
+                        className="bg-blue-400 px-4 py-2 rounded-full "
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {selectedCard.type === "Tweet Retweet" && (
+                  <div className="flex flex-col mb-4">
+                    <div className="mb-4 text-start text-white">
+                      Retweet the Below tweet{" "}
+                    </div>
+
+                    <Link
+                      target="_blank"
+                      href={selectedCard?.tweetRetweetUrl as string}
+                      className="rounded-full px-4 py-2 bg-blue-600 text-white mb-4"
+                    >
+                      <div className="flex justify-center items-center gap-2">
+                        <span>
+                          <i className="bi bi-twitter"></i>
+                        </span>
+                        <span>ReTweet</span>
+                      </div>
+                    </Link>
+                    <div className="flex justify-end items-center mb-2">
+                      <button
+                        onClick={() => {
+                          handleVerifyRetweet(
+                            selectedCard?.tweetRetweetUrl as string
+                          );
+                        }}
+                        className="bg-blue-700 px-4 py-2 rounded-full "
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {selectedCard.type === "Tweet" && (
+                  <>
+                    <div className="flex flex-col ">
+                       <div className="mb-4 text-start text-white">
+                        Below Tweet will be posted on your twitter account
+                    </div>
+                      {selectedCard?.defaultTweet && (
+                        <div className="flex flex-col">
+                          <textarea
+                            disabled
+                            value={selectedCard?.defaultTweet}
+                            className="w-full bg-gray-800 mb-4 rounded-md text-white p-2 border-1 border-gray-400"
+                          ></textarea>
+
+                          <div className="flex justify-end items-center ">
+                            <button
+                              onClick={() =>
+                                handleSendTweet(
+                                  selectedCard?.defaultTweet as string
+                                )
+                              }
+                              className="px-4 py-1 rounded-full bg-blue-500 hover:bg-blue-800 text-white"
+                            >
+                              <div className="flex justify-center items-center gap-2">
+                                <span>
+                                  <i className="bi bi-twitter"></i>
+                                </span>
+                                <span>Tweet</span>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {selectedCard.type === "Twitter Follow" && (
+                  <div>
+                    <div className="flex justify-center items-center mb-4">
+                      <Link
+                        href={`https://twitter.com/intent/follow?screen_name=${selectedCard?.tweetUsername}`}
+                        target="_blank"
+                        className="text-white bg-blue-500 rounded-full px-4 py-2 "
+                      >
+                        <div className="flex justify-center items-center gap-2">
+                          <span>
+                            <i className="bi bi-twitter"></i>
+                          </span>
+                          <span>Follow {selectedCard?.tweetUsername}</span>
+                        </div>
+                      </Link>
+                    </div>
+                    <div className="flex justify-end items-center mb-4">
+                      <button
+                        className="px-4 py-2 rounded-full bg-blue-700 text-white"
+                        onClick={() => {
+                          handleCheckTwitterFollow(
+                            selectedCard?.tweetUsername as string
+                          );
+                        }}
+                      >
+                        Claim
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {/* tweeter tasks end */}
+
+                {/* blockchain tasks start */}
+                {selectedCard.type === "Connect wallet" && (
+                  <div className="flex justify-end items-center" >
+                  <Button
+                    variant="solid"
+                    color="primary"
+                    className="justify-center text-center "
+                    onClick={() => connectSingleWallet(selectedCard._id)}
+                  >
+                    Connect your wallet
+                  </Button>
+                  </div>
+                )}
+
+                {/* {selectedCard.type === "Connect wallet" && address && balance && (
+                    <div className="mt-4">
+                      <p className="text-white">Address: {address}</p>
+                      <p className="text-white">Balance: {balance} ETH</p>
+                    </div>
+                )} */}
+
                 {selectedCard.type === "Connect multiple wallet" &&
                   [...Array(selectedCard.walletsToConnect)].map((_, index) => (
                     <div key={index}>
@@ -1810,21 +1507,78 @@ const Popup: React.FC<{
                     </div>
                   ))}
 
-                {/* <Button
+                {selectedCard.type === "Gitcoin passport" && (
+                   <div className="flex justify-end items-center" >
+                  <Button
                     variant="solid"
-                    color="danger"
-                    className="m-4 text-white   "
-                    onClick={ onClose }
+                    color="primary"
+                    className="justify-center text-center "
+                    onClick={() => submitPassport(selectedCard._id)}
                   >
-                    Cancel
-                  </Button> */}
+                    Submit Gitcoin passport
+                  </Button>
+                  </div>
+                )}
 
+                {selectedCard.type === "Gitcoin passport" && showScore && (
+                 <div className="flex justify-end items-center" >
+                  <Button
+                    variant="solid"
+                    color="primary"
+                    className="justify-center text-center"
+                    onClick={Score}
+                  >
+                    gitcoin score
+                  </Button>
+                  </div>
+                )}
+
+                {selectedCard.type == "Civic pass verification" && (
+                   <div className="flex justify-end items-center" >
+                  <Button
+                    variant="solid"
+                    color="primary"
+                    className="justify-center text-center "
+                    onClick={() => checkCivicPass(selectedCard._id)}
+                  >
+                    Verify the Civic pass
+                  </Button>
+                  </div>
+                )}
+
+                {selectedCard.type == "Ens holder" && (
+                 <div className="flex justify-end items-center" >
+                  <Button
+                    variant="solid"
+                    color="primary"
+                    className="justify-center text-center "
+                    onClick={() => checkENS(selectedCard._id)}
+                  >
+                    Verify the account
+                  </Button>
+                  </div>
+                )}
+
+                {selectedCard.type == "Eth holder" && (
+                  <div className="flex justify-end items-center" >
+                  <Button
+                    variant="solid"
+                    color="primary"
+                    className="text-center justify-center "
+                    onClick={() => checkETHBalance(selectedCard._id)}
+                  >
+                    Verify the account
+                  </Button>
+                  </div>
+                )}
+                {/* blockchain tasks end */}
                 {(selectedCard.type === "Opinion Scale" ||
                   selectedCard.type === "File upload" ||
                   selectedCard.type === "Text" ||
                   selectedCard.type === "Number" ||
                   selectedCard.type === "URL") && (
-                  <Button
+                  <div className="flex justify-end items-center mt-2" >
+                   <Button
                     variant="solid"
                     color="primary"
                     className=" "
@@ -1832,6 +1586,7 @@ const Popup: React.FC<{
                   >
                     Submit
                   </Button>
+                  </div>
                 )}
               </>
             )}

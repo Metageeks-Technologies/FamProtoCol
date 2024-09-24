@@ -1,15 +1,15 @@
 "use client";
+import { deleteTask, fetchTaskById } from "@/redux/reducer/taskSlice";
 import { fetchQuestById } from "@/redux/reducer/questSlice";
-import { completeTask, fetchTaskById } from "@/redux/reducer/taskSlice";
 import { AppDispatch, RootState } from "@/redux/store";
-import { ThunkDispatch } from "@reduxjs/toolkit";
-import { AnyAction } from 'redux';
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { ShimmerDiv, ShimmerTitle } from "shimmer-effects-react";
+import { TailSpinLoader } from "@/app/components/loader";
 
-interface Completion
-{
+interface Completion {
   user: string;
   completedAt: string;
   submission: string;
@@ -17,8 +17,7 @@ interface Completion
   _id: string;
 }
 
-interface CardData
-{
+interface CardData {
   _id: string;
   image: string;
   name: string;
@@ -34,74 +33,87 @@ interface CardData
   completions: Completion[];
 }
 
-const QuestPage = ( { params }: { params: { slug: string; }; } ) =>
-{
+const QuestPage = ({ params }: { params: { slug: string } }) => {
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
   const questId: string | any = params.slug;
-  const [ selectedCard, setSelectedCard ] = useState<CardData | null>( null );
-  const tasks = useSelector( ( state: RootState ) => state.task.currentTask );
-  // useSelector((state:any)=>console.log(state.task))
+  const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
+  const quest = useSelector((state: RootState) => state.quest.quest);
+  const { currentTask: tasks, loading } = useSelector(
+    (state: RootState) => state.task
+  );
+  console.log("quest:-", quest);
   // console.log(tasks)
-  useEffect( () =>
-  {
-    dispatch( fetchTaskById( questId ) );
-  }, [] );
+  useEffect(() => {
+    dispatch(fetchQuestById(questId));
+    dispatch(fetchTaskById(questId));
+  }, [dispatch, questId]);
 
-
-  const handleCardClick = (card: CardData) => {
-    setSelectedCard(card);
-    
+  const handleDeleteTask = (id: string) => () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      color: "white",
+      background: "#171616",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        dispatch(deleteTask(id));
+        setSelectedCard(null);
+        router.refresh();
+        Swal.fire({
+          title: "Deleted!",
+          background: "#171616",
+          color: "#48de02",
+          text: "Your task has been deleted",
+          icon: "success",
+        });
+      }
+    });
   };
-
-  const handleClosePopup = () =>
-  {
-    setSelectedCard( null );
-  };
-
-  const addTask = () =>
-  {
-    router.push( `/kol/add-task/${ questId }` )
-  };
-
 
   return (
     <div className="text-white min-h-screen">
-      <div className="w-[80%] mx-auto py-10">
-        <h1 className="text-2xl font-bold mb-4">Quest Monitoring</h1>
-        {/* progress bar */}
-         {/* <div className="my-5">
-          <h1 className="text-2xl">Task progress Bar</h1>
-          <div className="flex justify-between mb-1">
-            <span className="text-sm font-medium text-blue-700 dark:text-white">
-              {progress}%
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-            <div
-              className="bg-green-500 h-2.5 rounded-full"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-        </div> */}
-        { tasks && tasks?.length > 0 && (
-
-          <div className="flex flex-col md:flex-row md:justify-between">
-            <div className="max-w-[600px] pt-4 text-gray-400 flex justify-end">
-              <p className="text-white mb-6">Monitor task completions and submissions.</p>
+      <div className="w-[95%] mx-auto py-10">
+        <div className="flex gap-4 justify-start mb-2 items-start px-4">
+          {!quest && <ShimmerDiv mode="dark" height={100} width={100} />}
+          {quest && (
+            <div className="w-20 h-20 rounded-lg overflow-hidden">
+              <img
+                className="w-full h-full object-cover"
+                src={quest?.logo}
+                alt={quest?.title}
+              />
             </div>
+          )}
 
-            <div className="md:pt-6 md:inline-block">
-              <button className="bg-gray-700 hover:bg-gray-900 text-white font-medium w-full md:w-auto px-5 py-2 rounded-3xl"
-                onClick={ addTask }
-              >
-                Add task
-              </button>
+          <div className="flex flex-col ">
+            <div className="text-2xl font-bold capitalize">{quest?.title}</div>
+            <div className="w-full text-white opacity-40 flex justify-start ">
+              {quest?.description || "Monitor your tasks here"}
             </div>
           </div>
-        ) }
+        </div>
+        {tasks && tasks?.length > 0 && (
+          <div className="flex flex-col md:flex-row md:justify-end px-4">
+            <button
+              className="bg-famViolate hover:bg-violet-700 text-white font-medium w-full md:w-auto px-5 py-2 rounded-3xl"
+              onClick={() => {
+                router.push(`/kol/add-task/${questId}`);
+              }}
+            >
+              Add task
+            </button>
+          </div>
+        )}
 
-        { ( tasks.length === 0 ) && (
+        {loading && <TailSpinLoader />}
+
+        {!loading && tasks.length === 0 && (
           <div className="flex flex-col items-center justify-center h-[60vh]">
             <div className="text-center p-8 rounded-xl shadow-lg max-w-md w-full bg-slate-900">
               <svg
@@ -118,51 +130,60 @@ const QuestPage = ( { params }: { params: { slug: string; }; } ) =>
                   d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
                 />
               </svg>
-              <h3 className="text-xl font-medium text-white mb-2 ">No tasks available</h3>
-              <p className="text-gray-400 mb-6">Get started by creating a new task for this quest.</p>
+              <h3 className="text-xl font-medium text-white mb-2 ">
+                No tasks available
+              </h3>
+              <p className="text-gray-400 mb-6">
+                Get started by creating a new task for this quest.
+              </p>
               <button
-                onClick={ addTask }
+                onClick={() => {
+                  router.push(`/kol/add-task/${questId}`);
+                }}
                 className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
               >
                 Add New Task
               </button>
             </div>
           </div>
-        ) }
+        )}
 
-        <div className="grid gap-4 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 my-4">
-
-          { tasks?.map( ( task: CardData, index: number ) => (
+        <div className="px-4 grid gap-4 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 my-4">
+          { !loading && tasks?.map((task: CardData, index: number) => (
             <div
-              key={ index }
+              key={index}
               className="border border-gray-200 bg-white/5 p-4 rounded-xl shadow-lg hover:bg-white/10 cursor-pointer"
-              onClick={ () => handleCardClick( task ) }
+              onClick={() => {
+                setSelectedCard(task);
+              }}
             >
-              <h2 className="text-xl font-medium mb-2">{ task.type }</h2>
-              <p className="text-sm mb-2">{ task.description }</p>
+              <h2 className="text-xl font-medium mb-2">{task.type}</h2>
+              <p className="text-sm mb-2">{task.description}</p>
               <div className="flex justify-between items-center">
                 <span className="bg-purple-500 text-white px-2 py-1 rounded-lg text-xs">
-                  { task.category }
+                  {task.category}
                 </span>
                 <span className="text-sm">
-                  Completions: { task.completions.length }
+                  Completions: {task.completions.length}
                 </span>
               </div>
             </div>
-          ) ) }
+          ))}
         </div>
       </div>
 
-      { selectedCard && (
+      {selectedCard && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center">
           <div className="relative p-4 w-full max-w-4xl">
             <div className="relative bg-[#282828] rounded-3xl shadow text-white">
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 className="text-xl font-semibold text-white">
-                  { selectedCard.name } Completions
+                  {selectedCard.name} Completions
                 </h3>
                 <button
-                  onClick={ handleClosePopup }
+                  onClick={() => {
+                    setSelectedCard(null);
+                  }}
                   className="text-white bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center"
                 >
                   <svg
@@ -182,36 +203,59 @@ const QuestPage = ( { params }: { params: { slug: string; }; } ) =>
                   </svg>
                 </button>
               </div>
+              <div className="flex justify-end items-center">
+                <button
+                  onClick={handleDeleteTask(selectedCard._id)}
+                  className="px-2 py-1 mr-2 mt-2 font-semibold rounded-full text-white bg-famViolate hover:text-gray-400"
+                >
+                  <i className="bi bi-trash-fill"></i> Delete task
+                </button>
+              </div>
               <div className="p-4 md:p-5 max-h-[70vh] overflow-y-auto">
-                { selectedCard.completions.length > 0 ? (
+                {selectedCard.completions.length > 0 ? (
                   <table className="w-full text-sm text-left text-gray-200">
                     <thead className="text-xs text-gray-100 uppercase bg-gray-700">
                       <tr>
-                        <th scope="col" className="px-6 py-3">User ID</th>
-                        <th scope="col" className="px-6 py-3">User Name</th>
-                        <th scope="col" className="px-6 py-3">Completed At</th>
-                        <th scope="col" className="px-6 py-3">Submission</th>
+                        <th scope="col" className="px-6 py-3">
+                          User ID
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          User Name
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          Completed At
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          Submission
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
-                      { selectedCard.completions.map( ( completion, index ) => (
-                        <tr key={ index } className="bg-gray-800 border-b border-gray-700">
-                          <td className="px-6 py-4">{ completion.user }</td>
-                          <td className="px-6 py-4">{ completion?.userName }</td>
-                          <td className="px-6 py-4">{ new Date( completion.completedAt ).toLocaleString() }</td>
-                          <td className="px-6 py-4">{ completion.submission }</td>
+                      {selectedCard.completions.map((completion, index) => (
+                        <tr
+                          key={index}
+                          className="bg-gray-800 border-b border-gray-700"
+                        >
+                          <td className="px-6 py-4">{completion.user}</td>
+                          <td className="px-6 py-4">{completion?.userName}</td>
+                          <td className="px-6 py-4">
+                            {new Date(completion.completedAt).toLocaleString()}
+                          </td>
+                          <td className="px-6 py-4">{completion.submission}</td>
                         </tr>
-                      ) ) }
+                      ))}
                     </tbody>
                   </table>
                 ) : (
-                  <p className="text-center text-gray-400">No completions yet.</p>
-                ) }
+                  <p className="text-center text-gray-400">
+                    No completions yet.
+                  </p>
+                )}
               </div>
             </div>
           </div>
         </div>
-      ) }
+      )}
     </div>
   );
 };

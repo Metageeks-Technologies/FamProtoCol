@@ -191,20 +191,20 @@ const UserProfile = ( { params }: { params: { id: string; }; } ) =>
               <div className="lg:w-1/2">
                 <div className="flex flex-col lg:flex-row items-center ">
                   <div className="lg:w-2/5 flex flex-col justify-center items-center">
-                    <div className="w-[8rem] h-[8rem] flex justify-center items-center">
+                    <div className="w-[8rem] h-[8rem] bottom-trapezium">
                       { userData ? (
                         <img
                           src={ userData.image }
                           alt="avatar photo"
 
-                          className="bottom-trapezium mt-8"
+                          className="w-full h-full object-cover"
                         />
                       ) : (
                         <img
                           src="https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg?size=338&ext=jpg&ga=GA1.1.1141335507.1719532800&semt=ais_user"
                           alt="avatar photo"
 
-                          className="bottom-trapezium mt-8"
+                          className="w-full h-full object-cover"
                         />
                       ) }
                     </div>
@@ -212,7 +212,7 @@ const UserProfile = ( { params }: { params: { id: string; }; } ) =>
                   <div className="lg:w-3/5 flex lg:justify-start  mt-6 lg:mt-1">
                     <div className="flex flex-col justify-between lg:items-start items-center">
                       <div className="flex justify-start gap-5 row">
-                        <span className="username">
+                        <span className="text-2xl font-famFont ">
                           { userData?.displayName }
                         </span>
                         <span className="user-rank">
@@ -237,9 +237,9 @@ const UserProfile = ( { params }: { params: { id: string; }; } ) =>
                         </span>
                       </div>
                       <div className="flex row py-4 px-2 gap-1">
-                        <div className="box1 right-trapezium w-[2rem] h-[2rem] bg-[#ffffff33]">
+                        <div className="box1 right-trapezium w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                           <svg
-                            className="box2 right-trapezium p-2"
+                            className="box2 right-trapezium bg-black p-2"
                             xmlns="http://www.w3.org/2000/svg"
                             width="17"
                             height="17"
@@ -252,9 +252,9 @@ const UserProfile = ( { params }: { params: { id: string; }; } ) =>
                             />
                           </svg>
                         </div>
-                        <div className="box1 left-right-trapezium w-[2rem] h-[2rem] px-2 bg-[#ffffff33]">
+                        <div className="box1 left-right-trapezium w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                           <svg
-                            className="box2 left-right-trapezium p-2"
+                            className="box2 left-right-trapezium p-2 bg-black"
                             xmlns="http://www.w3.org/2000/svg"
                             width="17"
                             height="17"
@@ -267,9 +267,9 @@ const UserProfile = ( { params }: { params: { id: string; }; } ) =>
                             />
                           </svg>
                         </div>
-                        <div className="box1 left-trapezium w-[2rem] h-[2rem] bg-[#ffffff33]">
+                        <div className="box1 left-trapezium w-[2rem] h-[2rem] p-[1px] bg-zinc-800">
                           <svg
-                            className="box2 left-trapezium p-2"
+                            className="box2 left-trapezium p-2 bg-black"
                             xmlns="http://www.w3.org/2000/svg"
                             width="15"
                             height="15"
@@ -342,10 +342,10 @@ const UserProfile = ( { params }: { params: { id: string; }; } ) =>
                       <svg className="top-0 left-0 svg2" style={ { strokeWidth: "1px", stroke: "#FA00FF" } } xmlns="http://www.w3.org/2000/svg" width="4" height="5" viewBox="0 0 4 5" fill="none">
                         <path d="M0 4L3.5 4L3.5 0.5" stroke="#FA00FF" />
                       </svg>
-                      <div className="flex justify-start items-center">
+                      <div className="flex justify-start items-center p-2">
 
                         { userData?.badges?.length ? (
-                        <div className="flex flex-wrap lg:justify-start justify-center items-center p-2">
+                        <div className="flex flex-wrap lg:justify-start justify-center items-center p-4">
                           { userData.badges.map( ( data:any ) => (
                             <div
                               key={ data?.id }

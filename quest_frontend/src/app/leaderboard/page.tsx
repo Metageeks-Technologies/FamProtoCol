@@ -1,15 +1,21 @@
 "use client";
-import UserTable from "@/app/components/table/userTable";
-import { users, columns } from "./data";
-import { User, Column } from "./data";
 import { useEffect, useState } from "react";
+import UserTable from "@/app/components/table/userTable";
 import axios from "axios";
-import Image from "next/image";
+import Link from "next/link";
+import { LeaderBoardColumn,LeaderBoardUser } from "@/types/types";
+ 
+// Sample columns data
+const columns: LeaderBoardColumn[] = [
+  { name: 'Name', uid: 'name' },
+  { name: 'Fampoints', uid: 'fampoints' },
+  { name: 'XPS', uid: 'xps' },
+];
 
 const GlobalLeaderboard = () =>
 {
-  const [ data, setData ] = useState<User[]>( [] );
-  const [ topUsers, setTopUsers ] = useState<User[]>( [] );
+  const [ data, setData ] = useState<LeaderBoardUser[]>( [] );
+  const [ topUsers, setTopUsers ] = useState<LeaderBoardUser[]>( [] );
 
   const getLeaderBoard = async () =>
   {
@@ -30,14 +36,15 @@ const GlobalLeaderboard = () =>
         ( b.rewards?.xp || 0 ) - ( a.rewards?.xp || 0 )
       );
 
+
       // Take the top 3 users
       const topThreeUsers = sortedUsers.slice( 0, 3 );
-
       // Set the top 3 users
       setTopUsers( topThreeUsers );
 
       // Set all users for the table
       setData( sortedUsers );
+      // console.log( "all User",sortedUsers );
 
       // console.log( "Top 3 users:", topThreeUsers );
       // console.log( "All users:", allUsers );
@@ -55,13 +62,14 @@ const GlobalLeaderboard = () =>
 
   return (
     <div className=" w-[90%] mx-auto">
-   
-
       {/* top3 */ }
       <section className="w-full ">
         <div className="lg:my-4 my-8 flex items-center gap-8 justify-center">
           <div className=" grid sm:grid-cols-2 lg:grid-cols-3 lg:gap-0 sm:gap-8 gap-2 m-auto w-full justify-center ">
-            <div className=" p-[1px] lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  bg-[#282828] outer_leader_div">
+            <Link href={`/user/profile/${topUsers[1]?._id}`} className="order-2 sm:order-1 relative p-[1px] lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem] bg-[#282828] outer_leader_div">
+              <div className="absolute z-10 top-0 right-1 font-famFont text-famPurple text-2xl"
+              >#2</div>
+
               <div className=" lg:w-[26rem] lg:h-[13rem]  sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  rank-box  ">
                 <div className="w-full h-full innerbox flex justify-center pt-2 sm:pt-[26px] items-center ">
                   <div className="sm:w-[11rem] w-[130px] pt-2 sm:pt-0 mx-auto h-[114px] sm:h-[10rem] pl-0 ">
@@ -73,7 +81,7 @@ const GlobalLeaderboard = () =>
                     />
                   </div>
                   <div className=" flex flex-col   m-auto justify-center items-end">
-                    <div className=" w-full justify-center m-auto text-lg sm:text-xl text-center sm:my-2">{ topUsers[ 1 ]?.displayName }</div>
+                    <div className=" w-full justify-center m-auto text-lg sm:text-xl font-famFont text-center sm:my-2">{ topUsers[ 1 ]?.displayName }</div>
                     <div className="">
                       <div className="  flex gap-2 justify-center items-center">
                         <span>XPS</span>
@@ -85,8 +93,10 @@ const GlobalLeaderboard = () =>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="lg:my-16 p-[1px] lg:w-[26rem] lg:h-[13rem]  sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  bg-[#282828] outer_leader_div">
+            </Link>
+            <Link href={`/user/profile/${topUsers[0]?._id}`} className="order-1 sm:order-2 relative p-[1px] lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  bg-[#282828] outer_leader_div lg:my-16">
+              <div className="absolute z-10 top-0 right-1 font-famFont text-famPurple text-2xl"
+              >#1</div>
               <div className=" lg:w-[26rem] lg:h-[13rem]  sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  rank-box  ">
                 <div className="w-full h-full innerbox flex justify-center pt-2 sm:pt-[26px] items-center ">
                   <div className="sm:w-[11rem] w-[130px] pt-2 sm:pt-0 mx-auto h-[114px] sm:h-[10rem] pl-0 ">
@@ -98,7 +108,7 @@ const GlobalLeaderboard = () =>
                     />
                   </div>
                   <div className=" flex flex-col   m-auto justify-center items-end">
-                    <div className=" w-full justify-center m-auto text-lg sm:text-xl text-center sm:my-2">{ topUsers[ 0 ]?.displayName }</div>
+                    <div className=" w-full justify-center m-auto text-lg sm:text-xl font-famFont text-center sm:my-2">{ topUsers[ 0 ]?.displayName }</div>
                     <div className="">
                       <div className="  flex gap-2 justify-center items-center">
                           <span>
@@ -113,8 +123,10 @@ const GlobalLeaderboard = () =>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className=" p-[1px] lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  bg-[#282828] outer_leader_div">
+            </Link>
+            <Link href={`/user/profile/${topUsers[2]?._id}`} className="order-3 sm:order-3 relative p-[1px] lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  bg-[#282828] outer_leader_div">
+               <div className="absolute z-10 top-0 right-1 font-famFont text-famPurple text-2xl"
+              >#3</div>
               <div className="lg:w-[26rem] lg:h-[13rem] sm:w-[20rem] sm:h-[10rem] w-[17rem] h-[8rem]  rank-box  ">
                 <div className="w-full h-full innerbox flex justify-center pt-2 sm:pt-[26px] items-center ">
                   <div className="sm:w-[11rem] w-[130px] pt-2 sm:pt-0 mx-auto h-[114px] sm:h-[10rem] pl-0 ">
@@ -126,7 +138,7 @@ const GlobalLeaderboard = () =>
                     />
                   </div>
                   <div className=" flex flex-col   m-auto justify-center items-end">
-                    <div className=" w-full justify-center m-auto text-lg sm:text-xl text-center sm:my-2">{ topUsers[ 2 ]?.displayName }</div>
+                    <div className=" w-full justify-center m-auto text-lg sm:text-xl font-famFont text-center sm:my-2">{ topUsers[ 2 ]?.displayName }</div>
                     <div className="">
                       <div className="  flex gap-2 justify-center items-center">
                           <span>
@@ -150,7 +162,7 @@ const GlobalLeaderboard = () =>
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -171,7 +183,7 @@ const GlobalLeaderboard = () =>
           <div className="listOfFriends">Leaderboard</div>
         </div>
         <div className="w-[90%] lg:w-[80%] flex userTable justify-center items-center bg-[#040404] ">
-          <UserTable<User> data={ data } columns={ columns } rowsPerPage={ 5 } />
+          <UserTable<LeaderBoardUser> data={ data } columns={ columns } rowsPerPage={ 5 } />
         </div>
       </section>
     </div>

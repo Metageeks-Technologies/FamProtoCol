@@ -1,81 +1,77 @@
 import React from "react";
-import {useRouter} from 'next/navigation'
+import { useRouter } from "next/navigation";
+import { FaUser, FaBolt, FaTwitter, FaPlus } from "react-icons/fa";
+import { CommunityCardType } from "@/types/types";
 
-// Define the TypeScript type for the card data
-type CommunityCardData = {
-  _id: string;
-  logo: string;
-  title: string; // alphahub
-  quests: []; // length
-  description: string; // bio
-  members: [];
+const CommunityCard: React.FC<{ data: CommunityCardType,type?:string }> = ({ data,type='user'}) => {
+  const router = useRouter();
+
+ const generateDots = (count: number) => {
+  return Array.from({ length: count }, (_, index) => (
+    <i key={index} className="bi bi-dot"></i>
+  ));
 };
 
-// CommunityCard component
-const CommunityCard: React.FC<{ data: CommunityCardData }> = ({ data }) => {
-  const router=useRouter();
-  // console.log(data);
   return (
-    
-    <div className="cursor-pointer" onClick={() => {router.push(`/kol/community-project/${data._id}`)}}>
-      <div className="outer-div relative flex lg:gap-2 sm:gap-4 gap-4  hover:bg-[#8c71ff] hover:text-[#111111] border-[#282828] border rounded-md lg:p-5 sm:p-2 p-4 flex-col justify-center w-full sm:w-full ">
-        <div className="flex flex-row text-xl items-center justify-around ">
-          <div className="p-1">
-            <div className="image-container md:h-[5rem] md:w-[5rem] h-[4rem] w-[4rem] items-center flex">
-              <img src={data?.logo} alt="" className="styled-image" />
-            </div>
-            <div className="bg_Div_Down h-[2rem] mt-2 bg-gray-800" />
+    <div
+      onClick={() => router.push(`/${type}/community-project/${data?._id}`)}
+      className="overflow-hidden cursor-pointer outer-div bg-white/5 relative flex md:gap-6 lg:gap-6 sm:gap-4 gap-4 hover:bg-[#8c71ff] hover:text-[#111111] border-[#282828] border md:p-4 lg:p-4 p-2 flex-col  justify-center w-full sm:w-full"
+    >
+      <div className="flex flex-row text-xl items-center justify-around ">
+        <div className="w-1/4 p-1">
+          <div className="image-container w-full h-[5rem] md:h-[5rem]">
+            <img src={data.logo} alt={data.title} className="w-full h-full object-cover" />
           </div>
+          <div className="bg_Div_Down h-[2rem] md:h-[2rem] bg-gray-800"/>
+        </div>
+        <div className="w-3/4 flex flex-col justify-start gap-2 ">
+          <div className="flex w-full flex-col items-start ">
+            <div className="flex w-full h-[5rem] bg_eco_div border-b-4 border-[#8c71ff] gap-2 md:gap-2 p-2 bg-[#28223d] items-end justify-between ">
+              <div className="md:w-4/5 p text-wrap  truncate text-[12px] md:text-[10px] lg:text-[15px] px-2 md:ml-3 md:text-start text-center card-title ">
+                {data.title}
+              </div>
 
-          <div className="md:w-2/3 w-2/3 flex flex-col justify-start gap-2 ">
-            <div className="flex w-full flex-col items-start ">
-              <div className="flex w-full md:h-[5rem] bg_eco_div border-b-4 border-[#8c71ff] gap-2 md:gap-2  p-2 bg-[#28223d] flex-col lg:flex-row items-center md:items-end lg:items-end justify-between ">
-                <div className="md:w-4/5  w-4/5 truncate text-[12px] md:text-[10px] lg:text-[10px] md:ml-3 md:text-start text-center card-title">
-                  {data.title}
+              <div className="md:1/5 flex flex-row rounded-lg justify-center md:justify-end">
+                <div className="flex gap-1 mr-2 items-center flex-col">
+                  <span className="card-white-text text-xs sm:text-sm">
+                    {data.quests.length}
+                  </span>
+                  <span className=" card-gray-text font-famFont text-xs sm:text-sm">QUESTS</span>
                 </div>
-
-                <div className="md:1/5 flex flex-row rounded-lg justify-center md:justify-end">
-                  <div className="flex gap-1 mr-2 items-center flex-col">
-                    <span className="card-white-text text text-lg ">
-                      {data.quests.length}
-                    </span>
-                    <span className=" card-gray-text text-3xl">QUESTS</span>
-                  </div>
-                  <div className="flex gap-1 items-center flex-col">
-                    <span className="card-white-text text-lg">
-                      {data.members.length}
-                    </span>
-                    <span className=" card-gray-text text-lg">FOLLOWERS</span>
-                  </div>
+                <div className="flex gap-1 items-center flex-col">
+                  <span className="card-white-text text-xs sm:text-sm">
+                    {data.members.length}
+                  </span>
+                  <span className=" card-gray-text font-famFont text-xs sm:text-sm ">
+                    FOLLOWERS
+                  </span>
                 </div>
-                
               </div>
             </div>
           </div>
-          
-        </div>
-
-        <div className="absolute -top-1 -right-1">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="6"
-            height="6"
-            viewBox="0 0 4 4"
-            fill="none"
-          >
-            <path d="M0.5 0V3.5H4" stroke="white" />
-          </svg>
-        </div>
-
-        <div>
-          <div className="flex flex-row text-xs h-[5vh] m-1 gap-2 justify-start">
-            <span className="descText">Bio:</span>
-            <span className="descdata text-wrap break-words overflow-hidden line-clamp-2">
-              {data.description}
-            </span>
+          <div className="flex w-full flex-row justify-end gap-2">
+            <div className="flex bg-[#8C71FF] py-1 px-2 items-center">
+              <FaUser className="md:w-4 w-4 h-4 md:h-4" />
+              <div className="pl-1 text-sm">{data.members.length}</div>
+            </div>
+            <div className="flex bg-[#8C71FF] py-1 px-2 items-center">
+              <FaBolt className="md:w-4 w-4 h-4 md:h-4" />
+              <div className="pl-1 text-sm">{data.quests.length}</div>
+            </div>
+            <div className="flex bg-[#8C71FF] py-1 px-2 items-center">
+              <FaTwitter className="md:w-4 w-4 h-4 md:h-4" />
+              <div className="pl-1 text-sm"></div>
+            </div>
           </div>
         </div>
       </div>
+      <div className="flex flex-row text-xs gap-2 justify-start  ">
+        <span className="descText">Bio: </span>
+        <span className="break-words text-white opacity-30 text-[0.8rem] overflow-hidden line-clamp-2 font-famFont uppercase ">
+          {data.description.slice(0, 20)}
+        </span>
+      </div>
+      <div className="w-full flex text-white opacity-30 justify-between items-center shadow-md">{generateDots(15)}</div>
     </div>
   );
 };

@@ -10,7 +10,7 @@ const CallBackPageContent = () => {
   const searchParams = useSearchParams();
   const state = searchParams.get("state");
   const code = searchParams.get("code");
-  console.log(state, code);
+  // console.log(state, code);
 
   const handleLogin = async () => {
     try {
@@ -23,7 +23,7 @@ const CallBackPageContent = () => {
       router.push("/user/profile");
       console.log(data);
     } catch (error) {
-      router.push("/");
+      router.push("/home");
       console.log(error);
     }
   };

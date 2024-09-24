@@ -6,11 +6,9 @@ import { createTask } from "@/redux/reducer/taskSlice";
 import { fetchUserData } from "@/redux/reducer/authSlice";
 import { AppDispatch } from "@/redux/store";
 import { notify } from "@/utils/notify";
-import Image from "next/image";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Link from "next/link";
-import { DiscordJoin } from "@/app/components/discordPopup";
 import { Button, Select, SelectItem } from "@nextui-org/react";
 
 interface IQuiz {
@@ -66,7 +64,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
   const [success, setSuccess] = useState(false);
   const [showConnectButton, setShowConnectButton] = useState(false);
   const [modalView, setModalView] = useState(false);
-  const authToken = `Bearer ${Cookies.get("authToken")}`;
+  const authToken = `Bearer ${Cookies.get("_fam_token")}`;
   const [wallets, setWallets] = useState(0);
   const [activeTab, setActiveTab] = useState<string>("tweetReaction");
   const [telegram, setTelegram] = useState({
@@ -330,21 +328,25 @@ const AddTask = ({ params }: { params: { id: string } }) => {
     } catch (error: any) {
       setSuccess(false);
       setShowConnectButton(true);
-      const errorMessage = error.response?.data?.message || "An error occurred";
+      const errorMessage = error.response?.data?.message || "Invalid Discord Invite Link";
       notify("error", errorMessage);
     }
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInviteUrl(event.target.value);
-  };
+  const checkDiscordInvite = () => {
+   
+    if (!inviteUrl || inviteUrl.trim() === "") {
+      notify("error", "Please enter a valid Invite Link");
+      return;
+    } 
 
-  const handleButtonClick = () => {
-    if (inviteUrl) {
-      CheckDiscord(inviteUrl);
-    } else {
-      notify("error", "Please enter a valid URL.");
+    const regex = /https:\/\/discord\.gg\/[a-zA-Z0-9]+/;
+    const match = inviteUrl.match(regex);
+    if(!match){
+      notify("error", "Invalid Discord Invite Link");
+      return;
     }
+    CheckDiscord(inviteUrl);
   };
 
   const handleAddWord = () => {
@@ -404,6 +406,13 @@ const AddTask = ({ params }: { params: { id: string } }) => {
     }
   };
 
+  const ConnectDiscordServer= async()=>{
+    // console.log("connect server")
+    setModalView(false);
+    const connectUrl =`https://discord.com/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_ID}&permissions=8&integration_type=0&scope=bot`;
+    window.open(connectUrl, "_blank");
+  }
+
   return (
     <>
       {isOpen && (
@@ -437,7 +446,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                 <div className="p-4 md:p-5 flex flex-col gap-4 bg-[#141414] text-white w-full md:w-1/3">
                   {categories.map(
                     (category: string) =>
-                      category === "Answers" && (
+                      (category === "Answers") && (
                         <div key={category}>
                           <div className="mx-4">
                             <h4 className="text-xl font-medium mb-2 text-gray-400 ">
@@ -466,7 +475,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                                   <div className="flex-1 ">
                                     <h3>{task.name}</h3>
                                     <div className="text-sm  ">
-                                      <p className="text-gray-400 truncate ">
+                                      <p className="text-gray-400 text-wrap">
                                         {" "}
                                         {task.description}{" "}
                                       </p>
@@ -513,7 +522,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                                   <div className="flex-1 ">
                                     <h3>{task.name}</h3>
                                     <div className="text-sm  ">
-                                      <p className="text-gray-400 truncate ">
+                                      <p className="text-gray-400 text-wrap ">
                                         {" "}
                                         {task?.description}{" "}
                                       </p>
@@ -529,7 +538,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                 <div className="p-4 md:p-5 flex flex-col gap-4 bg-[#141414] text-white w-full md:w-1/3">
                   {categories.map(
                     (category: string) =>
-                      category === "On-chain action" && (
+                      (category === "On-chain action") && (
                         <div key={category}>
                           <div className="mx-4">
                             <h4 className="text-xl font-medium mb-2 text-gray-400 ">
@@ -559,7 +568,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                                   <div className="flex-1 ">
                                     <h3>{task.name}</h3>
                                     <div className="text-sm  ">
-                                      <p className="text-gray-400 truncate ">
+                                      <p className="text-gray-400 text-wrap ">
                                         {" "}
                                         {task?.description}{" "}
                                       </p>
@@ -818,58 +827,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                     </div>
                   )}
 
-                  <label className="block text-gray-300 font-semibold mb-2">
-                    Rewards
-                  </label>
-                  <div className="flex items-center mt-2">
-                    <label className="w-1/2 px-4 py-2 border rounded-l-lg bg-gray-800 text-white">
-                      XP
-                    </label>
-                    <input
-                      type="number"
-                      value={rewards.xp}
-                      min={0}
-                      max={500}
-                      onChange={(e) =>
-                        setRewards({
-                          ...rewards,
-                          xp:
-                            parseInt(e.target.value) > 500
-                              ? 500
-                              : parseInt(e.target.value),
-                        })
-                      }
-                      placeholder="Value"
-                      className="w-1/2 px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-300 bg-gray-800 text-white"
-                      required
-                    />
-                  </div>
-                  <div className="flex items-center mt-2">
-                    <label className="w-1/2 px-4 py-2 border rounded-l-lg bg-gray-800 text-white">
-                      Coins
-                    </label>
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      value={rewards.coins}
-                      onChange={(e) =>
-                        setRewards({
-                          ...rewards,
-                          coins:
-                            parseInt(e.target.value) > 100
-                              ? 100
-                              : parseInt(e.target.value),
-                        })
-                      }
-                      placeholder="Value"
-                      className="w-1/2 px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-300 bg-gray-800 text-white"
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* Task-specific inputs */}
+                  {/* Task-specific inputs */}
                 {selectedTask.name === "Visit Link" && (
                   <input
                     type="url"
@@ -897,16 +855,15 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                     <input
                       type="url"
                       className="w-full p-3 bg-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:outline-none"
-                      placeholder="https://"
-                      onChange={handleChange}
+                      placeholder="https://discord.gg/MBgk8JP3"
+                      onChange={(e)=>{setInviteUrl(e.target.value)}}
                       value={inviteUrl}
                     />
-
                     <div className="flex justify-between gap-4 items-center">
-                      <Button onClick={handleButtonClick}>
+                      <Button onClick={checkDiscordInvite}>
                         Check Discord Invite
                       </Button>
-                      {modalView && <DiscordJoin setModalView={setModalView} />}
+                      {modalView && <Button color="danger" variant="solid" onPress={()=>ConnectDiscordServer()} >Connect server</Button>}
                     </div>
                   </>
                 )}
@@ -1120,6 +1077,59 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                     {selectedTask.name.toLowerCase()}.
                   </p>
                 )}
+
+                  <label className="block text-gray-300 font-semibold mb-2">
+                    Rewards
+                  </label>
+                  <div className="flex items-center mt-2">
+                    <label className="w-1/2 px-4 py-2 border rounded-l-lg bg-gray-800 text-white">
+                      XP
+                    </label>
+                    <input
+                      type="number"
+                      value={rewards.xp}
+                      min={0}
+                      max={500}
+                      onChange={(e) =>
+                        setRewards({
+                          ...rewards,
+                          xp:
+                            parseInt(e.target.value) > 500
+                              ? 500
+                              : parseInt(e.target.value),
+                        })
+                      }
+                      placeholder="Value"
+                      className="w-1/2 px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-300 bg-gray-800 text-white"
+                      required
+                    />
+                  </div>
+                  <div className="flex items-center mt-2">
+                    <label className="w-1/2 px-4 py-2 border rounded-l-lg bg-gray-800 text-white">
+                      Coins
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={rewards.coins}
+                      onChange={(e) =>
+                        setRewards({
+                          ...rewards,
+                          coins:
+                            parseInt(e.target.value) > 100
+                              ? 100
+                              : parseInt(e.target.value),
+                        })
+                      }
+                      placeholder="Value"
+                      className="w-1/2 px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-300 bg-gray-800 text-white"
+                      required
+                    />
+                  </div>
+                </div>
+
+                
 
                 <div className="flex justify-end space-x-4 mt-6">
                   <button

@@ -209,7 +209,7 @@ const CommunityDataPage = (props: Props) => {
   const handleAdd=async(e:any)=>{
     e.preventDefault();
     setLoader(true);
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("_fam_admin_token");
     if(!token){
       notify("warn","Please login first");
       router.push("/admin/login");
@@ -250,7 +250,7 @@ const CommunityDataPage = (props: Props) => {
   const handleUpdate=async(e:any)=>{
     e.preventDefault();
     setLoader(true);
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("_fam_admin_token");
     if(!token){
       notify("warn","Please login first");
       router.push("/admin/login");

@@ -11,6 +11,7 @@ type UserTableProps<T> = {
   data: T[];
   columns: Column[];
   rowsPerPage?: number;
+  noData?:string
 };
 
 interface StarDisplayProps
@@ -28,23 +29,93 @@ const StarDisplay: React.FC<StarDisplayProps> = ( { cellValue } ) =>
   return <div className="flex flex-row justify-center gap-1 items-center">{ stars }</div>;
 };
 
-const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsPerPage }: UserTableProps<T> ) =>
+const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsPerPage,noData="No data available" }: UserTableProps<T> ) =>
 {
   const [ page, setPage ] = useState( 1 );
   const rowPerPage = rowsPerPage || 10;
   const pages = Math.ceil( data?.length / rowPerPage );
 
   const items = useMemo( () =>
-  {
+  { 
+     if (!Array.isArray(data)) {
+    console.error("Expected data to be an array but got:", data);
+    return []; // Return an empty array or handle it appropriately
+  }
     const start = ( page - 1 ) * rowPerPage;
     const end = start + rowPerPage;
-    return data.slice( start, end );
+    console.log("start",start,"end",end);
+    return data?.slice( start, end );
   }, [ page, data, rowPerPage ] );
+
+  const renderColumn = (column: Column, columnKey: string): ReactNode => {
+    switch (columnKey) {
+      case 'id':
+        return (
+          <div className="flex justify-start">
+            <span className="uppercase">ID</span>
+          </div>
+        );
+      case 'name':
+        return (
+          <div className="flex w-[60%] mx-auto justify-start">
+            <span className="uppercase">Fam Users</span>
+          </div>
+        );
+      case 'stars':
+        return (
+          <div className="flex justify-start">
+            <span className="uppercase">Stars</span>
+          </div>
+        );
+      case 'xps':
+        return (
+          <div className="flex justify-start ">
+            <span className="uppercase">XPs</span>
+          </div>
+        );
+      case 'fampoints':
+        return (
+          <div className="flex justify-start">
+            <span className="uppercase">Fps</span>
+          </div>
+        );
+      case 'earnings':
+        return (
+          <div className="flex justify-start">
+            <span className="uppercase">Earnings</span>
+          </div>
+        );
+      case 'referralCount':
+        return (
+          <div className="flex justify-center">
+            <span className="uppercase">Referrals</span>
+          </div>
+        );
+      case 'actions':
+        return (
+          <div className="flex justify-start">
+            <span className="uppercase">Actions</span>
+          </div>
+        );
+      case 'level':
+        return (
+          <div className="flex justify-start">
+            <span className="uppercase">Level</span>
+          </div>
+        );
+      default:
+        return (
+          <div className="flex justify-start">
+            <span>{columnKey}</span>
+          </div>
+        );
+    }
+  };
 
   const renderCell = useCallback( ( user: T, columnKey: string ): ReactNode =>
   {
     const cellValue = user[ columnKey ];
-    // console.log( cellValue, user, columnKey );
+    // console.log( "user",user );
     switch ( columnKey )
     {
       case "id":
@@ -55,12 +126,17 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
         );
       case "name":
         return (
-          <div className="capitalize flex justify-start items-center px-2">
-            <span className="lvl text-end text-xl mr-2 px-2">{ user.id || '' }</span>
+          <div className="flex justify-start md:w-[60%] mx-auto items-center gap-2 font-famFont uppercase">
+          {
+            user?.rankByReferredUser && (<span className="font-famFont text-famPurple text-end text-md">#{user?.rankByReferredUser}</span>)
+          }
             <User
-              avatarProps={ { radius: "none", src: user.image || '', size: "md" } }
-              name={ user.displayName || user.name || '' }
-
+              classNames={{
+                base:"px-0"
+              }}
+              avatarProps={ { radius: "md", src: user?.domain?.image || user?.image || '', size: "sm" } }
+              name={ user?.domain?.domainAddress || '' }
+              description={ user?.displayName || ''}
             />
           </div>
         );
@@ -72,19 +148,30 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
         );
       case "xps":
         return (
-          <div className="capitalize flex gap-2 items-center justify-start">
-            <div>
-              <span className="user-leaderboard-text px-2">Xps :  </span>
+          <div className="flex gap-2 items-center justify-start">
+              {/* <span className="uppercase sm:px-2 font-famFont text-white opacity-30">Xps </span> */}
               <span>{ user.rewards?.xp || cellValue || 0 }</span>
-            </div>
-
           </div>
         );
       case "fampoints":
         return (
-          <div className="capitalize flex justify-start items-center gap-1">
-            <span className="user-leaderboard-text px-2">Fampoints : </span>
-            <span className="flex justify-center items-center">{ user.rewards?.coin || cellValue || 0 }</span>
+          <div className="flex gap-2 items-start justify-start">
+            {/* <span className=" uppercase sm:px-2 font-famFont text-white opacity-30">Fps </span> */}
+            <span >{ user.rewards?.coins || cellValue || 0 }</span>
+          </div>
+        );
+      case "earnings":
+         return (
+          <div className="flex gap-2 items-start justify-start">
+            {/* <div className=" uppercase sm:px-2 font-famFont text-white opacity-30">Earnings </div> */}
+            <div className="flex justify-start gap-1" ><span>{(user?.referredUserCount)*2.5 || cellValue || 0 }</span><span>USDC</span></div>
+          </div>
+        );
+      case "referralCount":
+         return (
+          <div className="flex gap-2 items-start justify-center">
+            {/* <span className=" uppercase sm:px-2 font-famFont text-white opacity-30">Referral Count </span> */}
+            <span >{ user?.referredUserCount || cellValue || 0 }</span>
           </div>
         );
       case "actions":
@@ -110,7 +197,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
       case "level":
         return (
           <div>
-            <span className="lvl"> LVL: { user.level || 0 }</span>
+            <span className="text-[#FA00FF] uppercase font-famFont "> LVL: { user.level || 0 }</span>
           </div>
         );
       default:
@@ -118,26 +205,28 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
     }
   }, [] );
 
+
+
   return (
     <div className="w-full h-full">
       <Table
-        hideHeader
+        
         aria-label="Example table with custom cells"
         style={ {
           boxShadow: 'rgb(29 27 27 / 62%) -5px 0px 20px 2px, inset 0px -40px 63px 5px rgb(24 24 24 / 62%)',
         } }
         classNames={ {
-          wrapper: "min-h-[222px] bg-black text-white ",
+          wrapper: "bg-black text-white font-famFont ",
         } }
       >
-        <TableHeader columns={ columns }>
+        <TableHeader  columns={ columns }>
           { ( column ) => (
-            <TableColumn key={ column.uid }>
-              { column.name }
+            <TableColumn className="bg-black" key={ column.uid }>
+             {renderColumn(column,column.uid)}
             </TableColumn>
           ) }
         </TableHeader>
-        <TableBody items={ items } emptyContent={ "No data available" }>
+        <TableBody items={ items } emptyContent={ noData }>
           { ( item ) => (
             <TableRow key={ item?.id || item?._id || `row-${ items.indexOf( item ) }` }>
               { ( columnKey: any ) => <TableCell>{ renderCell( item, columnKey ) }</TableCell> }
@@ -148,15 +237,14 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
       { data.length > 0 && (
         <div className="flex w-full justify-center ">
           <Pagination
-            isCompact
             showControls
             showShadow
-            color="secondary"
             page={ page }
             total={ pages }
             onChange={ ( page ) => setPage( page ) }
             classNames={ {
-              cursor: "bg-[#FA00FF] text-white font-bold",
+              cursor: "bg-[#5538CE]",
+              
             } }
           />
         </div>

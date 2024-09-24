@@ -37,6 +37,13 @@ export interface IDiscordInfo {
 export interface IUser extends Document {
   phone_number: string;
   googleId:string;
+  domain:{
+    domainAddress: string;
+    image:string;
+    hashCode: string;
+    walletAddress: string;
+    password: string;
+  },
   displayName: string;
   email: string;
   bio: string;
@@ -62,7 +69,9 @@ export interface IUser extends Document {
   createdCommunities: mongoose.Types.ObjectId[];
   createdQuests: mongoose.Types.ObjectId[];
   createdTasks: mongoose.Types.ObjectId[];
-  inviteCode: string;
+  inviteCode?: string;
+  referredBy: mongoose.Types.ObjectId ;  // The user ID of the referrer
+  referredUsers?: mongoose.Types.ObjectId[];  // List of user IDs referred by this user
 }
 
 // Create the User schema
@@ -118,11 +127,12 @@ const userSchema: Schema = new mongoose.Schema(
     },
     followers: [{ type: String, default: [] }],
     following: [ { type: String, default: [] } ],
-    
     createdTasks: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Task' } ],
     createdQuests: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Quest' } ],
     createdCommunities: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Community' } ],
-    inviteCode: { type: String, default: '' },
+    inviteCode: { type: String, default: '',unique:true },
+    referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },  // The user ID of the referrer
+    referredUsers: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],  // List of user IDs referred by this user
   },
   { timestamps: true }
 );

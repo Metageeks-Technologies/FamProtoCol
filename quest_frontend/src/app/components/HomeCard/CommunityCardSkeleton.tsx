@@ -8,7 +8,7 @@ const CommunityCardSkeleton: React.FC = () =>
                 <div className="flex flex-row text-xl items-center justify-around">
                     <div className="p-1">
                         <div className="image-container md:h-[5rem] md:w-[5rem] h-[4rem] w-[4rem] items-center flex">
-                            <div className="styled-image bg-gray-600 w-full h-full rounded-full" />
+                            <div className="w-full h-full object-cover bg-gray-600 rounded-full" />
                         </div>
                         <div className="bg_Div_Down h-[2rem] mt-2 bg-gray-700" />
                     </div>

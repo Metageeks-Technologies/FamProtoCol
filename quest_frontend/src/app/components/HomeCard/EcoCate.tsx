@@ -22,8 +22,8 @@ const EcoCate: React.FC = () =>
 
   // console.log( "ecosystem :-0", communityData );
   return (
-    <div className="lg:mt-10 md:mt-4 mt-4 ">
-      <div className="flex items-center gap-1 mt-8 lg:mx-0 sm:mx-6 mx-6">
+    <div className="lg:mt-10 md:mt-4 mt-8 mb-8 mx-auto ">
+      <div className="flex justify-center sm:justify-start items-center gap-1 mb-8 lg:mx-0 sm:mx-6 mx-6">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -40,24 +40,24 @@ const EcoCate: React.FC = () =>
           <path d="M6 5L11 10" stroke="#FA00FF" strokeLinecap="round" />
         </svg>
         <div>
-          <p>Ecosystems</p>
+          <p className="font-qanelas" >Ecosystems</p>
         </div>
       </div>
-      <div className="eco&cat flex flex-col lg:flex-row lg:justify-between gap-10 ">
-        <div className="Main grid gap-4 mx-8  lg:mx-0 grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 pt-6 lg:basis-[50%]">
-          { ecosystem?.map( ( item: data ) => (
-            <div key={ item.id } className="card p cursor-pointer flex gap-1" onClick={ () => router.push( `/ecosystem/${ item.name }` ) }>
-              <div className="card bg-black w-28 h-28 border border-gray-700 flex items-center justify-center relative">
+      <div className="flex flex-col lg:flex-row lg:justify-between gap-10">
+        <div className="grid sm:gap-4 mx-auto sm:mx-8 lg:mx-0 grid-cols-3 sm:grid-cols-4 lg:grid-cols-4 pt-6 gap-4 lg:basis-[50%]">
+          { ecosystem?.map( ( item: data,index:number ) => (
+            <div key={ index } className="card p cursor-pointer flex gap-1" onClick={ () => router.push( `/ecosystem/${ item.name }` ) }>
+              <div className="card bg-black hover:bg-slate-900 w-16 h-16 sm:w-28 sm:h-28 border border-zinc-800 flex items-center justify-center relative">
                 <div className="w-full h-full relative">
-                  <div
+                  {/* <div
                     className="absolute inset-0 bg-cover bg-center opacity-10"
                     style={ { backgroundImage: `url( ${ item.imageUrl } )` } }
-                  ></div>
+                  ></div> */}
                   <div className="relative flex items-center justify-center w-full h-full">
                     <img
                       src={ item.imageUrl }
                       alt="Profile"
-                      className="w-16 h-16 object-cover rounded-full"
+                      className="w-8 h-8 sm:w-16 sm:h-16 object-cover rounded-full"
                     />
                   </div>
                 </div>
@@ -74,9 +74,9 @@ const EcoCate: React.FC = () =>
                 </div>
               </div>
 
-              <div className="icon flex flex-col justify-start gap-2 bg-white/10 h-24 w-8 icon-clip">
+              <div className="icon flex flex-col justify-start gap-2 bg-white/10 h-16 sm:h-24 w-6 sm:w-8 icon-clip">
                 { [ "⭐", "🍎", "⬆" ].map( ( icon, index ) => (
-                  <span key={ index } className="text">
+                  <span key={ index } className="text-xs sm:text-md">
                     { icon }
                   </span>
                 ) ) }
@@ -109,9 +109,9 @@ const EcoCate: React.FC = () =>
         </div>
 
         {/* pending */ }
-        <div>
-          <div className="relative sm:mx-10 lg:mx-0 mx-10 ">
-            <div className="flex items-center gap-1 pt-1  absolute bottom-6 left-0 lg:mt-0 sm:pt-10 ">
+        <div className="flex flex-col" >
+          <div className="relative flex justify-start items-center">
+            <div className="flex items-center gap-1 pt-1 absolute bottom-6 left-0 lg:mt-0 sm:pt-10 ">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -134,7 +134,7 @@ const EcoCate: React.FC = () =>
                 />
               </svg>
               <div>
-                <h1 className="font-thin text-gray-400 ">Categories</h1>
+                <h1 className="font-thin text-gray-400">Categories</h1>
               </div>
             </div>
             <div className="relative  items-center ">
@@ -179,12 +179,12 @@ const EcoCate: React.FC = () =>
               </div>
             </div>
           </div>
-
-          <div className="  grid items-center  lg:grid-cols-5 sm:grid-cols-5 sm:mx-10 lg:gap-8 grid-cols-2  mt-16  shadow-2xl rounded-md mx-10 lg:mx-auto  basis-[50%]">
+          <div className="mx-5 sm:mx-0 ">
+          <div className="grid mx-auto lg:grid-cols-5 sm:grid-cols-5 sm:mx-10 lg:gap-8 grid-cols-3 mt-16 shadow-2xl rounded-md lg:mx-auto basis-[50%]">
             { categories.map( ( card: data, index: number ) => (
               <div
                 key={ index }
-                className="cate flex items-center mb-4 lg:mb-0 hover:cursor-pointer"
+                className="cate flex items-center sm:mb-4 lg:mb-0 hover:cursor-pointer"
                 onClick={ () =>
                 {
                   // Store the category name in session storage
@@ -192,27 +192,24 @@ const EcoCate: React.FC = () =>
                   router.push( '/allcommunity' );
                 }
                 }
-
               >
-
-                <div className="text-center">
-                  <div className="image-container h-[6rem] w-[6rem]">
+                <div className="text-center overflow-clip ">
+                  <div className="image-container h-[5rem] w-[5rem] sm:h-[6rem] sm:w-[6rem]">
                     <img
                       src={ card.imageUrl }
                       alt={ card.name }
-                      className="styled-image"
+                      className="w-full h-full object-contain"   
                     />
                   </div>
-
-                  <h1
-                    className=" mt-1 text-center"
-                    style={ { letterSpacing: "2px" } }
+                  <div
+                    className=" mt-1 text-center font-famFont text-xs sm:text-sm tracking-widest "
                   >
                     { card.name }
-                  </h1>
+                  </div>
                 </div>
               </div>
             ) ) }
+          </div>
           </div>
         </div>
       </div>
