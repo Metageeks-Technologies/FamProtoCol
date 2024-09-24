@@ -84,6 +84,23 @@ body {
   );
 }
 
+.empty-left-trapezium {
+  clip-path: polygon(
+    100% 67%,
+    100% 69%,
+    100% 37%,
+    100% 26%,
+    100% 0%,
+    0% 0%,
+    0% 26%,
+    10% 37%,
+    10% 67%,
+    0% 74%,
+    0% 100%,
+    100% 100%
+  )
+}
+
 /* for div dacorate acc to figma */
 
 .h_bg_Div_Down {

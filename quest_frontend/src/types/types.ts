@@ -124,3 +124,23 @@ export interface LeaderBoardColumn {
   name: string;
   uid: keyof LeaderBoardUser ;
 }
+
+// referrer
+export interface Referrer{
+  displayName?:string;
+  domain?:{
+    domainAddress:string;
+    image:string;
+  }
+  image:string;
+  referredUserCount:number;
+}
+
+export interface ReferredUser{
+  displayName?:string;
+  domain?:{
+    domainAddress:string;
+    image:string;
+  }
+  image:string;
+}

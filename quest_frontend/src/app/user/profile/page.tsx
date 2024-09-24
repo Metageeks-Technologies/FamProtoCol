@@ -4,18 +4,18 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import ModalForm from "@/app/components/ModalForm";
-import { fetchUserData} from "@/redux/reducer/authSlice";
+import { fetchUserData } from "@/redux/reducer/authSlice";
 import { Button, Chip } from "@nextui-org/react";
-import type { Friend } from "@/types/types";
+import type { Friend, Referrer, ReferredUser } from "@/types/types";
 import UserTable from "@/app/components/table/userTable";
 import TeleApp from "@/app/components/telegram";
 import axios from "axios";
 import { notify } from "@/utils/notify";
 import { TailSpinLoader } from "@/app/components/loader";
-import { SweetAlert } from "@/utils/sweetAlert";
 import { ethers } from "ethers";
 import { connectWallet } from "@/utils/wallet-connect"; // Import your wallet connect utility
-import upgradeableContractAbi from '@/utils/abi/upgradableContract.json';
+import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
+import Link from "next/link";
 
 const columns = [
   { name: "NAME", uid: "name" },
@@ -23,17 +23,49 @@ const columns = [
   { name: "XPS", uid: "xps" },
 ];
 
-const Profile: React.FC = () => {
+const referralColumns = [
+  { name: "NAME", uid: "name" },
+  { name: "EARNINGS", uid: "earnings" },
+  { name: "FAMPOINTS", uid: "fampoints" },
+  { name: "REFERRALCOUNT", uid: "referralCount" },
+];
 
+const referredColumns = [
+  { name: "NAME", uid: "name" },
+  { name: "EARNINGS", uid: "earnings" },
+  // { name: "XPS", uid: "xps" },
+   { name: "FAMPOINTS", uid: "fampoints" },
+  { name: "REFERRALCOUNT", uid: "referralCount" },
+];
+
+const Profile: React.FC = () => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const [earned, setEarned] = useState<number | null>(null);
   const [allFriends, setAllFriends] = useState<any>([]);
   const [referral, setReferral] = useState<string>("");
-  const [isReferral, setIsReferral] = useState<boolean>(false);
+  const [referrer, setReferrer] = useState<Referrer[]>([]);
+  const [referredUsers, setReferredUsers] = useState<ReferredUser[]>([]);
+  const [referralLink, setReferralLink] = useState<string>("");
+  const baseReferralUrl = `${process.env.NEXT_PUBLIC_CLIENT_URL}/?referralCode=`;
+
   const user: any = useSelector((state: RootState) => state.login.user);
+  console.log("user", user);
 
-
+  const getReferredUsers = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/user/referred`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("referred users", response.data);
+      setReferredUsers(response.data.referredUsers);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const getFriendIds = (user: any) => {
     // Combine followers and following into a single array
     const allConnections = [
@@ -83,109 +115,165 @@ const Profile: React.FC = () => {
 
   const signupDiscord = async () => {
     const authUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/discord`;
-    window.open(authUrl, '_blank', 'noopener,noreferrer');
+    window.open(authUrl, "_blank", "noopener,noreferrer");
   };
   const signupX = async () => {
     const authUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/auth`;
-    window.open(authUrl, '_blank', 'noopener,noreferrer');
+    window.open(authUrl, "_blank", "noopener,noreferrer");
   };
 
-  const handleSwal=()=>{
-    SweetAlert("taskCompleted");
-  }
+  const onGenerateReferral = async () => {
+    try {
+      // Fetch referral code from the backend
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/user/generateRefferalCode`,
+        {
+          withCredentials: true,
+        }
+      );
 
-const onGenerateReferral = async () => {
-  try {
-    // Fetch referral code from the backend
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/generateRefferalCode`, {
-      withCredentials: true,
-    });
+      if (response.data.success) {
+        const referralCode = response.data.referralCode;
+        setReferral(referralCode);
+        setReferralLink(baseReferralUrl + referralCode);
+        // Notify the user about the successful generation
+        notify("success", "Referral code generated successfully!");
 
-    if (response.data.success) {
-      const referralCode = response.data.referralCode;
-      setReferral(response.data.referralCode);
-      // Notify the user about the successful generation
-      // notify("success", "Referral code generated successfully!");
+        // Connect the wallet if not already connected
+        const walletData = await connectWallet();
+        if (!walletData) {
+          notify("error", "Wallet connection failed. Please try again.");
+          return;
+        }
 
-      // Connect the wallet if not already connected
-      const walletData = await connectWallet();
-      if (!walletData) {
-        notify("error", "Wallet connection failed. Please try again.");
-        return;
+        // Use ethers to connect to the smart contract
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+
+        const contractAddress =
+          process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
+        const contractABI = upgradeableContractAbi;
+
+        // Initialize contract instance
+        const contract = new ethers.Contract(
+          contractAddress,
+          contractABI,
+          signer
+        );
+
+        // Call createReferralCode on the smart contract
+        const tx = await contract.createReferralCode(referralCode);
+        await tx.wait();
+
+        notify(
+          "success",
+          "Referral code saved to the blockchain successfully!"
+        );
       }
-
-      // Use ethers to connect to the smart contract
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-
-      const contractAddress = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
-      const contractABI = upgradeableContractAbi
-
-      // Initialize contract instance
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
-
-      // Call createReferralCode on the smart contract
-      const tx = await contract.createReferralCode(referralCode);
-      await tx.wait();
-
-      notify("success", "Referral code saved to the blockchain successfully!");
-      setIsReferral(true);
+    } catch (error) {
+      console.error("Error generating referral code:", error);
+      notify("error", "Failed to generate and save referral code.");
     }
-  } catch (error) {
-    console.error("Error generating referral code:", error);
-    notify("error", "Failed to generate and save referral code.");
-  }
-};
+  };
 
-  
+  const getReferrerUser = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/user/leaderboard/referrer`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("referrers", response);
+      setReferrer(response.data.users);
+    } catch (err) {
+      console.log("error while fetching referrer:", err);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(fetchUserData());
+    if (user.inviteCode) {
+      setReferral(user.inviteCode);
+      setReferralLink(baseReferralUrl + user.inviteCode);
+    }
+  }, [dispatch]);
+
   useEffect(() => {
     // setIsClient(true);
+    getReferredUsers();
+    getReferrerUser();
     getFriends();
-    dispatch(fetchUserData());
+    if (user.inviteCode) {
+      setReferral(user.inviteCode);
+      setReferralLink(baseReferralUrl + user.inviteCode);
+    }
   }, []);
 
   if (!user)
     return (
       <div className="min-h-screen flex justify-center items-center">
-        <TailSpinLoader/>
+        <TailSpinLoader />
       </div>
     );
 
   return (
     <>
-      <div className="min-h-screen mb-8 ">
-        <div className="text-white">
-          {/* user info */}
-          <section className="w-[90%] lg:w-[80%] mx-auto mt-20">
-            <div className="flex flex-col lg:flex-row gap-4 items-center lg:items-start justify-between lg:mt-20 mx-4 lg:mx-10">
-              {/* user info */}
-              <div className="lg:w-1/2">
-                <div className="flex flex-col lg:flex-row items-center gap-4">
-                  <div className="w-[8rem] h-[8rem] flex justify-center items-center">
-                    {user ? (
-                      <img
-                        src={user.image}
-                        alt="avatar photo"
-                        className="bottom-trapezium"
+      <div className="flex flex-col gap-2 py-4">
+        <div className="flex justify-end items-center mb-4 md:mb-0 w-[90%] mx-auto">
+          <Link
+            href="/"
+            className="bg-famViolate hover:bg-famViolate-light px-2 py-1 md:px-4 md:py-2 rounded-md font-famFont"
+          >
+            Go Back to Home
+          </Link>
+        </div>
+        {/* user info */}
+        <section className="w-full md:w-[90%] lg:w-[80%] mx-auto mb-8">
+          <div className="flex flex-col lg:flex-row gap-4 items-start justify-between lg:pt-20 mx-4 lg:mx-10">
+            {/* user info */}
+            <div className="lg:w-2/5 w-full">
+              <div className="flex flex-col lg:flex-row items-center gap-4">
+                <div className="bottom-trapezium w-40 h-40 flex justify-center items-center">
+                  {user ? (
+                    <img
+                      src={user.image}
+                      alt="avatar photo"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-12 w-12 text-gray-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                       />
-                    ) : (
-                      <img
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBbMogdPslbZaa9Th1hRvCCtzveStfagjWjw&s"
-                        alt="avatar photo"
-                        className="bottom-trapezium "
-                      />
-                    )}
-                  </div>
+                    </svg>
+                  )}
+                </div>
 
-                  <div className="lg:w-[16rem] flex lg:justify-start  mt-6 lg:mt-1">
-                    <div className=" flex flex-col lg:items-start items-center ">
-                      <div className="flex justify-start gap-[1rem] row items-center">
-                        <div className="text-2xl font-famFont">{user?.displayName}</div>
-                        <div className="user-rank">
-                          {/* Follow */}#{user?.rank}
-                        </div>
+                <div className="lg:w-[16rem] flex lg:justify-start items-start mt-6 lg:mt-1">
+                  <div className=" flex flex-col items-start ">
+                    <div className="flex flex-col justify-start items-start">
+                      <div className="text-2xl font-famFont ">
+                        {user?.displayName}
                       </div>
-                      <div className="flex row gap-1">
+                      <div className="text-xl text-famPurple flex items-baseline justify-start ">
+                        {/* #{user?.rank} */}
+                        <span>@</span>
+                        <span className="font-famFont">
+                          {user?.domain?.domainAddress}
+                        </span>
+                      </div>
+                    </div>
+                    {/* <div className="flex row gap-1">
                         <div className="box1 right-trapezium  w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                           <a target="_blank" href={"https://x.com/fr_Ani5"}>
                             <svg
@@ -240,136 +328,166 @@ const onGenerateReferral = async () => {
                             </svg>
                           </a>
                         </div>
-                      </div>
-                    </div>
+                      </div> */}
                   </div>
                 </div>
-                <div className="flex flex-col lg:flex-row items-center mt-4">
-                  <div className="lg:w-2/5">
-                    {user && (
-                      <div className="">
-                        <div className="flex flex-col items-center justify-center">
-                          <div className="flex flex-col justify-center items-center gap-2" >
-                            <ModalForm />
-                             <div className="flex flex-col">
-                   {isReferral && (
-                    <>
-                    <div className="flex justify-center  gap-2 items-center my-2">
-                      <input
-                        type="text"
-                        value={referral}
-                        readOnly
-                        className="text-md font-bold bg-gray-800 text-white border border-gray-700 rounded px-2 py-1 w-full"
-                      />
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(referral);
-                          notify(
-                            "default",
-                            "Referral code copied to clipboard!"
-                          );
-                        }}
-                        className="bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700 transition-colors duration-300"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          />
-                        </svg>
-                         </button>
-                    </div>
-                    </>
-                   )}
-                    <button
-                      className="p-2 rounded-2xl bg-purple-600 text-white px-4 m-3 hover:bg-purple-700 transition-colors duration-300"
-                      onClick={onGenerateReferral}
-                    >
-                      Generate Referral
-                    </button>
-                    {/* <button className="px-2 py-2 bg-blue-500" onClick={handleSwal} >Swal</button> */}
-                  </div>
-                          </div>
-                          <div className="flex flex-row justify-center items-center my-4 gap-2">
-                            {!user?.teleInfo?.telegramId && (
-                              <div className="mb-2">
-                                <TeleApp />
-                              </div>
-                            )}
-
-                            {!user?.discordInfo?.username && (
-                              <div className="mb-2">
-                                <Button
-                                  onClick={signupDiscord}
-                                  className="bg-[#c62df4] text-white px-2 py-0 text-md"
-                                >
-                                  <span>connect </span>
-                                  <span>
-                                    <i className="bi bi-discord"></i>
-                                  </span>
-                                </Button>
-                              </div>
-                            )}
-                            {!user?.twitterInfo?.username && (
-                              <div className="mb-2">
-                                <Button
-                                  variant="solid"
-                                  onClick={signupX}
-                                  className="bg-[#e6e6e6] text-black text-md"
-                                >
-                                  <span>connect </span>
-                                  <span>
-                                    <i className="bi bi-twitter-x"></i>
-                                  </span>
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex row gap-3">
-                          <button className="px-4 font-bold py-2 rounded-full text-center hover:text-[#FA00FF] ">
-                            {user?.following?.length} following
-                          </button>
-                          <button className="px-4 font-bold py-2 rounded-full text-center hover:text-[#FA00FF] ">
-                            {user?.followers?.length} followers
-                          </button>
-                        </div>
-                        <div className="flex col gap-5 justify-center items-center">
-                          <Chip
-                            onClick={handleEarnRewardsClicks}
-                            color="warning"
-                            variant="bordered"
-                            className="cursor-pointer px-4 py-2 mt-3"
-                          >
-                            {user?.rewards?.xp} pts
-                          </Chip>
-
-                          <Chip
-                            onClick={() => router.push("/user/my-community")}
-                            variant="solid"
-                            className="cursor-pointer px-4 py-2 mt-3"
-                            color="warning"
-                          >
-                            Earn rewards
-                          </Chip>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  </div>
-               
               </div>
-              {/* badges */}
-              <div className="lg:w-1/2 font-famFont ">
-                <div className="flex flex-col lg:justify-start justify-center lg:items-start items-center">
+              <div className="flex flex-col lg:flex-row items-start mt-4">
+                {user && (
+                  <div className="w-full">
+                    <div className="w-full flex flex-col items-center md:items-start justify-center md:justify-start">
+                      <div className="max-w-40 flex flex-col justify-center items-center md:justify-start md:items-start gap-2 ">
+                        <ModalForm />
+                        {
+                          (!user.inviteCode || user.inviteCode.trim().length === 0) && (
+                             <button
+                          className="w-full rounded-md bg-famViolate font-famFont text-white text-nowrap px-4 py-2 hover:bg-famViolate-light transition-colors duration-300"
+                          onClick={onGenerateReferral}
+                        >
+                          Generate Referral
+                        </button>
+                          )
+                        }
+                      </div>
+                      {user.inviteCode && (
+                        <div className="flex justify-start gap-2 items-center my-2">
+                          <input
+                            type="text"
+                            value={baseReferralUrl + user.inviteCode}
+                            readOnly
+                            className="text-md truncate font-famFont bg-gray-800 text-white border border-gray-600 focus:border-famViolate-light rounded px-2 py-1 w-full"
+                          />
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                baseReferralUrl + user.inviteCode
+                              );
+                              notify(
+                                "default",
+                                "Referral code copied to clipboard!"
+                              );
+                            }}
+                            className="bg-famViolate text-white p-2 rounded-lg hover:bg-famViolate-light transition-colors duration-300"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-6 w-6"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                      {/* <div className="flex flex-row justify-center items-center my-4 gap-2">
+                          {!user?.teleInfo?.telegramId && (
+                            <div className="mb-2">
+                              <TeleApp />
+                            </div>
+                          )}
+
+                          {!user?.discordInfo?.username && (
+                            <div className="mb-2">
+                              <Button
+                                onClick={signupDiscord}
+                                className="bg-[#c62df4] text-white px-2 py-0 text-md"
+                              >
+                                <span>connect </span>
+                                <span>
+                                  <i className="bi bi-discord"></i>
+                                </span>
+                              </Button>
+                            </div>
+                          )}
+                          {!user?.twitterInfo?.username && (
+                            <div className="mb-2">
+                              <Button
+                                variant="solid"
+                                onClick={signupX}
+                                className="bg-[#e6e6e6] text-black text-md"
+                              >
+                                <span>connect </span>
+                                <span>
+                                  <i className="bi bi-twitter-x"></i>
+                                </span>
+                              </Button>
+                            </div>
+                          )}
+                        </div> */}
+                    </div>
+                    {/* <div className="flex row gap-3">
+                        <button className="px-4 font-bold py-2 rounded-full text-center hover:text-[#FA00FF] ">
+                          {user?.following?.length} following
+                        </button>
+                        <button className="px-4 font-bold py-2 rounded-full text-center hover:text-[#FA00FF] ">
+                          {user?.followers?.length} followers
+                        </button>
+                      </div> */}
+                    {/* <div className="flex col gap-5 justify-center items-center">
+                        <Chip
+                          onClick={handleEarnRewardsClicks}
+                          color="warning"
+                          variant="bordered"
+                          className="cursor-pointer px-4 py-2 mt-3"
+                        >
+                          {user?.rewards?.xp} pts
+                        </Chip>
+
+                        <Chip
+                          onClick={() => router.push("/user/my-community")}
+                          variant="solid"
+                          className="cursor-pointer px-4 py-2 mt-3"
+                          color="warning"
+                        >
+                          Earn rewards
+                        </Chip>
+                      </div> */}
+                  </div>
+                )}
+              </div>
+            </div>
+            {/* badges */}
+            <div className="lg:w-3/5 w-full font-famFont ">
+              <div className="flex flex-col justify-center">
+                <div className="flex items-center gap-2 justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="15"
+                    height="11"
+                    viewBox="0 0 15 11"
+                    fill="none"
+                  >
+                    <path
+                      d="M0.5 1H5.98652L14.5 10"
+                      stroke="#FA00FF"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M5.5 5L10.5 10"
+                      stroke="#FA00FF"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="listOfFriends">Referrer LeaderBoard</div>
+                </div>
+                <div>
+                  <UserTable<Referrer>
+                    data={referrer}
+                    columns={referralColumns}
+                    rowsPerPage={5}
+                    noData="No Referrer available"
+                  />
+                </div>
+              </div>
+              {/* <div className="flex flex-col lg:justify-start justify-center lg:items-start items-center">
                   <div className="badgesBox mt-5 lg:mt-0">
                     <div className="w-full h-full innerbox2 ">
                       <svg
@@ -449,45 +567,43 @@ const onGenerateReferral = async () => {
                       )}
                     </div>
                   </div>
-                </div>
-              </div>
+                </div> */}
             </div>
-          </section>
-          {/* friends  */}
-          <section className="lg:w-[60%] mx-auto mt-32">
-            <div className="my-4 flex items-center gap-2 justify-center">
-              <div className="">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="15"
-                  height="11"
-                  viewBox="0 0 15 11"
-                  fill="none"
-                >
-                  <path
-                    d="M0.5 1H5.98652L14.5 10"
-                    stroke="#FA00FF"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M5.5 5L10.5 10"
-                    stroke="#FA00FF"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </div>
-              <div className="listOfFriends">List of Friends</div>
-            </div>
-            <div className="friendTable">
-              <UserTable<Friend>
-                data={allFriends}
-                columns={columns}
-                rowsPerPage={5}
+          </div>
+        </section>
+        {/* friends  */}
+        <section className="lg:w-[60%] w-full mx-auto sm:mt-8 ">
+          <div className="flex items-center gap-2 justify-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="15"
+              height="11"
+              viewBox="0 0 15 11"
+              fill="none"
+            >
+              <path
+                d="M0.5 1H5.98652L14.5 10"
+                stroke="#FA00FF"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
+              <path d="M5.5 5L10.5 10" stroke="#FA00FF" strokeLinecap="round" />
+            </svg>
+
+            <div className="listOfFriends font-famFont">
+              People referred By you
             </div>
-          </section>
-        </div>
+          </div>
+          <div className="friendTable">
+            <UserTable<ReferredUser>
+              data={referredUsers}
+              columns={referredColumns}
+              rowsPerPage={5}
+              noData="Share your referral link to your friends
+                you will get 2.5 USDC for each friend you refer"
+            />
+          </div>
+        </section>
       </div>
     </>
   );
