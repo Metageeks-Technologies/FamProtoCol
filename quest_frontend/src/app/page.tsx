@@ -20,6 +20,7 @@ import Link from "next/link";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [domain, setDomain] = useState<string>("");
   const [existingDomain, setExistingDomain] = useState<string[]>([]);
   const [isDomainAvailable, setIsDomainAvailable] = useState<string>("");
@@ -33,7 +34,6 @@ const LandingPage = () => {
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
   const [hash, setHash] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [logo, setLogo] = useState<any>(null);
   const [thankYou, setThankYou] = useState<boolean>(false);
@@ -43,7 +43,7 @@ const LandingPage = () => {
     login: false,
   });
   const router = useRouter();
-
+  
   const fetchDomains = async () => {
     try {
       const response = await axios.get(
@@ -67,7 +67,7 @@ const LandingPage = () => {
       const code = params.get("referralCode");
       if (code) {
         setReferralCode(code);
-        setActiveTab("signUp")
+        setActiveTab("signUp");
       }
     }
   }, []);
@@ -245,7 +245,6 @@ const LandingPage = () => {
     }
     setLoaders({ ...loaders, connectWallet: false });
   };
-
   const handleDomainMinting = async () => {
     setLoader(true);
     setError("");
@@ -361,7 +360,6 @@ const LandingPage = () => {
     }
     setLoader(false);
   };
-
   const getUploadUrl = async (): Promise<string> => {
     try {
       const response = await axios.post<{ url: string }>(
@@ -538,8 +536,8 @@ const LandingPage = () => {
                       </p>
                       <div className="mt-8 flex justify-center gap-4">
                         <Button
-                          onClick={() => handleOpen()}
-                          // onClick={() => comingSoon()}
+                          // onClick={() => handleOpen()}
+                          onClick={() => comingSoon()}
                           className="bg-[#5538CE] text-white font-semibold py-2 px-6 rounded-lg hover:bg-[#6243dd] transition duration-300"
                         >
                           Get Onboarded
@@ -749,11 +747,11 @@ const LandingPage = () => {
                     </div>
                   )}
 
-                  {
-                    activeTab === "signUp" &&  <div className="font-qanelas text-white capitalize text-xs mb-2 flex justify-center items-center gap-2">
-                    phase 1 domain minting price starts from 5 usdc
-                  </div>
-                  }
+                  {activeTab === "signUp" && (
+                    <div className="font-qanelas text-white capitalize text-xs mb-2 flex justify-center items-center gap-2">
+                      phase 1 domain minting price starts from 5 usdc
+                    </div>
+                  )}
                   <div
                     className={` ${
                       activeTab === "signUp" ? "w-full" : "w-[80%] mx-auto"
