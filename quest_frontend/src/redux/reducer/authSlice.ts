@@ -1,9 +1,8 @@
 // userSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import {Quest} from '@/types/types';
-import { persistor } from '../store';
-import Cookies from 'js-cookie';
 import axios from 'axios';
+import mongoose from "mongoose"
 
 // Define interfaces for Twitter and Discord info
 export interface ITwitterInfo
@@ -56,6 +55,16 @@ export interface IUser
   createdCommunities: [];
   createdQuests: [];
   createdTasks: [];
+  domain:{
+    domainAddress: string;
+    image:string;
+    hashCode: string;
+    walletAddress: string;
+    password: string;
+  },
+  inviteCode?: string;
+  referredBy: mongoose.Types.ObjectId ;  // The user ID of the referrer
+  referredUsers?: mongoose.Types.ObjectId[];  // List of user IDs referred by this user
 }
 
 // Define the initial state interface
@@ -80,15 +89,10 @@ export const fetchUserData = createAsyncThunk(
   {
     try
     {
-      const authToken = `Bearer ${ Cookies.get( '_fam_token' ) }`;
       const response = await axios.get( `${ process.env.NEXT_PUBLIC_SERVER_URL }/auth/profile`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': authToken,
-        },
         withCredentials:true
       } );
-      // console.log("response from userslice:", response.data );
+      console.log("response from userslice:", response.data );
       const data = response.data;
       return data;
     } catch ( err )
@@ -119,12 +123,7 @@ export const updateUserProfile = createAsyncThunk(
   'login/updateUserProfile',
   async (formData: Partial<IUser>, { rejectWithValue }) => {
     try {
-      const authToken = `Bearer ${Cookies.get('_fam_token')}`;
       const response = await axios.put(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/profile/update`, formData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': authToken,
-        },  
         withCredentials: true 
        });
       return response.data.user;
