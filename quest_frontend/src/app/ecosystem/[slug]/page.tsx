@@ -10,7 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 const EcosystemPage = (params: { params: { slug: any } }) => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const eco = params.params.slug;
+  const slug = params.params.slug;
+  const eco = decodeURIComponent(slug);
   // console.log( eco );
   const communityData = useSelector((state: any) => state.adminCommunity);
 
@@ -46,21 +47,21 @@ const EcosystemPage = (params: { params: { slug: any } }) => {
   }, []);
 
   return (
-    <div className=" pt-[5rem] w-[90%] mx-auto min-h-screen font-famFont uppercase">
-      <div className="flex-col lg:flex-row items-center flex justify-between md:gap-32 mb-16">
-        <div className="flex sm:w-2/5 flex-row gap-2 text-xl items-center justify-around">
-          <div className="image-container p-[1px] bg-zinc-800">
-            <div className="image-container h-[10rem] bg-black w-36 items-center flex">
+    <div className="pt-[5rem] w-[90%] mx-auto font-famFont uppercase">
+      <div className="flex-col md:flex-row items-center flex justify-between md:gap-32 mb-16">
+        <div className="flex flex-col sm:flex-row w-full gap-2 text-xl items-center justify-start">
+          <div className="image-container p-[1px] bg-gray-600">
+            <div className="image-container w-36 h-36">
               <img
                 src={currentEcosystem?.imageUrl}
-                alt=""
+                alt={currentEcosystem?.name}
                 className="w-full h-full object-cover"
               />
             </div>
           </div>
-          <div className="flex w-[21rem] m-1 flex-col  items-center">
-            <div className="flex  flex-row items-center justify-between  w-full m-auto">
-              <div className="text-4xl">{currentEcosystem?.name}</div>
+          <div className="flex m-1 flex-col  items-center">
+            <div className="flex items-center md:justify-between">
+              <div className="text-2xl md:text-4xl">{currentEcosystem?.name}</div>
               <div className="bg_Div_Container p-[1px] bg-zinc-800 rounded-lg">
                 <div className="text-xs bg_Div_Container bg-[#1d1a28] px-6 py-1 rounded-lg">
                   392K Participants
@@ -68,16 +69,16 @@ const EcosystemPage = (params: { params: { slug: any } }) => {
               </div>
             </div>
             <hr className="h-[1px] my-2  border-[0.5px] w-full border-dashed bg-black " />
-            <div className="flex  flex-row text-sm gap-2 justify-between w-full m-auto">
-              <div className=" flex">Desc: </div>
-              <div className=" text-wrap  text-gray-500">
+            <div className="flex text-sm gap-2 justify-between ">
+              <span className=" flex">Desc: </span>
+              <span className="text-wrap text-gray-500">
                 Lorem ipsum, dolor sit amet consectetur adipisicing elitorem
-                ipsu{" "}
-              </div>
+                ipsu
+              </span>
             </div>
           </div>
         </div>
-        <div className="flex flex-row text-gray-500 text-xl sm:w-3/5 justify-between bg-[#111111] shadow-lg shadow-[#0d0d0d] p-4 items-center">
+        {/* <div className="flex flex-col md:flex-row text-gray-500 text-xl w-full md:w-3/5 justify-between bg-[#111111] shadow-lg shadow-[#0d0d0d] p-4 items-center">
           <div className="bg_Div_half h-[10rem] w-[16rem] items-center flex">
             <img
               src="https://clusterprotocol2024.s3.amazonaws.com/others/Capa_1.png"
@@ -86,7 +87,7 @@ const EcosystemPage = (params: { params: { slug: any } }) => {
             />
           </div>
 
-          <div className="flex flex-col w-1/2  gap-3 p-2 justify-start   ">
+          <div className="flex flex-col gap-3 p-2 justify-start">
             <div className="text-sm flex flex-row gap-2 justify-between">
               <div>
                 <img
@@ -122,7 +123,7 @@ const EcosystemPage = (params: { params: { slug: any } }) => {
             participate in quests in an ecosystem / cetegory in order to earn
             badges
           </div>
-        </div>
+        </div> */}
       </div>
       <div className="my-16 w-full">
         <svg

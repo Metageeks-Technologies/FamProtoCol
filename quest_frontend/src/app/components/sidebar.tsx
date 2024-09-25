@@ -130,10 +130,10 @@ const Sidebar = () => {
             </div>
             <div
               className="justify-center items-center m-auto border-l border-r flex h-12 md:h-40 md:border-r w-[12rem] md:w-full border-r-white"
-              onClick={() => handleLinkClick("/")}
+              onClick={() => handleLinkClick("/user/points-parlor")}
             >
-              <div className="md:w-full border-t w-full hover:bg-opacity-15 hover:bg-[#5638ce40] border-b p-3 hover:border-b-4 hover:border-b-voilet-700 cursor-pointer">
-                <button>REWARDS</button>
+              <div className="md:w-full capitalize border-t w-full hover:bg-opacity-15 hover:bg-[#5638ce40] border-b p-3 hover:border-b-4 hover:border-b-voilet-700 cursor-pointer">
+                <button>POINTS PARLOUR</button>
               </div>
             </div>
             <div
@@ -182,10 +182,10 @@ const Sidebar = () => {
             </div>
             <div
               className="flex w-full h-12 md:h-40 justify-center items-center m-auto border-x-1 p-4 border-x-[#ffffff47] "
-              onClick={() => handleLinkClick("/")}
+              onClick={() => handleLinkClick("/user/points-parlor")}
             >
               <div className="hover:bg-opacity-15 hover:bg-[#5638ce48] w-full px-8 py-6 border-b-1 border-b-[#ffffff47] cursor-pointer">
-                REWARDS
+                POINTS PARLOUR
               </div>
             </div>
             <div

@@ -1,5 +1,5 @@
 import express,{Response, Request} from 'express';
-import {referredByUser,getDomains, getUserById,followUser,unfollowUser,signUpDomain, getAllUser, getFriendsByIds,generateReferralCode, loginDomain } from '../../controllers/user/user'
+import {famTaskComplete,referredByUser,getDomains, getUserById,followUser,unfollowUser,signUpDomain, getAllUser, getFriendsByIds,generateReferralCode, loginDomain } from '../../controllers/user/user'
 import {getUsersByRewardsOrder,getReferrers } from '../../controllers/leaderboard/leaderboard';
 import { verifyToken } from '../../middleware/user/verifyToken';
 const userRouter = express.Router();
@@ -14,6 +14,7 @@ userRouter.post('/signUpDomain',signUpDomain);
 userRouter.post('/loginDomain',loginDomain);
 userRouter.get('/generateRefferalCode',verifyToken,generateReferralCode);
 userRouter.get('/domains',getDomains);
+userRouter.post('/famTaskComplete',verifyToken,famTaskComplete);
 userRouter.get('/:id',getUserById);
 userRouter.get( '/', getAllUser );
 

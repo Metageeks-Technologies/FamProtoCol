@@ -101,7 +101,7 @@ const MyCommunities: React.FC = () =>
   }, [userCommunities, currentPageJoinedCommunity, joinedCommunitiesPerPage]);
 
   return (
-    <div className="bg-black text-white min-h-screen">
+    <div className="bg-black w-[95%] mx-auto text-white min-h-screen">
       <div className="container px-2">
         <header className="mb-12 px-4 mt-4">
           <h1 className="text-xl sm:text-3xl font-bold mb-2 sm:mb-4">My Communities</h1>
@@ -111,7 +111,7 @@ const MyCommunities: React.FC = () =>
         </header>
 
         <section className="mb-16">
-          <div className="flex justify-between items-center px-4 mb-4">
+          <div className="flex justify-start sm:justify-between items-center px-4 mb-4">
             <h2 className="text-md font-bold text-center">
               Joined Communities
             </h2>
@@ -182,7 +182,7 @@ const MyCommunities: React.FC = () =>
         </section>
 
         <section>
-          <div className="flex justify-between items-center mb-4 px-4">
+          <div className="flex justify-start sm:justify-between items-center mb-4 px-4">
             <h2 className="text-md font-bold ">
               Created Communities
             </h2>

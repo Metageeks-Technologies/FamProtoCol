@@ -222,7 +222,7 @@ const CreateCommunity: React.FC = () => {
                 placeholder="DESC..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3 py-2 bg-black border border-gray-800  focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 bg-black border font-famFont border-gray-800  focus:outline-none focus:ring-2 focus:ring-famViolate text-sm"
                 rows={3}
               />
             </div>
@@ -237,7 +237,7 @@ const CreateCommunity: React.FC = () => {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="px-3 py-2 bg-black border font-famFont border-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full md:w-28 text-sm"
+                className="px-3 py-2 bg-black border font-famFont border-gray-800 focus:outline-none focus:ring-2 focus:ring-famViolate w-full md:w-28 text-sm"
                 required
               />
             </div>
@@ -250,7 +250,7 @@ const CreateCommunity: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsBlockchainRelated(true)}
-                  className="relative w-16 h-10 group"
+                  className="relative w-16 h-10 group "
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -338,7 +338,7 @@ const CreateCommunity: React.FC = () => {
             <div className="flex flex-col md:flex-row md:space-x-4 bg-black text-white">
               <div className="md:w-1/2 mb-4 md:mb-0 bg-black text-white">
                 <label className="block font-famFont mb-1 text-sm">
-                  Categories (Select multiple)*
+                  Categories
                 </label>
                 <Multiselect
                   options={
@@ -382,7 +382,7 @@ const CreateCommunity: React.FC = () => {
                       color: "white",
                     },
                   }}
-                  className="bg-black border font-famFont border-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full text-sm"
+                  className="bg-black border font-famFont border-gray-800 focus:outline-none focus:ring-2 focus:ring-famViolate w-full text-sm"
                   showCheckbox={false}
                   avoidHighlightFirstOption={true}
                   hideSelectedList={false}
@@ -396,7 +396,7 @@ const CreateCommunity: React.FC = () => {
                   id="ecosystem"
                   value={ecosystems}
                   onChange={(e) => setEcosystems(e.target.value)}
-                  className="px-3 py-2 bg-black border font-famFont text-gray-400 border-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full text-sm"
+                  className="px-3 py-2 bg-black border font-famFont text-gray-400 border-gray-800 focus:outline-none focus:ring-2 focus:ring-famViolate w-full text-sm"
                 >
                   {communityData?.ecosystems?.map((ecosystem: any) => (
                     <option

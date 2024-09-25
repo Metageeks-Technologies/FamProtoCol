@@ -56,7 +56,7 @@ authRouter.get(
 authRouter.get(
   "/discord/callback",
   passport.authenticate("discord", {
-    successRedirect:`${process.env.PUBLIC_CLIENT_URL}/sucessfulLogin`,
+    successRedirect:`${process.env.PUBLIC_CLIENT_URL}/sucessfullLogin`,
     failureRedirect: `${process.env.PUBLIC_CLIENT_URL}/failed`,
      }) 
 );

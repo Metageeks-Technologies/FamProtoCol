@@ -72,6 +72,11 @@ export interface IUser extends Document {
   inviteCode?: string;
   referredBy: mongoose.Types.ObjectId ;  // The user ID of the referrer
   referredUsers?: mongoose.Types.ObjectId[];  // List of user IDs referred by this user
+  famTasks:string[];
+  famTasksSubmisson:{
+    connectWallets:string[],
+    gitScore:string;
+  }
 }
 
 // Create the User schema
@@ -133,6 +138,12 @@ const userSchema: Schema = new mongoose.Schema(
     inviteCode: { type: String, default: '',unique:true },
     referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },  // The user ID of the referrer
     referredUsers: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],  // List of user IDs referred by this user
+    famTasks:[{type:String}],
+    famTasksSubmisson:{
+      connectWallets:[{type:String}],
+      gitScore:{type:String}
+    }
+
   },
   { timestamps: true }
 );

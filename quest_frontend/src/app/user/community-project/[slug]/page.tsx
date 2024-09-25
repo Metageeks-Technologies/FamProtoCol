@@ -410,7 +410,7 @@ export default function CommunityProject ( {
                 className=""
               >
                 <div>
-                  <div className={`box1 education-clip p-[2px]  ${(index%4)===0 && "bg-red-500" } ${(index%4)===1 && "bg-blue-500" } ${(index%4)===2 && "bg-green-500" } ${(index%4)===3 && "bg-yellow-500" } `}>
+                  <div className={`box1 education-clip p-[2px]  ${(index%4)===0 && "bg-red-600" } ${(index%4)===1 && "bg-blue-600" } ${(index%4)===2 && "bg-green-600" } ${(index%4)===3 && "bg-yellow-700" } `}>
                     <div className="education-clip box2 h-20 w-40 bg-black flex justify-center items-center p-2">
                        <div className="h-16 w-36">
                       <img
@@ -425,8 +425,8 @@ export default function CommunityProject ( {
                   <div className="mt-2 flex gap-3 justify-center">
                     <div>
                       <img
-                        src={ `${ community.logo }` }
-                        alt=""
+                        src={community.logo}
+                        alt={community.title}
                         className="h-6 w-6 rounded-full object-cover"
                       />
                     </div>

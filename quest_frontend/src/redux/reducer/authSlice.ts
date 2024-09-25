@@ -65,6 +65,11 @@ export interface IUser
   inviteCode?: string;
   referredBy: mongoose.Types.ObjectId ;  // The user ID of the referrer
   referredUsers?: mongoose.Types.ObjectId[];  // List of user IDs referred by this user
+  famTasks:string[];
+  famTasksSubmisson:{
+    connectWallets:string[],
+    gitScore:string;
+  }
 }
 
 // Define the initial state interface
@@ -133,6 +138,7 @@ export const updateUserProfile = createAsyncThunk(
     }
   }
 );
+
 
 // Create the slice
 const userSlice = createSlice( {

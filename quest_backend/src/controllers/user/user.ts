@@ -389,3 +389,34 @@ export const referredByUser = async (req: any, res: Response) => {
     res.send({ success: false, message: "internal server error" });
   }
 };
+
+export const famTaskComplete=async (req: any, res: Response) => {
+  const { id } = req.user;
+  const {task,accountAddress}=req.body;
+  console.log("req.body",req.body);
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.send({ success: false, message: "User not found" });
+    }
+    if(task.action!="multipleWalletConnect"){
+      user.famTasks.push(task.action);
+    }
+    user.rewards = user.rewards || { coins: 0, xp: 0 }; // Initialize rewards if undefined
+    user.rewards.coins = user.rewards.coins || 0; // Initialize coins if undefined
+
+      // Increment coins
+    user.rewards.coins += task.famPoints;
+    if(accountAddress){
+      user.famTasksSubmisson.connectWallets.push(accountAddress);
+    }
+    await user.save();
+    return res.send({
+      success: true,
+      message: "User fetched successfully",
+      famTasks: user.famTasks,
+    });
+  } catch (err: any) {
+    res.send({ success: false, message: "internal server error" });
+  }
+}
