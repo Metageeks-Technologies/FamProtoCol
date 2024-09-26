@@ -306,49 +306,36 @@ export const getAllUser = async (req: Request, res: Response) => {
   }
 };
 
-const generateUniqueReferralCode = async (userId: string) => {
+const generateUniqueReferralCode = async () => {
   let referralCode = generateReferral(8);
   let isUnique = false;
 
   while (!isUnique) {
     try {
-      const result = await User.updateOne(
-        { _id: userId },
-        { $set: { inviteCode: referralCode } }
-      );
+      // Check if the referral code already exists in the database
+      const existingReferral = await User.findOne({ inviteCode: referralCode });
 
-      if (result.modifiedCount === 1) {
+      if (!existingReferral) {
+        // If no existing referral code is found, it's unique
         isUnique = true;
       } else {
+        // Generate a new referral code if it already exists
         referralCode = generateReferral(8);
       }
-    } catch (error: any) {
-      if (error.code === 11000) {
-        referralCode = generateReferral(8);
-      } else {
-        throw error;
-      }
+    } catch (error) {
+      throw error; // Handle any other errors appropriately
     }
   }
 
   return referralCode;
 };
 
+
 export const generateReferralCode = async (req: any, res: Response) => {
   try {
-    const { id } = req.user;
-    // console.log(ids);
-
-    const user = await User.findById(id);
-    // console.log(user);
-    if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not found" });
-    }
-    const referralCode = await generateUniqueReferralCode(id);
+    const referralCode = await generateUniqueReferralCode();
     const baseUrl = process.env.PUBLIC_CLIENT_URL;
-    const referralLink = `${baseUrl}/signup?referralCode=${referralCode}`;
+    const referralLink = `${baseUrl}?referralCode=${referralCode}`;
 
     return res.status(200).json({ success: true, referralCode, referralLink });
   } catch (err) {
@@ -356,6 +343,25 @@ export const generateReferralCode = async (req: any, res: Response) => {
     res.status(500).json({ error: err });
   }
 };
+
+export const setReferralCode = async (req: any, res: Response) => {
+  const { id } = req.user;
+  try {
+    
+    const user = await User.findById(id);
+    if(!user){
+      return res.send({ success: false, message: "User not found" });
+    }
+    const { referralCode } = req.body;
+    user.inviteCode = referralCode;
+    await user.save();
+
+    res.send({ success: true, message: "Referral code set successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ success: false, message: "Internal server error" });
+  }
+}
 
 export const getDomains = async (req: Request, res: Response) => {
   try {
@@ -408,7 +414,7 @@ export const famTaskComplete=async (req: any, res: Response) => {
       // Increment coins
     user.rewards.coins += task.famPoints;
     if(accountAddress){
-      user.famTasksSubmisson.connectWallets.push(accountAddress);
+      user.famTasksSubmission.connectWallets.push(accountAddress);
     }
     await user.save();
     return res.send({

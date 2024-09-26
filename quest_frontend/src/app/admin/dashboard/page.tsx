@@ -74,19 +74,11 @@ const AdminDashboardPage = (props: Props) => {
     }
   }, []);
   return (
-      <div className=' h-screen'>
-        <h2>dashboard page</h2>
-      <div className='flex gap-5 items-center justify-center '>
-      <div>
-          View users
-        </div>
+      <div className='bg-white text-black h-screen flex items-start justify-center p-4'>
+       
+      <div className='text-xl '>
+        Welcome to the admin dashboard.
 
-        <div>
-          View cols
-        </div> 
-        <div>
-          view community
-        </div>
       </div>
 
     </div>

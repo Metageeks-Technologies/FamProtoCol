@@ -73,7 +73,7 @@ export interface IUser extends Document {
   referredBy: mongoose.Types.ObjectId ;  // The user ID of the referrer
   referredUsers?: mongoose.Types.ObjectId[];  // List of user IDs referred by this user
   famTasks:string[];
-  famTasksSubmisson:{
+  famTasksSubmission:{
     connectWallets:string[],
     gitScore:string;
   }
@@ -139,7 +139,7 @@ const userSchema: Schema = new mongoose.Schema(
     referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },  // The user ID of the referrer
     referredUsers: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],  // List of user IDs referred by this user
     famTasks:[{type:String}],
-    famTasksSubmisson:{
+    famTasksSubmission:{
       connectWallets:[{type:String}],
       gitScore:{type:String}
     }

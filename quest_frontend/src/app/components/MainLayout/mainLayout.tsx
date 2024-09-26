@@ -1,11 +1,11 @@
 // layout/MainLayout.
 "use client";
 import { usePathname } from 'next/navigation';
-import Navbar from '../Navbars/Navbar';
-import AdminNavbar from '../Navbars/AdminNavbar';
-import Footer from '../Footer';
+import Navbar from '@/app/components/Navbars/Navbar';
+import AdminNavbar from '@/app/components/Navbars/AdminNavbar';
+import Footer from '@/app/components/Footer';
 import { NextUIProvider } from "@nextui-org/react";
-import Sidebar from '../sidebar';
+import Sidebar from '@/app/components/sidebar/sidebar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -26,7 +26,7 @@ const MainLayout = ( {
         {!isAdminRoute && <Sidebar />}
         <main className={`min-h-screen ${isAdminRoute?'':'md:ml-[4rem]'}`}>{ children }</main>
         <ToastContainer />
-      {!isLandingRoute &&  <Footer /> }
+      {(!isLandingRoute || !isAdminRoute) &&  <Footer /> }
       </NextUIProvider>
     </div>
   );

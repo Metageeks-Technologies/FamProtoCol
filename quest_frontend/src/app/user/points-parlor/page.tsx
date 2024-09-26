@@ -19,7 +19,7 @@ interface FamTasks {
   buttonText: string;
 }
 
-interface FamTasksSubmisson {
+interface FamTasksSubmission {
     connectWallets:string[],
     gitScore:string;
 }
@@ -198,7 +198,7 @@ const PointsParlor = () => {
                 task={task}
                 taskCompleted={taskCompleted}
                 completedTask={completedTask}
-                famTasksSubmission={user.famTasksSubmisson}
+                famTasksSubmission={user?.famTasksSubmission ?? []}
               />
             ))}
         </div>
@@ -213,7 +213,7 @@ interface FamTaskCardProps {
   task: FamTasks; // Assume FamTasks is the type for the task object
   taskCompleted: (task: FamTasks,accountAddress?:string) => Promise<void>; // Define the function signature
   completedTask:string[];
-  famTasksSubmission:FamTasksSubmisson;
+  famTasksSubmission:FamTasksSubmission;
 }
 
 const FamTaskCard: React.FC<FamTaskCardProps> = ({ task, taskCompleted,completedTask,famTasksSubmission}) => {
@@ -323,7 +323,7 @@ const FamTaskCard: React.FC<FamTaskCardProps> = ({ task, taskCompleted,completed
         return;
       }
 
-      if (famTasksSubmission.connectWallets?.includes(accountAddress)) {
+      if (famTasksSubmission && famTasksSubmission?.connectWallets?.includes(accountAddress)) {
         notify("warn", "This account is already connected.Please connect another account from metamask. ");
         return;
       }

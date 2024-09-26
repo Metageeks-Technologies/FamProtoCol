@@ -5,10 +5,9 @@ import {
   Modal,
   ModalContent,
   ModalBody,
-  useDisclosure,
+  useDisclosure,Spinner
 } from "@nextui-org/react";
 import { ethers } from "ethers";
-import { Spinner } from "@nextui-org/react";
 import axios from "axios";
 import { notify } from "@/utils/notify";
 import { connectWallet } from "@/utils/wallet-connect";
@@ -199,7 +198,7 @@ const LandingPage = () => {
       if (response.data.success) {
         notify("success", response.data.message);
         handleClose();
-        router.push("/user/profile");
+        router.push("/user/referral/dashboard");
       }
     } catch (err: any) {
       console.log(err);
@@ -234,7 +233,7 @@ const LandingPage = () => {
           notify("success", response.data.message);
           handleClose();
           // setShowPasswordField(true);
-          router.push("/user/profile");
+          router.push("/user/referral/dashboard");
         }
       } else {
         setError("Failed to connect wallet.");
@@ -245,122 +244,6 @@ const LandingPage = () => {
     }
     setLoaders({ ...loaders, connectWallet: false });
   };
-
-  // const handleDomainMinting = async () => {
-  //   setLoader(true);
-  //   setError("");
-  //   setAlertMessage("");
-  //   if (!domain || domain === "" || domain.length < 3) {
-  //     setError("Domain name must be atleast 4 characters long");
-  //     setLoader(false);
-  //     return;
-  //   }
-
-  //   if (isDomainAvailable === "false") {
-  //     setError("Domain already exists");
-  //     setLoader(false);
-  //     return;
-  //   }
-
-  //   if (!isAlphanumericWithHyphen(domain)) {
-  //     setError(
-  //       "Invalid Username: The username must contain only alphanumeric characters and hyphens. Spaces are not allowed"
-  //     );
-  //     setLoader(false);
-  //     return;
-  //   }
-
-  //   const updatedDomain = domain + ".fam";
-
-  //   const ArbicontractAddress =
-  //     process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
-  //   const usdcContractAddress = process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS!;
-  //   const contractABI = upgradeableContractAbi;
-  //   const usdcABI = usdc;
-
-  //   if (!ArbicontractAddress || !contractABI || !address) {
-  //     const walletInfo = await connectWallet();
-  //     if (walletInfo) {
-  //       setAlertMessage("Wallet connected successfully");
-  //       setIsWalletConnected(true);
-  //       setAddress(walletInfo.address);
-  //     } else {
-  //       setError("Failed to connect wallet.");
-  //       setLoader(false);
-  //       return;
-  //     }
-  //   }
-
-  //   try {
-  //     const provider = new ethers.BrowserProvider(window.ethereum);
-  //     const signer = await provider.getSigner();
-
-  //     // Initialize USDC contract instance
-  //     const usdcContract = new ethers.Contract(
-  //       usdcContractAddress,
-  //       usdcABI,
-  //       signer
-  //     );
-
-  //     // Check the user's USDC balance
-  //     const usdcBalance = await usdcContract.balanceOf(
-  //       await signer.getAddress()
-  //     );
-  //     const usdcAmount = ethers.parseUnits("5", 6); // 5 USDC with 6 decimals
-
-  //     if (usdcBalance < usdcAmount) {
-  //       setError(
-  //         "Insufficient USDC balance. Please ensure you have at least 5 USDC in your wallet."
-  //       );
-  //       setLoader(false);
-  //       return;
-  //     }
-
-  //     // Approve the minting fee (5 USDC) for your contract
-  //     const approveTx = await usdcContract.approve(
-  //       ArbicontractAddress,
-  //       usdcAmount
-  //     );
-  //     await approveTx.wait();
-
-  //     // Initialize your upgradeable contract instance
-  //     const contract = new ethers.Contract(
-  //       ArbicontractAddress,
-  //       contractABI,
-  //       signer
-  //     );
-  //     let tx;
-  //     // Call the mintDomainWithReferral function with the domain and referral code
-  //     if (referralCode && referralCode != "") {
-  //       tx = await contract.mintDomainWithReferral(updatedDomain, referralCode);
-  //       await tx.wait();
-  //     } else {
-  //       tx = await contract.mintDomain(updatedDomain);
-  //       await tx.wait();
-  //     }
-
-  //     // console.log("Domain minted successfully with referral", tx);
-  //     setAlertMessage(`Domain ${updatedDomain} minted successfully`);
-  //     setHash(tx.hash);
-  //     setShowPasswordField(true);
-  //   } catch (error) {
-  //     if (typeof error === "object" && error !== null && "reason" in error) {
-  //       setAlertMessage("");
-  //       setError(`${(error as { reason: string }).reason}`);
-  //     } else if (
-  //       typeof error === "object" &&
-  //       error !== null &&
-  //       "message" in error
-  //     ) {
-  //       setError(`${(error as { message: string }).message}`);
-  //       setAlertMessage("");
-  //     } else {
-  //       setError("An unknown error occurred.");
-  //       setAlertMessage("");
-  //     }
-  //   }
-  //   setLoader(false);
-  // };
 
   const handleDomainMinting = async () => {
     setLoader(true);

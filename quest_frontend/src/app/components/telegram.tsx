@@ -1,8 +1,7 @@
 "use client"
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import axiosInstance from '@/utils/axios/axios';
 
 const TeleApp: React.FC = () => {
   useEffect(() => {
@@ -32,13 +31,9 @@ const TeleApp: React.FC = () => {
 
       try {
         // Call your API route to save Telegram data
-        const authToken = `Bearer ${ Cookies.get( '_fam_token' ) }`;
+       
         console.log("step1, telegramData:",telegramData);
-        const response = await axios.get( `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/telegram/callback`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': authToken,
-          },
+        const response = await axiosInstance.get('/auth/telegram/callback', {
           params:telegramData,
           withCredentials:true
         } );

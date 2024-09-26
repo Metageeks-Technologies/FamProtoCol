@@ -270,8 +270,8 @@ const Profile: React.FC = () => {
             {/* badges */}
             <div className="lg:w-3/5 w-full font-famFont ">
               <div className="flex flex-col lg:justify-start justify-center lg:items-start items-center">
-                  <div className="badgesBox mt-5 lg:mt-0">
-                    <div className="w-full h-full innerbox2 ">
+                  <div className="w-full  badgesBox">
+                    <div className="w-full p-4 h-full innerbox2 ">
                       <svg
                         className="top-0 left-0 svg1"
                         style={{ strokeWidth: "1px", stroke: "#FA00FF" }}
@@ -298,7 +298,7 @@ const Profile: React.FC = () => {
                         <path d="M0 4L3.5 4L3.5 0.5" stroke="#FA00FF" />
                       </svg>
                       {user?.badges?.length ? (
-                        <div className="flex flex-wrap lg:justify-start justify-center items-center p-2">
+                        <div className="flex flex-wrap lg:justify-start justify-center items-center p-4">
                           {user.badges.map((data: any) => (
                             <div
                               key={data?.id}

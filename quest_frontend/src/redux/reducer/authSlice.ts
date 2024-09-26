@@ -66,7 +66,7 @@ export interface IUser
   referredBy: mongoose.Types.ObjectId ;  // The user ID of the referrer
   referredUsers?: mongoose.Types.ObjectId[];  // List of user IDs referred by this user
   famTasks:string[];
-  famTasksSubmisson:{
+  famTasksSubmission:{
     connectWallets:string[],
     gitScore:string;
   }

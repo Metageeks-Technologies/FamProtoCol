@@ -1,9 +1,8 @@
 "use client";
+import axiosInstance from "@/utils/axios/axios";
 import { notify } from "@/utils/notify";
-import axios from "axios";
-// import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React,{useState,useEffect} from "react";
+import React,{useState} from "react";
 
 type Props = {};
 
@@ -15,17 +14,13 @@ const LoginPage = (props: Props) => {
     
     const handleSubmit=async()=>{
         try {
-            const response= await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/admin/login`,{email,password});
+            const response= await axiosInstance.post('/admin/login',{email,password});
             // console.log(response);
-
-            const data=response.data;
-            
             if(response.status===200){
-              notify("success",data.message);
-              localStorage.setItem('_fam_admin_token',data.token);
+              notify("success",response.data.message);
+              localStorage.setItem('_fam_admin_token',response.data.token);
               router.push('/admin/dashboard');
             }
-
         } catch (error:any) {
             notify("error",error.response.data.message);
             console.log(`error while admin login ${error}`)
@@ -34,7 +29,7 @@ const LoginPage = (props: Props) => {
 
   return (
     <>
-      <section className="bg-gray-900">
+      <section className="bg-gray-100">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 p-4">
             <div className="p-4  md:space-y-6 sm:p-8">
