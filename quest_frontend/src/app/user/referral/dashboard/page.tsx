@@ -93,12 +93,7 @@ const ReferralProfile: React.FC = () => {
 
   const getReferredUsers = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/user/referred`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axiosInstance.get('/user/referred');
       console.log("referred users", response.data);
       setReferredUsers(response.data.referredUsers);
     } catch (error) {
@@ -107,12 +102,7 @@ const ReferralProfile: React.FC = () => {
   };
   const getReferrerUser = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/user/leaderboard/referrer`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axiosInstance.get('/user/leaderboard/referrer');
       console.log("referrers", response);
       setReferrer(response.data.users);
     } catch (err) {

@@ -86,7 +86,7 @@ const GlobalLeaderboard = () =>
                       <div className="  flex gap-2 justify-center items-center">
                         <span>XPS</span>
                         <div className="bg-violet-500/25 px-2 border-l-2 text-sm sm:text-lg  border-[#8c71ff]">{ ( topUsers[ 1 ]?.rewards.xp ) }</div>
-                        <span>COINS</span>
+                        <span>FPS</span>
                         <div className="bg-violet-500/25 px-2 border-l-2 text-sm sm:text-lg border-[#8c71ff]">{ topUsers[ 1 ]?.rewards.coins } </div>
                       </div>
                     </div>
@@ -116,7 +116,7 @@ const GlobalLeaderboard = () =>
                         </span>
                         <div className="bg-violet-500/25 px-2 border-l-2 text-sm sm:text-lg  border-[#8c71ff]">
                           { topUsers[ 0 ]?.rewards.xp } </div>
-                        <span>COINS</span>
+                        <span>FPS</span>
                         <div className="bg-violet-500/25 px-2 border-l-2 text-sm sm:text-lg border-[#8c71ff]"> { topUsers[ 0 ]?.rewards.coins }</div>
                       </div>
                     </div>
@@ -150,7 +150,7 @@ const GlobalLeaderboard = () =>
                           </span>
                         </div>
                           <span>
-                            COINS
+                           FPS
                           </span>
                         <div className="bg-violet-500/25 px-2 border-l-2 text-sm sm:text-lg border-[#8c71ff]">
                           <span>

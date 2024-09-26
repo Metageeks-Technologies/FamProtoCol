@@ -33,6 +33,7 @@ import {
 import { SweetAlert } from "@/utils/sweetAlert";
 import { fetchQuestById } from "@/redux/reducer/questSlice";
 import contractAbi from "@/utils/abi/contract.json";
+import axiosInstance from "@/utils/axios/axios";
 // types.ts
 declare global {
   interface Window {
@@ -163,12 +164,9 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
         taskId: selectedCard?._id,
         expireDate: 5,
       };
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/task/get/referral`,
+      const response = await axiosInstance.post(
+       '/task/get/referral',
         formData,
-        {
-          withCredentials: true,
-        }
       );
       setReferral(response.data);
     } catch (error) {
@@ -872,12 +870,11 @@ const Popup: React.FC<{
         return;
       }
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/checkFollow`,
+      const response = await axiosInstance.post(
+        '/twitter/checkFollow',
         {
           targetUserName: userName,
         },
-        { withCredentials: true }
       );
 
       if (!response.data.success) {
@@ -910,10 +907,9 @@ const Popup: React.FC<{
     // console.log("tweetId", tweetId);
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/checkLike`,
+      const response = await axiosInstance.post(
+        '/twitter/checkLike',
         { tweetId },
-        { withCredentials: true }
       );
       // console.log("like response", response.data);
 
@@ -950,10 +946,9 @@ const Popup: React.FC<{
     }
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/checkRetweet`,
+      const response = await axiosInstance.post(
+       '/twitter/checkRetweet',
         { tweetId },
-        { withCredentials: true }
       );
 
       if (!response.data.success) {
@@ -983,10 +978,10 @@ const Popup: React.FC<{
       return;
     }
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/send`,
-        { tweetBody },
-        { withCredentials: true }
+      const response = await axiosInstance.post(
+        '/twitter/send',
+        tweetBody,
+       
       );
 
       if (!response.data.success) {
@@ -1019,14 +1014,8 @@ const Popup: React.FC<{
         return;
       }
 
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/telegram/getChatMember?chat_id=${chatId}&user_id=${user?.teleInfo?.telegramId}`,
-        {
-          headers: {
-            Authorization: authToken,
-          },
-          withCredentials: true,
-        }
+      const response = await axiosInstance.get(
+        `/telegram/getChatMember?chat_id=${chatId}&user_id=${user?.teleInfo?.telegramId}`,
       );
 
       if (!response.data.success) {

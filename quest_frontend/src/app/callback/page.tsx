@@ -1,9 +1,9 @@
 "use client";
 import React, { Suspense,useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@nextui-org/react";
+import axiosInstance from "@/utils/axios/axios";
 
 const CallBackPageContent = () => {
   const router = useRouter();
@@ -14,11 +14,8 @@ const CallBackPageContent = () => {
 
   const handleLogin = async () => {
     try {
-      const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/twitter/auth/callback?state=${state}&code=${code}`,
-        {
-          withCredentials: true,
-        }
+      const { data } = await axiosInstance.get(
+        `/twitter/auth/callback?state=${state}&code=${code}`,
       );
       router.push("/user/profile");
       console.log(data);
@@ -30,7 +27,7 @@ const CallBackPageContent = () => {
 
   useEffect(() => {
     handleLogin();
-  }, []); // Ensure dependencies are set correctly
+  }, [state,code]); // Ensure dependencies are set correctly
 
   return <div className="min-h-screen flex justify-center items-center " >
     <Spinner size="lg" />

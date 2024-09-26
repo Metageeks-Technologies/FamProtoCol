@@ -415,6 +415,10 @@ export const famTaskComplete=async (req: any, res: Response) => {
     user.rewards.coins += task.famPoints;
     if(accountAddress){
       user.famTasksSubmission.connectWallets.push(accountAddress);
+
+      if(task.action==="multipleWalletConnect" && user.famTasksSubmission.connectWallets.length>=10){
+        user.famTasks.push(task.action);
+     }
     }
     await user.save();
     return res.send({

@@ -38,7 +38,7 @@ const tasks = [
   {
     name: "Multiple Wallet Connect",
     description:
-      "Connect multiple wallets to access a broader range of assets and interactions across Web3 applications.You will get points on every account you connect.",
+      "Connect multiple wallets to access a broader range of assets and interactions across Web3 applications.You will get points on every account you connect.You can connect max 10 accounts",
     image:
       "https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg",
     action: "multipleWalletConnect",
