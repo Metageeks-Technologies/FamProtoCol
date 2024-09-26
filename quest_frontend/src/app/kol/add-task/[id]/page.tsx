@@ -7,9 +7,9 @@ import { fetchUserData } from "@/redux/reducer/authSlice";
 import { AppDispatch } from "@/redux/store";
 import { notify } from "@/utils/notify";
 import axios from "axios";
-import Cookies from "js-cookie";
 import Link from "next/link";
 import { Button, Select, SelectItem } from "@nextui-org/react";
+import axiosInstance from "@/utils/axios/axios";
 
 interface IQuiz {
   question: string;
@@ -64,7 +64,6 @@ const AddTask = ({ params }: { params: { id: string } }) => {
   const [success, setSuccess] = useState(false);
   const [showConnectButton, setShowConnectButton] = useState(false);
   const [modalView, setModalView] = useState(false);
-  const authToken = `Bearer ${Cookies.get("_fam_token")}`;
   const [wallets, setWallets] = useState(0);
   const [telegram, setTelegram] = useState({
     telegramGroupLink: "",
@@ -294,18 +293,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
   const CheckDiscord = async (inviteUrl: string) => {
     try {
       const encodedInviteUrl = encodeURIComponent(inviteUrl); // encode the URL
-      console.log("authToken", authToken);
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/validate/${encodedInviteUrl}`,
-        {}, // assuming there is no body payload
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: authToken,
-          },
-          withCredentials: true,
-        }
-      );
+      const response = await axiosInstance.post(`/auth/validate/${encodedInviteUrl}`);
       const data = response.data;
       const guildata = data.validLink.guilData;
       const checkguild = data.validLink.checkLink;
@@ -378,15 +366,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
         return;
       }
       
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/telegram/checkBot?chat_id=${chatId}`,
-          {
-            headers: {
-              Authorization: authToken,
-            },
-            withCredentials: true,
-          }
-        );
+        const response = await axiosInstance.get(`/telegram/checkBot?chat_id=${chatId}`);
 
         if (!response.data.success) {
           notify("error", response.data.message);

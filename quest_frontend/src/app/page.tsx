@@ -5,9 +5,11 @@ import {
   Modal,
   ModalContent,
   ModalBody,
-  useDisclosure,Spinner
+  useDisclosure,
+  Spinner,
 } from "@nextui-org/react";
 import { ethers } from "ethers";
+import axiosInstance from "@/utils/axios/axios";
 import axios from "axios";
 import { notify } from "@/utils/notify";
 import { connectWallet } from "@/utils/wallet-connect";
@@ -45,9 +47,7 @@ const LandingPage = () => {
 
   const fetchDomains = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/user/domains`
-      );
+      const response = await axiosInstance.get("/user/domains");
       if (response.data.success) {
         setExistingDomain(response.data.filteredDomain);
         // console.log(response.data.filteredDomain);
@@ -147,18 +147,14 @@ const LandingPage = () => {
       }
 
       const path = `https://${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}.s3.amazonaws.com/userProfile/${domain}`;
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/user/signUpDomain`,
-        {
-          domainAddress: updatedDomain,
-          image: path,
-          password: password,
-          hashCode: hash,
-          walletAddress: address,
-          referralCode,
-        },
-        { withCredentials: true }
-      );
+      const response = await axiosInstance.post("/user/signUpDomain", {
+        domainAddress: updatedDomain,
+        image: path,
+        password: password,
+        hashCode: hash,
+        walletAddress: address,
+        referralCode,
+      });
 
       if (response.data.success) {
         // alert(response.data.message);
@@ -186,14 +182,10 @@ const LandingPage = () => {
     const updatedDomain = domain + ".fam";
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/user/loginDomain`,
-        {
-          domainAddress: updatedDomain,
-          password,
-        },
-        { withCredentials: true }
-      );
+      const response = await axiosInstance.post("/user/loginDomain", {
+        domainAddress: updatedDomain,
+        password,
+      });
 
       if (response.data.success) {
         notify("success", response.data.message);
@@ -218,13 +210,9 @@ const LandingPage = () => {
         setAlertMessage("Wallet connected successfully");
         setIsWalletConnected(true);
 
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/user/loginDomain`,
-          {
-            walletAddress: walletInfo.address,
-          },
-          { withCredentials: true }
-        );
+        const response = await axiosInstance.post("/user/loginDomain", {
+          walletAddress: walletInfo.address,
+        });
 
         console.log("response", response.data);
 
@@ -249,20 +237,20 @@ const LandingPage = () => {
     setLoader(true);
     setError("");
     setAlertMessage("");
-  
+
     // Validate domain name
     if (!domain || domain.length < 3) {
       setError("Domain name must be at least 4 characters long");
       setLoader(false);
       return;
     }
-  
+
     if (isDomainAvailable === "false") {
       setError("Domain already exists");
       setLoader(false);
       return;
     }
-  
+
     if (!isAlphanumericWithHyphen(domain)) {
       setError(
         "Invalid Domain: The domain must contain only alphanumeric characters and hyphens. Spaces are not allowed"
@@ -270,14 +258,15 @@ const LandingPage = () => {
       setLoader(false);
       return;
     }
-  
+
     const updatedDomain = domain + ".fam";
-  
-    const ArbicontractAddress = process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
+
+    const ArbicontractAddress =
+      process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
     const usdcContractAddress = process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS!;
     const contractABI = upgradeableContractAbi;
     const usdcABI = usdc;
-  
+
     if (!ArbicontractAddress || !contractABI || !address) {
       const walletInfo = await connectWallet();
       if (walletInfo) {
@@ -290,17 +279,23 @@ const LandingPage = () => {
         return;
       }
     }
-  
+
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
-  
+
       // Initialize the contract instance
-      const contract = new ethers.Contract(ArbicontractAddress, contractABI, signer);
-  
+      const contract = new ethers.Contract(
+        ArbicontractAddress,
+        contractABI,
+        signer
+      );
+
       // Check if the user is whitelisted for free mint
-      const isFreeMintWhitelisted = await contract.freeMintWhitelist(await signer.getAddress());
-  
+      const isFreeMintWhitelisted = await contract.freeMintWhitelist(
+        await signer.getAddress()
+      );
+
       if (isFreeMintWhitelisted) {
         // Call free mint function
         const tx = await contract.freeMintDomain(updatedDomain, referralCode);
@@ -310,31 +305,49 @@ const LandingPage = () => {
         setShowPasswordField(true);
       } else {
         // Check if the user is whitelisted for discount mint
-        const isDiscountMintWhitelisted = await contract.discountMintWhitelist(await signer.getAddress());
-  
+        const isDiscountMintWhitelisted = await contract.discountMintWhitelist(
+          await signer.getAddress()
+        );
+
         if (isDiscountMintWhitelisted) {
           // Discounted mint fee (2.5 USDC)
           const usdcAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDC with 6 decimals
-  
+
           // Initialize USDC contract instance
-          const usdcContract = new ethers.Contract(usdcContractAddress, usdcABI, signer);
-  
+          const usdcContract = new ethers.Contract(
+            usdcContractAddress,
+            usdcABI,
+            signer
+          );
+
           // Check the user's USDC balance
-          const usdcBalance = await usdcContract.balanceOf(await signer.getAddress());
+          const usdcBalance = await usdcContract.balanceOf(
+            await signer.getAddress()
+          );
           if (usdcBalance < usdcAmountDiscount) {
-            setError("Insufficient USDC balance. Please ensure you have at least 2.5 USDC.");
+            setError(
+              "Insufficient USDC balance. Please ensure you have at least 2.5 USDC."
+            );
             setLoader(false);
             return;
           }
-  
+
           // Approve the discounted minting fee (2.5 USDC) for your contract
-          const approveTxDiscount = await usdcContract.approve(ArbicontractAddress, usdcAmountDiscount);
+          const approveTxDiscount = await usdcContract.approve(
+            ArbicontractAddress,
+            usdcAmountDiscount
+          );
           await approveTxDiscount.wait();
-  
+
           // Call discount mint function
-          const tx = await contract.discountMintDomain(updatedDomain, referralCode);
+          const tx = await contract.discountMintDomain(
+            updatedDomain,
+            referralCode
+          );
           await tx.wait();
-          setAlertMessage(`Domain ${updatedDomain} minted with discount successfully`);
+          setAlertMessage(
+            `Domain ${updatedDomain} minted with discount successfully`
+          );
           setHash(tx.hash);
           setShowPasswordField(true);
         } else {
@@ -344,29 +357,45 @@ const LandingPage = () => {
             setLoader(false);
             return;
           }
-  
+
           // Initialize USDC contract instance
-          const usdcContract = new ethers.Contract(usdcContractAddress, usdcABI, signer);
-  
+          const usdcContract = new ethers.Contract(
+            usdcContractAddress,
+            usdcABI,
+            signer
+          );
+
           // Check the user's USDC balance
-          const usdcBalance = await usdcContract.balanceOf(await signer.getAddress());
+          const usdcBalance = await usdcContract.balanceOf(
+            await signer.getAddress()
+          );
           const usdcAmount = ethers.parseUnits("5", 6); // 5 USDC with 6 decimals
-  
+
           if (usdcBalance < usdcAmount) {
-            setError("Insufficient USDC balance. Please ensure you have at least 5 USDC.");
+            setError(
+              "Insufficient USDC balance. Please ensure you have at least 5 USDC."
+            );
             setLoader(false);
             return;
           }
-  
+
           // Approve the minting fee (5 USDC) for your contract
-          const approveTx = await usdcContract.approve(ArbicontractAddress, usdcAmount);
+          const approveTx = await usdcContract.approve(
+            ArbicontractAddress,
+            usdcAmount
+          );
           await approveTx.wait();
-  
+
           // Call mintDomainWithReferral function
-          const tx = await contract.mintDomainWithReferral(updatedDomain, referralCode);
+          const tx = await contract.mintDomainWithReferral(
+            updatedDomain,
+            referralCode
+          );
           await tx.wait();
-  
-          setAlertMessage(`Domain ${updatedDomain} minted successfully with referral`);
+
+          setAlertMessage(
+            `Domain ${updatedDomain} minted successfully with referral`
+          );
           setHash(tx.hash);
           setShowPasswordField(true);
         }
@@ -375,7 +404,11 @@ const LandingPage = () => {
       if (typeof error === "object" && error !== null && "reason" in error) {
         setAlertMessage("");
         setError(`${(error as { reason: string }).reason}`);
-      } else if (typeof error === "object" && error !== null && "message" in error) {
+      } else if (
+        typeof error === "object" &&
+        error !== null &&
+        "message" in error
+      ) {
         setError(`${(error as { message: string }).message}`);
         setAlertMessage("");
       } else {
@@ -383,19 +416,16 @@ const LandingPage = () => {
         setAlertMessage("");
       }
     }
-  
+
     setLoader(false);
   };
-  
+
   const getUploadUrl = async (): Promise<string> => {
     try {
-      const response = await axios.post<{ url: string }>(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/aws/generate-upload-url`,
-        {
-          folder: "userProfile",
-          fileName: domain,
-        }
-      );
+      const response = await axios.post("/aws/generate-upload-url", {
+        folder: "userProfile",
+        fileName: domain,
+      });
       return response.data.url;
     } catch (error) {
       console.error("Error getting upload URL:", error);
@@ -571,7 +601,7 @@ const LandingPage = () => {
                         </Button>
                         <Button
                           // onClick={() => comingSoon()}
-                          onClick={()=>router.push('/home')}
+                          onClick={() => router.push("/home")}
                           className="bg-white text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
                         >
                           Explore

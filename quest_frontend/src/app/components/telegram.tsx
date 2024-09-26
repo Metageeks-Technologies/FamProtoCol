@@ -35,7 +35,6 @@ const TeleApp: React.FC = () => {
         console.log("step1, telegramData:",telegramData);
         const response = await axiosInstance.get('/auth/telegram/callback', {
           params:telegramData,
-          withCredentials:true
         } );
         console.log("step2, response:",response);
       } catch (error) {

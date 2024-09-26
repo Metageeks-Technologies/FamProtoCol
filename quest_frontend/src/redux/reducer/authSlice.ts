@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import {Quest} from '@/types/types';
 import axios from 'axios';
 import mongoose from "mongoose"
+import axiosInstance from '@/utils/axios/axios';
 
 // Define interfaces for Twitter and Discord info
 export interface ITwitterInfo
@@ -94,9 +95,7 @@ export const fetchUserData = createAsyncThunk(
   {
     try
     {
-      const response = await axios.get( `${ process.env.NEXT_PUBLIC_SERVER_URL }/auth/profile`, {
-        withCredentials:true
-      } );
+      const response = await axiosInstance.get( '/auth/profile');
       console.log("response from userslice:", response.data );
       const data = response.data;
       return data;
@@ -114,7 +113,7 @@ export const logoutUser = createAsyncThunk(
   {
     try
     {
-      const response = await axios.get( `${ process.env.NEXT_PUBLIC_SERVER_URL }/auth/logout`, { withCredentials: true } );
+      const response = await axiosInstance.get( '/auth/logout');
     //  console.log("response from logout",response)
       return response.data;
     } catch ( err )
@@ -128,9 +127,7 @@ export const updateUserProfile = createAsyncThunk(
   'login/updateUserProfile',
   async (formData: Partial<IUser>, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/profile/update`, formData, {
-        withCredentials: true 
-       });
+      const response = await axiosInstance.put('/auth/profile/update', formData);
       return response.data.user;
     } catch ( err )
     {
@@ -138,7 +135,6 @@ export const updateUserProfile = createAsyncThunk(
     }
   }
 );
-
 
 // Create the slice
 const userSlice = createSlice( {

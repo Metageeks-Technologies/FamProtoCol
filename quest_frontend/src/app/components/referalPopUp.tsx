@@ -1,13 +1,12 @@
 import { updateUserProfile } from '@/redux/reducer/authSlice';
 import { fetchAllCommunities } from '@/redux/reducer/communitySlice';
 import { AppDispatch, RootState } from '@/redux/store';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
 import { notify } from '@/utils/notify';
-import Cookies from 'js-cookie';
+import axiosInstance from '@/utils/axios/axios';
 
 interface ReferralFormProps {
     memberId: any;
@@ -32,16 +31,9 @@ interface ReferralFormProps {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const authToken = `Bearer ${Cookies.get('_fam_token')}`;
-    const response = await axios.post(
-        `${ process.env.NEXT_PUBLIC_SERVER_URL }/community/get/joinCommunities/${id}`,
+    const response = await axiosInstance.post(
+        `/community/get/joinCommunities/${id}`,
       formData ,
-        {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': authToken,
-        },  withCredentials: true // Add this line to include credentials
-      }
     );
       // console.log("dsa",response.data)
       await dispatch(fetchAllCommunities());
