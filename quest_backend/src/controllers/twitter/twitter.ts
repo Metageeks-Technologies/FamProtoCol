@@ -1,17 +1,15 @@
-import axios from "axios";
 import dotenv from "dotenv";
 import { TwitterApi } from "twitter-api-v2";
-import TwitterApiBase from "twitter-api-v2/dist/esm/client.base";
 import User from "../../models/user/user";
 import AuthState from "../../models/authState/authState";
 dotenv.config();
 
-const accessToken = process.env.X_ACCESS_TOKEN;
-const BearerToken = process.env.TWITTER_BEARER_TOKEN;
+const twitterClientId = process.env.TWITTER_CLIENT_ID;
+const twitterClientSecret = process.env.TWITTER_SECRET_KEY;
 
 const client = new TwitterApi({
-  clientId: "UkVZdV8zR2lXczlnejhkVTBDcjY6MTpjaQ" as string,
-  clientSecret: "P0Q71rJ1gaGn3x12dV8Y96DeFIlRhPAqLwkC2rWQ_rTFy5H7Sw" as string,
+  clientId: twitterClientId as string,
+  clientSecret: twitterClientSecret as string,
 });
 
 export const callbackURL = `${process.env.PUBLIC_CLIENT_URL}/callback`;
@@ -86,9 +84,9 @@ export const OAuth2WithTwitterCallback = async (
 
     const { data: profile } = await loggedClient.v2.me();
 
-    const { ids } = LoggedInUser;
+    const { id } = LoggedInUser;
 
-    const userToUpdate = await User.findById(ids);
+    const userToUpdate = await User.findById(id);
 
     if (!userToUpdate) {
       return res

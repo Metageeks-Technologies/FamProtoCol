@@ -73,9 +73,6 @@ const Navbar: React.FC = () => {
     }
   }, [dispatch, router]);
 
-  const signup = () => {
-    dispatch(toggleNav(true));
-  }
 
   const handleToggleNav=async()=>{
     console.log("nav toggled",navOpen)
@@ -121,7 +118,7 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* news */}
-          <div className="bg-gradient-to-r from-[#FA00FF] via-[#FF7B7B] to-[#5538CE] text-white w-[40%] lg:w-[60%] h-[40px]">
+          <div className="bg-gradient-to-r from-[#FA00FF] via-[#FF7B7B] to-[#5538CE] text-white w-[40%] lg:w-[50%] h-[40px]">
             <div className=" flex flex-row w-full justify-center items-center">
               {/* linear-gradient(90deg, #FA00FF 0.03%, #FF7B7B 23.93%, #5538CE 118.3%); */}
 
@@ -170,7 +167,7 @@ const Navbar: React.FC = () => {
           {/* profile */}
           <div className=" flex justify-evenly items-center">
             {user ? (
-              <Dropdown placement="bottom-end" className="bg-slate-800">
+              <Dropdown placement="bottom-end" className="bg-gray-900">
                 <DropdownTrigger>
                   <Avatar
                     isBordered
@@ -189,10 +186,28 @@ const Navbar: React.FC = () => {
                   <DropdownItem key="profile" className="h-10 font-bold">
                     {/* <p className="font-semibold">welcome { data.displayName }</p> */}
                     <p
-                      className="font-semibold text-center"
+                      className="font-semibold text-center text-white"
                       onClick={() => router.push("/user/profile")}
                     >
-                      View profile
+                      View Profile
+                    </p>
+                  </DropdownItem>
+                  <DropdownItem key="referral" className="h-10 font-bold">
+                    {/* <p className="font-semibold">welcome { data.displayName }</p> */}
+                    <p
+                      className="font-semibold text-center text-white"
+                      onClick={() => router.push("/user/referral/dashboard")}
+                    >
+                      Referral Dashboard
+                    </p>
+                  </DropdownItem>
+                   <DropdownItem key="referral" className="h-10 font-bold">
+                    {/* <p className="font-semibold">welcome { data.displayName }</p> */}
+                    <p
+                      className="font-semibold text-center text-white"
+                      onClick={() => router.push("/user/points-parlor")}
+                    >
+                      Points Parlour
                     </p>
                   </DropdownItem>
                   <DropdownItem
@@ -208,11 +223,9 @@ const Navbar: React.FC = () => {
                 </DropdownMenu>
               </Dropdown>
             ) : (
-              <button className="rounded bg-famViolate " onClick={signup}>
-                <div className="py-1 px-4 rounded">
-                  <div className="m-1 w-full">Sign in / up</div>
-                </div>
-              </button>
+              <Button className="rounded-md px-4 py-2 bg-famViolate text-white" onPress={()=>{router.push("/")}}>
+                 Login
+              </Button>
             )}
             {/* notification */}
             {/* <div className="relative px-2">

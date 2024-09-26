@@ -7,6 +7,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { notify } from "@/utils/notify";
 import { TailSpin } from "react-loader-spinner";
+import { Button } from "@nextui-org/react";
 
 const ModalForm = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -127,12 +128,13 @@ const ModalForm = () => {
 
   return (
     <>
-      <button
-        onClick={toggleModal}
-        className="w-full font-famFont text-white cursor-pointer bg-gray-800 px-4 py-2 rounded-md"
+      <Button
+        onPress={toggleModal}
+        variant="bordered"
+        className="font-qanelas border-2 border-gray-800  text-white cursor-pointer px-4 py-2 rounded-md"
       >
         Edit profile
-      </button>
+      </Button>
       {isModalVisible && (
         <div
           id="static-modal"

@@ -24,28 +24,28 @@ export const getReferrers = async (req: Request, res: Response) => {
           displayName: 1, // Include any other fields you want to return
           domain: 1,
           image: 1,
-          rewards:1,
-          referredUserCount: { $size: { $ifNull: ["$referredUsers", []] } } // Count the number of referred users
+          rewards: 1,
+          referredUserCount: { $size: { $ifNull: ["$referredUsers", []] } }, // Count the number of referred users
+          createdAt: 1 // Include creation date to break ties
         }
       },
       {
         $setWindowFields: {
-          sortBy: { referredUserCount: -1 }, // Sort by referredUserCount in descending order
+          sortBy: { referredUserCount: -1 }, // Sort only by referredUserCount for ranking
           output: {
             rankByReferredUser: {
-              $rank: {} // Assign rank based on referredUserCount
+              $denseRank: {} // Rank based on referredUserCount only
             }
           }
         }
-      },
-      {
-        $sort: { referredUserCount: -1 } // Ensure the final output is sorted by referredUserCount
       }
     ]);
-    
+
     res.send({ success: true, users, message: "Users fetched successfully" });
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({ message: 'Error fetching users' });
   }
 };
+
+

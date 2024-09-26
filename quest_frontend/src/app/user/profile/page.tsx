@@ -11,6 +11,7 @@ import UserTable from "@/app/components/table/userTable";
 import TeleApp from "@/app/components/telegram";
 import { TailSpinLoader } from "@/app/components/loader";
 import axiosInstance from "@/utils/axios/axios";
+import Link from "next/link";
 
 const columns = [
   { name: "NAME", uid: "name" },
@@ -90,7 +91,7 @@ const Profile: React.FC = () => {
       <div className="flex flex-col gap-2 py-4">
         {/* user info */}
         <section className="w-full md:w-[90%] lg:w-[80%] mx-auto mb-8">
-          <div className="flex flex-col lg:flex-row gap-4 items-start justify-between lg:pt-20 mx-4 lg:mx-10">
+          <div className="flex flex-col lg:flex-row gap-4 items-start justify-center lg:justify-between lg:pt-20 mx-4 lg:mx-10">
             {/* user info */}
             <div className="lg:w-2/5 w-full">
               <div className="flex flex-col lg:flex-row items-center gap-4">
@@ -121,11 +122,11 @@ const Profile: React.FC = () => {
 
                 <div className="lg:w-[16rem] flex lg:justify-start items-start mt-6 lg:mt-1">
                   <div className=" flex flex-col items-start ">
-                    <div className="flex flex-col justify-center sm:justify-start items-start">
+                    <div className="flex flex-col justify-center lg:justify-start items-start">
                       <div className="text-2xl font-famFont ">
                         {user?.displayName}
                       </div>
-                      <div className="text-xl text-famPurple flex items-baseline justify-center sm:justify-start ">
+                      <div className="text-xl text-famPurple flex items-baseline justify-center lg:justify-start ">
                         {/* #{user?.rank} */}
                         <span>@</span>
                         <span className="font-famFont">
@@ -133,7 +134,7 @@ const Profile: React.FC = () => {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center justify-center sm:justify-start gap-1">
+                    <div className="flex items-center  justify-center lg:justify-start gap-1">
                         <div className="box1 right-trapezium  w-[2rem] h-[2rem] p-[1px] bg-zinc-800 ">
                           <a target="_blank" href={"https://x.com/fr_Ani5"}>
                             <svg
@@ -195,17 +196,17 @@ const Profile: React.FC = () => {
               <div className="flex flex-col lg:flex-row items-start mt-4">
                 {user && (
                   <div className="w-full">
-                    <div className="w-full flex flex-col items-center md:items-start justify-center md:justify-start">
-                      <div className="max-w-40 flex flex-col justify-center items-center md:justify-start md:items-start gap-2 ">
+                    <div className="w-full flex flex-col items-center md:items-start justify-center lg:justify-start">
+                      <div className="flex justify-center items-center md:justify-start md:items-start gap-2 ">
                         <ModalForm />
+                        <Link className="px-4 py-2 bg-famViolate rounded-md " href="/user/referral/dashboard" >Referral dashboard</Link>
                       </div>
-                      <div className="flex flex-row justify-center items-center my-4 gap-2">
+                      <div className="flex flex-wrap justify-center md:justify-start items-center my-4 gap-2">
                           {!user?.teleInfo?.telegramId && (
                             <div className="mb-2">
                               <TeleApp />
                             </div>
                           )}
-
                           {!user?.discordInfo?.username && (
                             <div className="mb-2">
                               <Button
@@ -235,33 +236,33 @@ const Profile: React.FC = () => {
                           )}
                         </div>
                     </div>
-                    <div className="flex justify-center sm:justify-start gap-3">
-                        <button className="px-4 font-bold py-2 rounded-full text-center hover:text-[#FA00FF] ">
+                    <div className="flex justify-center md:justify-start gap-3">
+                        <button className="font-bold py-2 rounded-full text-center hover:text-[#FA00FF] ">
                           {user?.following?.length} following
                         </button>
-                        <button className="px-4 font-bold py-2 rounded-full text-center hover:text-[#FA00FF] ">
+                        <button className="font-bold py-2 rounded-full text-center hover:text-[#FA00FF] ">
                           {user?.followers?.length} followers
                         </button>
                       </div>
-                    <div className="flex col gap-5 justify-center sm:justify-start items-center">
+                    <div className="flex col gap-5 justify-center md:justify-start items-center">
                         <Chip
                           onClick={handleEarnRewardsClicks}
-                          color="warning"
                           variant="bordered"
-                          className="cursor-pointer px-4 py-2 mt-3"
+                          color="warning"
+                          className="cursor-pointer border-2 px-4 py-2 mt-3"
                         >
-                          {user?.rewards?.xp} pts
+                          {user?.rewards?.xp} Xps
                         </Chip>
 
                         <Chip
-                          onClick={() => router.push("/user/my-community")}
                           variant="solid"
-                          className="cursor-pointer px-4 py-2 mt-3"
                           color="warning"
+                          className="cursor-pointer px-4 py-2 mt-3"
                         >
-                          Earn rewards
+                         {user?.rewards?.coins} Fps
                         </Chip>
                       </div>
+                      
                   </div>
                 )}
               </div>
@@ -269,8 +270,8 @@ const Profile: React.FC = () => {
             {/* badges */}
             <div className="lg:w-3/5 w-full font-famFont ">
               <div className="flex flex-col lg:justify-start justify-center lg:items-start items-center">
-                  <div className="badgesBox mt-5 lg:mt-0">
-                    <div className="w-full h-full innerbox2 ">
+                  <div className="w-full  badgesBox">
+                    <div className="w-full p-4 h-full innerbox2 ">
                       <svg
                         className="top-0 left-0 svg1"
                         style={{ strokeWidth: "1px", stroke: "#FA00FF" }}
@@ -297,7 +298,7 @@ const Profile: React.FC = () => {
                         <path d="M0 4L3.5 4L3.5 0.5" stroke="#FA00FF" />
                       </svg>
                       {user?.badges?.length ? (
-                        <div className="flex flex-wrap lg:justify-start justify-center items-center p-2">
+                        <div className="flex flex-wrap lg:justify-start justify-center items-center p-4">
                           {user.badges.map((data: any) => (
                             <div
                               key={data?.id}
@@ -372,7 +373,7 @@ const Profile: React.FC = () => {
             </svg>
 
             <div className="listOfFriends font-famFont">
-              People referred By you
+              People Followed You
             </div>
           </div>
           <div className="friendTable">
@@ -380,7 +381,7 @@ const Profile: React.FC = () => {
               data={allFriends}
               columns={columns}
               rowsPerPage={5}
-              noData="Follow some famUser to add them in your friend list"
+              noData="No FamUser followed you yet"
             />
           </div>
         </section>

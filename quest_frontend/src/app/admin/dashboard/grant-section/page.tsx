@@ -300,10 +300,12 @@ const Grantspage = () => {
 
 
   return (
-    <div className="bg-slate-100">
-      <div className="h-screen">
-        <div className="p-4 mx-auto w-[80%] flex flex-col justify-center items-center ">
-          <div className="w-full flex justify-end items-end">
+    <div className="h-screen overflow-y-scroll">
+     
+      <div className="w-full">
+        <div className="p-4 mx-auto flex flex-col justify-center items-center ">
+          <div className="w-full mb-4 flex justify-between items-center">
+           <div className="text-xl  font-bold text-slate-900" >Grant section</div>
             <button
               className="border-2 shadow-md text-white font-bold py-2 px-4 rounded-full bg-slate-700 hover:bg-slate-900"
               onClick={() => handleOpen("add", null)}
@@ -314,7 +316,7 @@ const Grantspage = () => {
               <span className="text-sm">Add Feed</span>
             </button>
           </div>
-          <table className=" w-[80%] bg-white text-black rounded-lg">
+          <table className=" w-full bg-white text-black rounded-lg">
             <thead className="p-4 bg-slate-900 rounded-t-lg">
               <tr className="text-white rounded-lg">
                 <th className="p-4 border-r text-center">Logo</th>

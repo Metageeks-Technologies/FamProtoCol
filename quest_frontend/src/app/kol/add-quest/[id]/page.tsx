@@ -40,8 +40,7 @@ function CreateQuest() {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [rewards, setRewards] = useState<Reward[]>([
-    { type: "xp", value: 0 },
-    { type: "coin", value: 0 },
+    { type: "Xps", value: 0 },
   ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -230,7 +229,7 @@ function CreateQuest() {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-4 py-2 border-1 border-gray-600 focus:outline-none focus:ring-2 focus:ring-famViolate transition-colors duration-300 bg-gray-950 text-white"
+                className="w-full px-4 py-2 border-1 border-gray-600 font-famFont focus:outline-none focus:ring-2 focus:ring-famViolate transition-colors duration-300 bg-gray-950 text-white"
                 required
               />
             </div>
@@ -240,14 +239,14 @@ function CreateQuest() {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-2 border-1 border-gray-600 focus:outline-none focus:ring-2 focus:ring-famViolate transition-colors duration-300 bg-gray-950 text-white"
+              className="w-full px-4 py-2 border-1 border-gray-600 font-famFont focus:outline-none focus:ring-2 focus:ring-famViolate transition-colors duration-300 bg-gray-950 text-white"
               rows={4}
               required
             />
           </div>
           <div className="mb-5">
             <label className="text-white font-famFont mb-2">
-              Categories (Select multiple)*
+              Categories
             </label>
             <Multiselect
               options={
@@ -283,7 +282,7 @@ function CreateQuest() {
                   color: "white",
                 },
               }}
-              className="w-full focus:outline-none focus:ring-2 focus:ring-famViolate transition-colors duration-300 text-sm text-white"
+              className="w-full font-famFont focus:outline-none focus:ring-2 focus:ring-famViolate transition-colors duration-300 text-sm text-white"
               showCheckbox={false}
               avoidHighlightFirstOption={true}
               hideSelectedList={false}

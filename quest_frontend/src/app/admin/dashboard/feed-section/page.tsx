@@ -310,10 +310,11 @@ const AddFeedPage = () =>
 
   return (
     <>
-      <div className="bg-slate-100 " id='edit-feed'>  
-        <div className='h-screen'>
-          <div className='p-4 mx-auto w-[80%] flex flex-col justify-center items-center '>
-            <div className='w-full flex justify-end items-end'>
+      <div className="h-screen" id='edit-feed'>  
+        <div className='w-full'>
+          <div className='p-4 flex flex-col justify-center items-center '>
+            <div className='w-full flex justify-between items-end mb-4'>
+              <div className='font-bold text-xl text-black' >Edit Feed</div>
               <button className='border-2 shadow-md text-white font-bold py-2 px-4 rounded-full bg-slate-700 hover:bg-slate-900' onClick={()=>handleOpen("add",null)} >
                 <span className='mr-2 text-sm'>
                   <i className="bi bi-plus-circle"></i>
@@ -322,7 +323,7 @@ const AddFeedPage = () =>
                 </span>
               </button>
             </div>
-            <table className=" w-[80%] bg-white text-black rounded-lg">
+            <table className="w-full bg-white text-black rounded-lg">
               <thead className='p-4 bg-slate-900 rounded-t-lg'>
                 <tr className="text-white rounded-lg">
                   <th className='p-4 border-r text-center'>S.No</th>
@@ -356,8 +357,7 @@ const AddFeedPage = () =>
             </div>
           </div>
           </div>
-          <div className="flex flex-wrap bg-red-600 gap-3">
-      </div>
+         
       <Modal backdrop="transparent" size='2xl' closeButton={false} scrollBehavior="outside" isOpen={isOpen} onClose={onClose}>
         <ModalContent>
           {(onClose) => (

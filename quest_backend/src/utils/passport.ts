@@ -93,12 +93,12 @@ passport.use(
         const data= await jwt.verify(token, secretKey);
         const users = data as any;
         // console.log("sddsdds",users)
-        if (!users || !users.ids) {
+        if (!users || !users.id) {
           return done(new Error( 'User ID not provided'));
         }
     
         // Fetch the user by ID
-        let user = await UserDb.findById(users.ids);
+        let user = await UserDb.findById(users.id);
         
         if (!user) {
           return done(new Error('User not found'));

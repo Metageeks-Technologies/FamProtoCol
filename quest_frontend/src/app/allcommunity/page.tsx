@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaUser, FaTwitter, FaBolt } from "react-icons/fa";
-import
-{
+import {
   fetchAllCommunities,
   joinCommunity,
 } from "@/redux/reducer/communitySlice";
@@ -10,8 +9,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserData } from "@/redux/reducer/authSlice";
-import
-{
+import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
@@ -24,67 +22,59 @@ import ReferralForm from "@/app/components/referalPopUp";
 import { notify } from "@/utils/notify";
 import { getCommunitySuccess } from "@/redux/reducer/adminCommunitySlice";
 
-const MyCommunities = () =>
-{
+const MyCommunities = () => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
+
   // const cardData:any = useSelector( ( state: RootState ) => state.community.allCommunities );
-  const memberId = useSelector( ( state: RootState ) => state.login.user?._id );
-  const [ loadingCommunityId, setLoadingCommunityId ] = useState<string | null>(
+  const memberId = useSelector((state: RootState) => state.login.user?._id);
+  const [loadingCommunityId, setLoadingCommunityId] = useState<string | null>(
     null
   );
-  const [ search, setSearch ] = useState<string>( "" );
-  const [ ecosystem, setEcosystem ] = useState<string>( "" );
-  const [ category, setCategory ] = useState<string>( "" );
-  const [ communities, setCommunities ] = useState<any[]>( [] );
-  const [ selectedEcosystem, setSelectedEcosystem ] = useState<string[]>( [] );
-  const [ selectedCategories, setSelectedCategories ] = useState<string[]>( [] );
-  const [ page, setPage ] = useState( 1 );
-  const [ totalPages, setTotalPages ] = useState( 1 );
-  const [ itemsPerPage, setItemsPerPage ] = useState<Number>(12);
-
+  const [search, setSearch] = useState<string>("");
+  const [ecosystem, setEcosystem] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [communities, setCommunities] = useState<any[]>([]);
+  const [selectedEcosystem, setSelectedEcosystem] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState<Number>(12);
 
   // const data = useSelector( ( state: RootState ) => state.community.forall );
-  const data = useSelector( ( state: any ) => state.adminCommunity );
+  const data = useSelector((state: any) => state.adminCommunity);
 
   const categories = data?.categories || [];
   const ecosystems = data?.ecosystems || [];
 
   let storedCategory;
-  useEffect( () =>
-  {
-    storedCategory = localStorage?.getItem( 'category' );
-    if ( storedCategory )
-    {
-      setSelectedCategories( [ storedCategory ] );
+  useEffect(() => {
+    storedCategory = localStorage?.getItem("category");
+    if (storedCategory) {
+      setSelectedCategories([storedCategory]);
       // optionally, remove it from session storage if you don't need it anymore
-      localStorage.removeItem( 'category' );
+      localStorage.removeItem("category");
     }
 
     // console.log("category Name:",storedCategory)
-  }, [] );
-
+  }, []);
 
   // console.log( selectedCategories );
 
-  const joinningCommunity = async ( e: any ) =>
-  {
-    setLoadingCommunityId( e._id );
-    try
-    {
+  const joinningCommunity = async (e: any) => {
+    setLoadingCommunityId(e._id);
+    try {
       const res = await dispatch(
-        joinCommunity( { memberId, id: e._id } )
+        joinCommunity({ memberId, id: e._id })
       ).unwrap();
       // console.log( res );
-      await dispatch( fetchAllCommunities() );
-    } catch ( error )
-    {
-      console.log( "error in adding the community", "123", error );
-    } finally
-    {
+      await dispatch(fetchAllCommunities());
+    } catch (error) {
+      console.log("error in adding the community", "123", error);
+    } finally {
       // console.log( "Tis is finally" );
-      fetchCommunities( search, ecosystem, category, page );
-      setLoadingCommunityId( null );
+      fetchCommunities(search, ecosystem, category, page);
+      setLoadingCommunityId(null);
     }
   };
 
@@ -93,12 +83,10 @@ const MyCommunities = () =>
     ecosystem: string,
     category: string,
     currentPage: number
-  ) =>
-  {
-    try
-    {
+  ) => {
+    try {
       const response = await axios.post(
-        `${ process.env.NEXT_PUBLIC_SERVER_URL }/community/get`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/community/get`,
         {
           search,
           ecosystem: selectedEcosystem,
@@ -108,103 +96,94 @@ const MyCommunities = () =>
           params: {
             page: currentPage,
             limit: itemsPerPage,
-          }
+          },
         }
       );
 
-      setCommunities( response.data.communities );
-      setTotalPages( response.data.pagination.totalPages );
+      setCommunities(response.data.communities);
+      setTotalPages(response.data.pagination.totalPages);
       // You might want to update other pagination info as well
-    } catch ( error )
-    {
-      console.error( "Failed to fetch communities:", error );
+    } catch (error) {
+      console.error("Failed to fetch communities:", error);
     }
   };
   // console.log( "communities:-", communities );
 
-  useEffect( () =>
-  {
-    fetchCommunities( "", "", "", page );
-    dispatch( getCommunitySuccess() );
+  useEffect(() => {
+    fetchCommunities("", "", "", page);
+    dispatch(getCommunitySuccess());
 
     // dispatch( fetchAllCommunities() );
     // dispatch( fetchCategoryEcosystem() );
-    dispatch( fetchUserData() );
-  }, [ page, itemsPerPage ] );
+    dispatch(fetchUserData());
+  }, [page, itemsPerPage]);
 
-  const handlePageChange = ( newPage: any ) =>
-  {
-    setPage( newPage );
+  const handlePageChange = (newPage: any) => {
+    setPage(newPage);
   };
 
-  const handleSubmit = async ( e: React.FormEvent<HTMLFormElement> ) =>
-  {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetchCommunities( search, ecosystem, category, page );
+    fetchCommunities(search, ecosystem, category, page);
   };
 
-  const rest = async () =>
-  {
-    setSearch( '' );
-    setSelectedCategories( [] );
-    setSelectedEcosystem( [] );
-    fetchCommunities( "", "", "", page );
-
+  const rest = async () => {
+    setSearch("");
+    setSelectedCategories([]);
+    setSelectedEcosystem([]);
+    fetchCommunities("", "", "", page);
   };
   return (
     <div className="bg-black text-white min-h-screen">
-      <div className="mx-4 lg:mx-20 sm:ml-20">
+      <div className="w-[90%] mx-auto">
         <div className="text-2xl mb-4 pt-10 font-bold text-center lg:text-start font-qanelas">
           All Communities
         </div>
         <div className="w-full mb-4 flex justify-start items-center text-white opacity-70">
-            Explore the communities and join the one that interests you.
+          Explore the communities and join the one that interests you.
         </div>
 
         <div className="mb-4">
-          <form onSubmit={ handleSubmit }>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col lg:flex-row lg:justify-between justify-center gap-2 lg:gap-0">
-              <div className="flex justify-start px-2 py-1 gap-2 items-center bg-zinc-950 text-white border border-zinc-800 focus:ring-cyan-500 focus:border-cyan-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500">
-                <div className="flex justify-center items-center ">
-                 <i className="bi bi-search"></i>
+              <div className="w-full md:max-w-[32%] flex justify-start px-4 gap-2 items-center bg-zinc-950 text-white border border-zinc-800 focus:ring-famViolate focus:border-famViolate ">
+                <div className="px-2">
+                  <i className="bi bi-search"></i>
                 </div>
                 <input
                   type="text"
                   id="search-navbar"
                   className="w-full p-2 text-sm bg-zinc-950 text-white"
                   placeholder="Search Communities"
-                  value={ search }
-                  onChange={ ( e ) => setSearch( e.target.value ) }
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-              <div className="flex flex-col items-center justify-center gap-2 mb-2 lg:flex-row">
+              <div className="w-full flex flex-col items-center justify-end gap-2 mb-2 lg:flex-row">
                 <div className="grid grid-cols-2 mb-2">
                   <div className="text-white lg:bg-slate-800 sm:bg-slate-800  rounded-xl mx-4 ">
-                    <Dropdown 
-                    className="bg-slate-800"
-                    >
+                    <Dropdown className="bg-slate-800">
                       <DropdownTrigger>
                         <Button
                           variant="bordered"
                           className="capitalize text-white"
                         >
-                          { selectedCategories.length > 0
-                            ? selectedCategories.join( ", " )
-                            : "Select Categories" }
+                          Select Categories
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu
                         aria-label="Select Categories"
                         disallowEmptySelection
                         selectionMode="multiple"
-                        selectedKeys={ selectedCategories }
-                        onSelectionChange={ ( keys ) =>
-                          setSelectedCategories( Array.from( keys ) as string[] )
+                        selectedKeys={selectedCategories}
+                        onSelectionChange={(keys) =>
+                          setSelectedCategories(Array.from(keys) as string[])
                         }
+                        className="flex-wrap"
                       >
-                        { categories.map( ( cat: any ) => (
-                          <DropdownItem key={ cat.name }>{ cat.name }</DropdownItem>
-                        ) ) }
+                        {categories.map((cat: any) => (
+                          <DropdownItem key={cat.name}>{cat.name}</DropdownItem>
+                        ))}
                       </DropdownMenu>
                     </Dropdown>
                   </div>
@@ -215,27 +194,25 @@ const MyCommunities = () =>
                           variant="bordered"
                           className="capitalize text-white"
                         >
-                          { selectedEcosystem.length > 0
-                            ? selectedEcosystem.join( ", " )
-                            : "Select Ecosystem" }
+                           Select Ecosystem
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu
                         aria-label="Select Ecosystem"
                         disallowEmptySelection
                         selectionMode="multiple"
-                        onSelectionChange={ ( keys ) =>
-                          setSelectedEcosystem( Array.from( keys ) as string[] )
+                        onSelectionChange={(keys) =>
+                          setSelectedEcosystem(Array.from(keys) as string[])
                         }
-                        selectedKeys={ selectedEcosystem }
+                        selectedKeys={selectedEcosystem}
+                        className="flex-wrap"
                       >
-                        { ecosystems.map( ( eco: any ) => (
-                          <DropdownItem key={ eco.name }>{ eco.name }</DropdownItem>
-                        ) ) }
+                        {ecosystems.map((eco: any) => (
+                          <DropdownItem key={eco.name}>{eco.name}</DropdownItem>
+                        ))}
                       </DropdownMenu>
                     </Dropdown>
                   </div>
-
                 </div>
                 <div className="flex justify-center items-center gap-4">
                   <button
@@ -245,7 +222,7 @@ const MyCommunities = () =>
                     Apply
                   </button>
                   <button
-                    onClick={ rest }
+                    onClick={rest}
                     className="px-6 py-2 border-1 border-red-500 text-red-500 font-semibold rounded-xl transition duration-300 ease-in-out hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                   >
                     Reset
@@ -255,48 +232,65 @@ const MyCommunities = () =>
             </div>
           </form>
         </div>
-        
-          <div className="flex justify-end items-center my-2">
-              <div className="flex items-center justify-center border-white border-1 rounded-xl gap-2 bg-slate-900 p-2 text-white">
-              <select className="text-white bg-slate-900" name="itemPerPage" id="itemPerPage" value={itemsPerPage.toString()} onChange={(e) => setItemsPerPage(parseInt(e.target.value))}>
-              <option className="bg-zinc-900 text-white text-xs w-[30px]" value="12">12 Per Page</option>
-              <option className="bg-zinc-900 text-white text-xs w-[30px]" value="24">24 Per Page</option>
-              <option className="bg-zinc-900 text-white text-xs w-[30px]" value="36">36 Per Page</option>
-              </select>
-            </div>
-            </div>
-        { ( communities && communities.length ) ?
+
+        <div className="flex justify-end items-center my-2">
+          <div className="flex items-center justify-center border-white border-1 rounded-xl gap-2 bg-slate-900 p-2 text-white">
+            <select
+              className="text-white bg-slate-900"
+              name="itemPerPage"
+              id="itemPerPage"
+              value={itemsPerPage.toString()}
+              onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+            >
+              <option
+                className="bg-zinc-900 text-white text-xs w-[30px]"
+                value="12"
+              >
+                12 Per Page
+              </option>
+              <option
+                className="bg-zinc-900 text-white text-xs w-[30px]"
+                value="24"
+              >
+                24 Per Page
+              </option>
+              <option
+                className="bg-zinc-900 text-white text-xs w-[30px]"
+                value="36"
+              >
+                36 Per Page
+              </option>
+            </select>
+          </div>
+        </div>
+        {communities && communities.length ? (
           <>
             <div className="grid gap-4 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 pt-8 ">
-              { communities?.map( ( card: any, index: number ) => (
+              {communities?.map((card: any, index: number) => (
                 <div
-                  key={ index }
-                  onClick={ () =>
-                  {
-                    if ( memberId && card.creator == memberId )
-                    {
-                      router.push( `/kol/community-project/${ card._id }` );
-                    } else if ( memberId && card.members.includes( memberId ) )
-                    {
-                      router.push( `/user/community-project/${ card._id }` );
-                    } else
-                    {
-                      router.push( `/allcommunity/${ card._id }` );
+                  key={index}
+                  onClick={() => {
+                    if (memberId && card.creator == memberId) {
+                      router.push(`/kol/community-project/${card._id}`);
+                    } else if (memberId && card.members.includes(memberId)) {
+                      router.push(`/user/community-project/${card._id}`);
+                    } else {
+                      router.push(`/allcommunity/${card._id}`);
                     }
-                  } }
+                  }}
                   className=" bg-white/5 cursor-pointer outer-div relative flex lg:gap-2 sm:gap-4 gap-4  hover:bg-[#8c71ff] hover:text-[#111111] border-[#282828] border rounded-md lg:p-4 sm:p-2 p-4 flex-col justify-center w-full sm:w-full"
                 >
                   <div className="flex  flex-row md:flex-row lg:flex-row text-xl items-center justify-around ">
                     <div className="p-1">
                       <div className="image-container h-[5rem] w-[5rem] md:h-[5rem] md:w-[5rem] items-center flex ">
                         <img
-                          src={ card.logo }
+                          src={card.logo}
                           alt="style image"
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="bg_Div_Down h-[2rem] md:h-[2rem] bg-gray-800">
-                        { " " }
+                        {" "}
                       </div>
                     </div>
 
@@ -304,13 +298,13 @@ const MyCommunities = () =>
                       <div className="flex w-full flex-col items-start ">
                         <div className="flex w-full h-[5rem] md:h-[5rem] bg_eco_div border-b-4 border-[#8c71ff] gap-2 p-2 bg-[#28223d] items-end lg:items-end justify-between ">
                           <div className="md:w-4/5  w-4/5 truncate text-[12px] md:text-[10px] lg:text-[10px] md:ml-3 md:text-start text-center card-title">
-                            { card.title }
+                            {card.title}
                           </div>
 
                           <div className="md:1/5 flex flex-row rounded-lg justify-center md:justify-end">
                             <div className="flex gap-1 mr-2 items-center flex-col">
                               <span className="card-white-text text text-lg ">
-                                { card.quests.length }
+                                {card.quests.length}
                               </span>
                               <span className=" card-gray-text text-3xl">
                                 QUESTS
@@ -318,7 +312,7 @@ const MyCommunities = () =>
                             </div>
                             <div className="flex gap-1 items-center flex-col">
                               <span className="card-white-text text-lg">
-                                { card.members.length }
+                                {card.members.length}
                               </span>
                               <span className=" card-gray-text text-lg">
                                 FOLLOWERS
@@ -330,11 +324,15 @@ const MyCommunities = () =>
                       <div className="flex w-full flex-row justify-end gap-2">
                         <div className="flex bg-[#8C71FF] py-1 px-2 items-center">
                           <FaUser className="md:w-4 w-4 h-4 md:h-4" />
-                          <div className="pl-1 text-sm">{ card.members.length }</div>
+                          <div className="pl-1 text-sm">
+                            {card.members.length}
+                          </div>
                         </div>
                         <div className="flex bg-[#8C71FF] py-1 px-2 items-center">
                           <FaBolt className="md:w-4 w-4 h-4 md:h-4" />
-                          <div className="pl-1 text-sm">{ card.quests.length }</div>
+                          <div className="pl-1 text-sm">
+                            {card.quests.length}
+                          </div>
                         </div>
                         <div className="flex bg-[#8C71FF] py-1 px-2 items-center">
                           <FaTwitter className="md:w-4 w-4 h-4 md:h-4" />
@@ -346,12 +344,12 @@ const MyCommunities = () =>
                   <div className="flex flex-row text-xs m-1 gap-2 justify-start  ">
                     <span className="descText">Bio: </span>
                     <span className="break-words text-white opacity-30 text-[0.8rem] overflow-hidden line-clamp-2 font-famFont uppercase ">
-          {card.description.slice(0, 20)}
-        </span>
+                      {card.description.slice(0, 20)}
+                    </span>
                   </div>
 
-                  { card.members.includes( memberId ) ? (
-                    <div className="flex justify-center items-center mt-1" >
+                  {card.members.includes(memberId) ? (
+                    <div className="flex justify-center items-center mt-1">
                       <button
                         className="px-2 py-1 text-sm bg-green-500/20 text-green-400 text-center font-medium rounded-lg transition-all duration-300 ease-in-out cursor-default border border-green-500/50 hover:bg-green-500/30 w-full"
                         disabled
@@ -363,54 +361,61 @@ const MyCommunities = () =>
                     <div className="flex gap-3 mt-1">
                       <button
                         className="px-2 py-1 text-xs bg-white/10 hover:bg-white/25 text-center text-neutral-400 descdata rounded-md transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg"
-                        onClick={ () => router.push( `/kol/community-project/${ card._id }` ) }
+                        onClick={() =>
+                          router.push(`/kol/community-project/${card._id}`)
+                        }
                       >
                         View Your Community
                       </button>
                     </div>
                   ) : memberId ? (
-                    <div className="flex gap-3 mt-1" >
+                    <div className="flex gap-3 mt-1">
                       <button
-                        className={ `px-2 py-1 text-xs bg-white/10 hover:bg-white/25 text-center text-neutral-400 descdata hover:text-black rounded-md transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg ${ loadingCommunityId === card._id ? "cursor-wait" : ""
-                          }` }
-                        onClick={ ( e ) =>
-                        {
+                        className={`px-2 py-1 text-xs bg-white/10 hover:bg-white/25 text-center text-neutral-400 descdata hover:text-black rounded-md transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg ${
+                          loadingCommunityId === card._id ? "cursor-wait" : ""
+                        }`}
+                        onClick={(e) => {
                           e.stopPropagation();
-                          if ( loadingCommunityId === null ) joinningCommunity( card );
-                        } }
-                        disabled={ loadingCommunityId !== null }
+                          if (loadingCommunityId === null)
+                            joinningCommunity(card);
+                        }}
+                        disabled={loadingCommunityId !== null}
                       >
-                        { loadingCommunityId === card._id ? "Joining..." : "Join Community" }
+                        {loadingCommunityId === card._id
+                          ? "Joining..."
+                          : "Join Community"}
                       </button>
-                      <ReferralForm memberId={ memberId } id={ card._id } />
+                      <ReferralForm memberId={memberId} id={card._id} />
                     </div>
                   ) : (
-                    <div className="mt-1 w-full" >
+                    <div className="mt-1 w-full">
                       <button
                         className="px-2 py-1 text-xs bg-white/10 hover:bg-white/25 text-center text-neutral-400 descdata hover:text-black rounded-md transition-all duration-300 ease-in-out cursor-pointer hover:shadow-lg w-full"
-                        onClick={ () => router.push( '/login' ) }
+                        onClick={() => router.push("/login")}
                       >
                         Please Login
                       </button>
                     </div>
-                  ) }
+                  )}
                 </div>
-              ) ) }
+              ))}
             </div>
 
             <div className="flex justify-center items-center my-16">
               <Pagination
-                onChange={ handlePageChange } page={ page } initialPage={ 1 } total={ totalPages } showControls
-                 classNames={{
-              cursor:'bg-[#5538CE]',
-             }}
-               
+                onChange={handlePageChange}
+                page={page}
+                initialPage={1}
+                total={totalPages}
+                showControls
+                classNames={{
+                  cursor: "bg-[#5538CE]",
+                }}
               />
-              </div>
-            
-           
+            </div>
           </>
-          : <div className="col-span-full flex justify-center items-center py-12">
+        ) : (
+          <div className="col-span-full flex justify-center items-center py-12">
             <div className="bg-white/5 border border-[#282828] rounded-lg p-8 text-center max-w-md">
               <div className="mb-6">
                 <svg
@@ -428,19 +433,22 @@ const MyCommunities = () =>
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-medium text-white mb-2">No Communities Found</h3>
+              <h3 className="text-xl font-medium text-white mb-2">
+                No Communities Found
+              </h3>
               <p className="text-gray-400 mb-6">
-                We couldn't find any communities matching your criteria. Try adjusting your filters or search terms.
+                We couldn't find any communities matching your criteria. Try
+                adjusting your filters or search terms.
               </p>
               <button
-                onClick={ rest }
+                onClick={rest}
                 className="px-4 py-2 bg-[#8c71ff] text-white font-semibold rounded-md hover:bg-[#7c5df9] transition duration-300 ease-in-out"
               >
                 Reset Filters
               </button>
             </div>
           </div>
-        }
+        )}
       </div>
     </div>
   );

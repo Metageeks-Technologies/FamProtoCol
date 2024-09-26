@@ -66,7 +66,6 @@ const AddTask = ({ params }: { params: { id: string } }) => {
   const [modalView, setModalView] = useState(false);
   const authToken = `Bearer ${Cookies.get("_fam_token")}`;
   const [wallets, setWallets] = useState(0);
-  const [activeTab, setActiveTab] = useState<string>("tweetReaction");
   const [telegram, setTelegram] = useState({
     telegramGroupLink: "",
   });
@@ -79,10 +78,6 @@ const AddTask = ({ params }: { params: { id: string } }) => {
     defaultTweet: "",
   });
   const [tweetWord, setTweetWord] = useState<string>("");
-
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
-  };
 
   const { taskOptions, categories } = useSelector(
     (state: any) => state.taskOption
@@ -492,7 +487,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                 <div className="p-4 md:p-5 flex flex-col gap-2 bg-[#141414] text-white w-full md:w-1/3">
                   {categories.map(
                     (category: string) =>
-                      (category === "Actions" || category === "Social") && (
+                      ( category === "Social") && (
                         <div key={category}>
                           <div className="mx-4">
                             <h4 className="text-xl font-medium mb-2 text-gray-400 ">
@@ -538,7 +533,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                 <div className="p-4 md:p-5 flex flex-col gap-4 bg-[#141414] text-white w-full md:w-1/3">
                   {categories.map(
                     (category: string) =>
-                      (category === "On-chain action") && (
+                      (category === "Actions") && (
                         <div key={category}>
                           <div className="mx-4">
                             <h4 className="text-xl font-medium mb-2 text-gray-400 ">
@@ -636,7 +631,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                     rows={4}
                   />
 
-                  {selectedTask.name === "Connect multiple wallet" && (
+                  {/* {selectedTask.name === "Connect multiple wallet" && (
                     <div className="flex items-center mt-2">
                       <label className="w-full p-3 border-r-1  rounded-l-lg bg-gray-700 text-white">
                         Total wallet to connect
@@ -657,14 +652,14 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                         }
                       />
                     </div>
-                  )}
+                  )} */}
                   {selectedTask.name === "Tweet Like" && (
                     <div className="flex flex-col justify-start items-start gap-2 mb-4">
                       <label htmlFor="tweetUrl">TweetUrl</label>
                       <input
                         type="text"
                         placeholder="https://x.com/HOW3_Official/status/1829297591920464076"
-                        className="w-full px-2 py-1 rounded-md bg-gray-700"
+                        className="w-full px-4 py-2 rounded-md focus:ring-2 focus:ring-purple-500 bg-gray-700"
                         id="tweetUrl"
                         name="tweetUrl"
                         value={tweet.tweetLikeUrl}
@@ -1083,7 +1078,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                   </label>
                   <div className="flex items-center mt-2">
                     <label className="w-1/2 px-4 py-2 border rounded-l-lg bg-gray-800 text-white">
-                      XP
+                      Xps
                     </label>
                     <input
                       type="number"
@@ -1104,7 +1099,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                       required
                     />
                   </div>
-                  <div className="flex items-center mt-2">
+                  {/* <div className="flex items-center mt-2">
                     <label className="w-1/2 px-4 py-2 border rounded-l-lg bg-gray-800 text-white">
                       Coins
                     </label>
@@ -1126,7 +1121,7 @@ const AddTask = ({ params }: { params: { id: string } }) => {
                       className="w-1/2 px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-300 bg-gray-800 text-white"
                       required
                     />
-                  </div>
+                  </div> */}
                 </div>
 
                 

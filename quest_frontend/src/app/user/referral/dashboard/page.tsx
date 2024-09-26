@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import ModalForm from "@/app/components/ModalForm";
 import { fetchUserData } from "@/redux/reducer/authSlice";
-import type {Referrer, ReferredUser } from "@/types/types";
+import type { Referrer, ReferredUser } from "@/types/types";
 import UserTable from "@/app/components/table/userTable";
 import axios from "axios";
 import { notify } from "@/utils/notify";
@@ -13,6 +13,7 @@ import { ethers } from "ethers";
 import { connectWallet } from "@/utils/wallet-connect"; // Import your wallet connect utility
 import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
 import Link from "next/link";
+import axiosInstance from "@/utils/axios/axios";
 
 const referralColumns = [
   { name: "NAME", uid: "name" },
@@ -32,6 +33,7 @@ const ReferralProfile: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [referrer, setReferrer] = useState<Referrer[]>([]);
   const [referredUsers, setReferredUsers] = useState<ReferredUser[]>([]);
+  const [showReferral, setShowReferral] = useState(false);
   const baseReferralUrl = `${process.env.NEXT_PUBLIC_CLIENT_URL}/?referralCode=`;
 
   const user: any = useSelector((state: RootState) => state.login.user);
@@ -40,17 +42,11 @@ const ReferralProfile: React.FC = () => {
   const onGenerateReferral = async () => {
     try {
       // Fetch referral code from the backend
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/user/generateRefferalCode`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response=await axiosInstance.get('/user/generateRefferalCode');
 
       if (response.data.success) {
         const referralCode = response.data.referralCode;
         // Notify the user about the successful generation
-        notify("success", "Referral code generated successfully!");
 
         // Connect the wallet if not already connected
         const walletData = await connectWallet();
@@ -78,10 +74,16 @@ const ReferralProfile: React.FC = () => {
         const tx = await contract.createReferralCode(referralCode);
         await tx.wait();
 
-        notify(
+        const res = await axiosInstance.post("/user/setRefferalCode", referralCode);
+        if(res.data.success){
+          notify(
           "success",
-          "Referral code saved to the blockchain successfully!"
-        );
+          "Referral code generated and saved successfully!"
+          );
+        }
+        else{
+          notify("error", "Failed to save referral code.");
+        }
       }
     } catch (error) {
       console.error("Error generating referral code:", error);
@@ -196,8 +198,8 @@ const ReferralProfile: React.FC = () => {
               <div className="flex flex-col lg:flex-row items-start mt-4">
                 {user && (
                   <div className="w-full">
-                    <div className="w-full flex flex-col items-center md:items-start justify-center md:justify-start">
-                      <div className="max-w-40 flex flex-col justify-center items-center md:justify-start md:items-start gap-2 ">
+                    <div className="w-full flex flex-col items-center lg:items-start justify-center md:justify-start">
+                      <div className="max-w-40 flex flex-col justify-center items-center lg:justify-start lg:items-start gap-2 ">
                         <ModalForm />
                         {(!user.inviteCode ||
                           user.inviteCode.trim().length === 0) && (
@@ -211,12 +213,22 @@ const ReferralProfile: React.FC = () => {
                       </div>
                       {user.inviteCode && (
                         <div className="flex justify-start gap-2 items-center my-2">
-                          <input
-                            type="text"
-                            value={baseReferralUrl + user.inviteCode}
-                            readOnly
-                            className="text-md truncate font-famFont bg-gray-800 text-white border border-gray-600 focus:border-famViolate-light rounded px-2 py-1 w-full"
-                          />
+                          <div className="relative">
+                            <input
+                              type={showReferral ? "text" : "password"} // Toggles between text and password
+                              value={baseReferralUrl + user.inviteCode}
+                              readOnly
+                              className="text-sm pr-8 font-famFont bg-zinc-950 text-white border-1 border-gray-600 focus:border-famViolate-light rounded px-4 py-2 w-full"
+                            />
+                            <button
+                              onClick={() => {
+                                setShowReferral(!showReferral);
+                              }}
+                              className="absolute top-1/2 right-2 transform -translate-y-1/2 text-sm text-white hover:text-famViolate-light"
+                            >
+                              {showReferral ? <i className="bi bi-eye-slash"></i> : <i className="bi bi-eye"></i>}
+                            </button>
+                          </div>
                           <button
                             onClick={() => {
                               navigator.clipboard.writeText(

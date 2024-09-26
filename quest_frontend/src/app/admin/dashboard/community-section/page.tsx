@@ -42,8 +42,9 @@ const Page = () => {
   }, [currentPage]);
 
   return (
-    <div className="bg-slate-50 min-h-screen">
-      <div className="p-4 mx-auto w-full md:w-[80%]">
+    <div className="h-screen overflow-y-auto ">
+      <div className="p-4 text-black text-xl flex justify-start items-start font-bold " >All Communities</div>
+      <div className="p-4 mx-auto w-full ">
         <div className="overflow-x-auto">
           <table className="w-full bg-white text-black rounded-lg mt-4">
             <thead className="bg-slate-900 text-white">
