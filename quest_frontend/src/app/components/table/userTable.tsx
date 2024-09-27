@@ -43,7 +43,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
   }
     const start = ( page - 1 ) * rowPerPage;
     const end = start + rowPerPage;
-    console.log("start",start,"end",end);
+    // console.log("start",start,"end",end);
     return data?.slice( start, end );
   }, [ page, data, rowPerPage ] );
 
