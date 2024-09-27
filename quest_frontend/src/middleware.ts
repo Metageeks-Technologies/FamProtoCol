@@ -4,15 +4,15 @@ import type { NextRequest } from "next/server";
 export function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
-  console.log("pahtname:-", pathname);
-  console.log("search ", searchParams);
-  // if (
-  //   pathname !== "/" &&
-  //   pathname !== "/user/referral/dashboard" &&
-  //   !(pathname === "/" && searchParams.has("referralCode"))
-  // ) {
-  //   return NextResponse.redirect(new URL("/", req.url));
-  // }
+  // console.log("pathname:-", pathname);
+  // console.log("search ", searchParams);
+  if (
+    pathname !== "/" &&
+    pathname !== "/user/referral/dashboard" &&
+    !(pathname === "/" && searchParams.has("referralCode"))
+  ) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
   return NextResponse.next();
 }
 
