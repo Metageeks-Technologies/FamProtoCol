@@ -422,7 +422,7 @@ const LandingPage = () => {
 
   const getUploadUrl = async (): Promise<string> => {
     try {
-      const response = await axios.post("/aws/generate-upload-url", {
+      const response = await axiosInstance.post("/aws/generate-upload-url", {
         folder: "userProfile",
         fileName: domain,
       });

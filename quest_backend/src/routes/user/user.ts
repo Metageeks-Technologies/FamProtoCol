@@ -13,7 +13,7 @@ userRouter.post('/friends',getFriendsByIds);
 userRouter.post('/signUpDomain',signUpDomain);
 userRouter.post('/loginDomain',loginDomain);
 userRouter.get('/generateRefferalCode',verifyToken,generateReferralCode);
-userRouter.post('/setRefferalCode',verifyToken,setReferralCode);
+userRouter.post('/setReferralCode',verifyToken,setReferralCode);
 userRouter.get('/domains',getDomains);
 userRouter.post('/famTaskComplete',verifyToken,famTaskComplete);
 userRouter.get('/:id',getUserById);

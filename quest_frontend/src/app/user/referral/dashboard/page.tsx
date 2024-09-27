@@ -74,16 +74,18 @@ const ReferralProfile: React.FC = () => {
         const tx = await contract.createReferralCode(referralCode);
         await tx.wait();
 
-        const res = await axiosInstance.post("/user/setRefferalCode", referralCode);
+        const res = await axiosInstance.post("/user/setReferralCode", {referralCode});
         if(res.data.success){
           notify(
           "success",
           "Referral code generated and saved successfully!"
           );
+          dispatch(fetchUserData());
         }
         else{
           notify("error", "Failed to save referral code.");
         }
+       
       }
     } catch (error) {
       console.error("Error generating referral code:", error);
