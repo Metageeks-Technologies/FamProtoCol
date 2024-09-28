@@ -3,9 +3,8 @@ import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
-
-  console.log("pahtname:-", pathname);
-  console.log("search ", searchParams);
+  // console.log("pahtname:-", pathname);
+  // console.log("search ", searchParams);
   // if (
   //   pathname !== "/" &&
   //   pathname !== "/user/referral/dashboard" &&

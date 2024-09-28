@@ -330,7 +330,6 @@ const generateUniqueReferralCode = async () => {
   return referralCode;
 };
 
-
 export const generateReferralCode = async (req: any, res: Response) => {
   try {
     const referralCode = await generateUniqueReferralCode();
@@ -366,7 +365,7 @@ export const setReferralCode = async (req: any, res: Response) => {
 export const getDomains = async (req: Request, res: Response) => {
   try {
     const domains = await User.find({}, "domain.domainAddress");
-    console.log(domains);
+    // console.log(domains);
     let filteredDomain = domains
       .filter((d: any) => d.domain && d.domain.domainAddress)
       .map((d: any) => d.domain.domainAddress);

@@ -45,6 +45,18 @@ const LandingPage = () => {
   });
   const router = useRouter();
 
+  const notifyAlert = (type: string, message?: string) => {
+    if (type === "success") {
+      setAlertMessage(message || "");
+      setError("");
+    } else if (type === "error") {
+      setAlertMessage("");
+      setError(message || "");
+    } else {
+      setAlertMessage("");
+      setError("");
+    }
+  };
   const fetchDomains = async () => {
     try {
       const response = await axiosInstance.get("/user/domains");
@@ -77,8 +89,7 @@ const LandingPage = () => {
   };
 
   const handleDomainChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setError("");
-    setAlertMessage("");
+    notifyAlert("clear");
     setDomain(event.target.value);
     setIsDomainAvailable("");
 
@@ -101,27 +112,24 @@ const LandingPage = () => {
   const handleOpen = () => {
     setLoader(false);
     setDomain("");
-    setError("");
     onOpen();
     setShowPasswordField(false);
     setPassword("");
-    setAlertMessage("");
+    notifyAlert("clear");
     setThankYou(false);
     // setIswalletconnected(false)
   };
 
   const handleClose = () => {
-    setError("");
-    setAlertMessage("");
+    notifyAlert("clear");
     onClose();
   };
 
   const handleSignUpDomain = async () => {
     setLoader(true);
-    setError("");
-    setAlertMessage("");
+    notifyAlert("clear");
     if (!isAlphanumericWithHyphen(domain)) {
-      setError("Invalid username");
+      notifyAlert("error", "Invalid username");
       setLoader(false);
       return;
     }
@@ -129,20 +137,25 @@ const LandingPage = () => {
     // console.log(updatedDomain);
     if (!logo) {
       setLoader(false);
-      setError("Please upload logo");
+      notifyAlert("error", "Logo is required");
       return;
     }
     if (!["image/jpeg", "image/png", "image/jpg"].includes(logo.type)) {
       setLoader(false);
-      setError("Only JPEG, PNG,JPG images are allowed");
+      notifyAlert("error", "Only JPEG, PNG,JPG images are allowed");
       return;
     }
+    if (!password) {
+      notifyAlert("error", "Password is required");
+      return;
+    }
+
     try {
       const uploadSuccess = await handleUpload();
       // console.log(uploadSuccess);
       if (!uploadSuccess) {
         setLoader(false);
-        setError("Failed to upload image");
+        notifyAlert("error", "Failed to upload image");
         return;
       }
 
@@ -166,16 +179,16 @@ const LandingPage = () => {
       }
     } catch (err: any) {
       console.log(err);
-      setError(err.response.data.message);
+      notifyAlert("error", err.response.data.message);
       setLoader(false);
     }
   };
   const handleLoginDomain = async () => {
     setLoaders({ ...loaders, login: true });
-    setError("");
-    setAlertMessage("");
+    notifyAlert("clear");
     if (!isAlphanumericWithHyphen(domain)) {
-      setError("Invalid username");
+      notifyAlert("error", "Invalid username");
+
       setLoaders({ ...loaders, login: false });
       return;
     }
@@ -194,7 +207,7 @@ const LandingPage = () => {
       }
     } catch (err: any) {
       console.log(err);
-      setError(err.response.data.message);
+      notifyAlert("error", err.response.data.message);
     }
     setLoaders({ ...loaders, login: false });
   };
@@ -202,12 +215,10 @@ const LandingPage = () => {
   const handleLoginWithWallet = async () => {
     try {
       setLoaders({ ...loaders, connectWallet: true });
-      setError("");
-      setAlertMessage("");
+      notifyAlert("clear");
       const walletInfo = await connectWallet();
       console.log("wallet", walletInfo);
       if (walletInfo) {
-        setAlertMessage("Wallet connected successfully");
         setIsWalletConnected(true);
 
         const response = await axiosInstance.post("/user/loginDomain", {
@@ -224,38 +235,52 @@ const LandingPage = () => {
           router.push("/user/referral/dashboard");
         }
       } else {
-        setError("Failed to connect wallet.");
+        notify("error", "Failed to connect wallet");
       }
     } catch (error: any) {
       console.log(error);
-      setError(error.response.data.message);
+      notifyAlert("error", error.response.data.message);
     }
     setLoaders({ ...loaders, connectWallet: false });
   };
 
   const handleDomainMinting = async () => {
     setLoader(true);
-    setError("");
-    setAlertMessage("");
-
+    notifyAlert("clear");
     // Validate domain name
     if (!domain || domain.length < 3) {
-      setError("Domain name must be at least 4 characters long");
+      notifyAlert("error", "Domain name must be at least 4 characters long");
       setLoader(false);
       return;
     }
 
     if (isDomainAvailable === "false") {
-      setError("Domain already exists");
+      notifyAlert("error", "Domain already exists");
       setLoader(false);
       return;
     }
 
     if (!isAlphanumericWithHyphen(domain)) {
-      setError(
+      notifyAlert(
+        "error",
         "Invalid Domain: The domain must contain only alphanumeric characters and hyphens. Spaces are not allowed"
       );
       setLoader(false);
+      return;
+    }
+
+    if (!logo) {
+      setLoader(false);
+      notifyAlert("error", "Please upload logo");
+      return;
+    }
+    if (!["image/jpeg", "image/png", "image/jpg"].includes(logo.type)) {
+      setLoader(false);
+      notifyAlert("error", "Only JPEG, PNG,JPG images are allowed");
+      return;
+    }
+    if (!password) {
+      notifyAlert("error", "Password Required");
       return;
     }
 
@@ -270,11 +295,10 @@ const LandingPage = () => {
     if (!ArbicontractAddress || !contractABI || !address) {
       const walletInfo = await connectWallet();
       if (walletInfo) {
-        setAlertMessage("Wallet connected successfully");
         setIsWalletConnected(true);
         setAddress(walletInfo.address);
       } else {
-        setError("Failed to connect wallet.");
+        notifyAlert("error", "Failed to connect wallet.");
         setLoader(false);
         return;
       }
@@ -300,7 +324,10 @@ const LandingPage = () => {
         // Call free mint function
         const tx = await contract.freeMintDomain(updatedDomain, referralCode);
         await tx.wait();
-        setAlertMessage(`Domain ${updatedDomain} minted for free successfully`);
+        notifyAlert(
+          "success",
+          `Domain ${updatedDomain} minted for free successfully`
+        );
         setHash(tx.hash);
         setShowPasswordField(true);
       } else {
@@ -325,7 +352,8 @@ const LandingPage = () => {
             await signer.getAddress()
           );
           if (usdcBalance < usdcAmountDiscount) {
-            setError(
+            notifyAlert(
+              "error",
               "Insufficient USDC balance. Please ensure you have at least 2.5 USDC."
             );
             setLoader(false);
@@ -345,7 +373,8 @@ const LandingPage = () => {
             referralCode
           );
           await tx.wait();
-          setAlertMessage(
+          notifyAlert(
+            "success",
             `Domain ${updatedDomain} minted with discount successfully`
           );
           setHash(tx.hash);
@@ -353,7 +382,10 @@ const LandingPage = () => {
         } else {
           // If not whitelisted, check referral code validity and call mintDomainWithReferral
           if (!referralCode || referralCode === "") {
-            setError("You must provide a valid referral code to mint.");
+            notifyAlert(
+              "error",
+              "You must provide a valid referral code to mint."
+            );
             setLoader(false);
             return;
           }
@@ -372,7 +404,8 @@ const LandingPage = () => {
           const usdcAmount = ethers.parseUnits("5", 6); // 5 USDC with 6 decimals
 
           if (usdcBalance < usdcAmount) {
-            setError(
+            notifyAlert(
+              "error",
               "Insufficient USDC balance. Please ensure you have at least 5 USDC."
             );
             setLoader(false);
@@ -392,8 +425,8 @@ const LandingPage = () => {
             referralCode
           );
           await tx.wait();
-
-          setAlertMessage(
+          notifyAlert(
+            "success",
             `Domain ${updatedDomain} minted successfully with referral`
           );
           setHash(tx.hash);
@@ -402,18 +435,15 @@ const LandingPage = () => {
       }
     } catch (error) {
       if (typeof error === "object" && error !== null && "reason" in error) {
-        setAlertMessage("");
-        setError(`${(error as { reason: string }).reason}`);
+        notifyAlert("error", `${(error as { reason: string }).reason}`);
       } else if (
         typeof error === "object" &&
         error !== null &&
         "message" in error
       ) {
-        setError(`${(error as { message: string }).message}`);
-        setAlertMessage("");
+        notifyAlert("error", `${(error as { message: string }).message}`);
       } else {
-        setError("An unknown error occurred.");
-        setAlertMessage("");
+        notifyAlert("error", "An unknown error occurred");
       }
     }
 
@@ -485,131 +515,171 @@ const LandingPage = () => {
     setPassword("");
     setShowPasswordField(false);
     setDomain("");
-    setError("");
-    setAlertMessage("");
+    notifyAlert("clear");
+  };
+
+  const handlePayment = () => {
+    console.log("payment called");
+    const options = {
+      method: "POST",
+      url: "https://api.copperx.dev/api/v1/checkout/sessions",
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        authorization:
+          "Bearer pav1_RqsZegSQDQ28KaZWiVmmifsqfoJeoAgFvBfinHV28UMLL53fhCComfRF8rDVwZ1c",
+      },
+      data: {
+        successUrl: "https://copperx.io/success?cid={CHECKOUT_SESSION_ID}",
+        lineItems: {
+          data: [
+            {
+              priceData: {
+                currency: "usdc",
+                unitAmount: "100000000",
+                productData: {
+                  name: "Basic",
+                  description:
+                    "For early stage projects who are getting started",
+                },
+              },
+            },
+          ],
+        },
+      },
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        console.log("response", response.data);
+      })
+      .catch(function (error) {
+        console.error("error", error);
+      });
   };
 
   return (
     <>
-      <div className="landing-page">
-        <div className="">
-          <div className="w-[90%] mx-auto p-8">
-            <div className="flex flex-col justify-between h-screen">
-              <div className="w-full md:mt-0 mt-4">
-                <div className="flex md:flex-row flex-col-reverse md:justify-between items-center gap-3 ">
-                  <div className="flex items-center gap-1">
-                    <div
-                      onClick={() => comingSoon()}
-                      className="text-[#FA00FF] cursor-pointer font-famFont "
-                    >
-                      VIEW DOCUMENTATION
-                    </div>
-                    <div className="mt-2">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="5"
-                        height="8"
-                        viewBox="0 0 5 8"
-                        fill="none"
-                      >
-                        <path
-                          d="M0.487305 7.48755L3.97475 4.0001L0.487305 0.512655"
-                          stroke="#FA00FF"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <div className="text-white opacity-30 font-famFont ">
-                      SOCIAL MEDIA:
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {/* twitter */}
-                      <Link target="_blank" href="https://x.com/famprotocol">
-                        <div className="box1 right-trapezium bg-zinc-700 p-[1px]">
-                          <div className="box2 right-trapezium p-2 bg-[#111111]">
-                            <i className="bi bi-twitter-x"></i>
-                          </div>
-                        </div>
-                      </Link>
-                      {/* telegram */}
-                      <Link target="_blank" href="https://t.me/FamProtocol">
-                        <div className="box1 empty-left-trapezium bg-zinc-700 p-[1px]">
-                          <div className="box2 empty-left-trapezium p-2 bg-[#111111]">
-                            <i className="bi bi-telegram"></i>
-                          </div>
-                        </div>
-                      </Link>
-                      {/* <div className="box1 left-trapezium w-[2rem] h-[2rem] bg-[#ffffff33] p-[1px]">
-                         <i className="bi bi-discord"></i>
-                      </div> */}
-                    </div>
-                  </div>
+      <div className="landing-page h-screen">
+        <div className="w-[90%] mx-auto pt-8 h-full ">
+          <div className="flex flex-col justify-between items-center h-full">
+            <div className="w-full flex md:flex-row flex-col-reverse md:justify-between items-center gap-3 ">
+              <div className="flex items-center gap-1">
+                <div
+                  onClick={() => comingSoon()}
+                  className="text-[#FA00FF] cursor-pointer font-famFont "
+                >
+                  VIEW DOCUMENTATION
+                </div>
+                <div className="mt-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="5"
+                    height="8"
+                    viewBox="0 0 5 8"
+                    fill="none"
+                  >
+                    <path
+                      d="M0.487305 7.48755L3.97475 4.0001L0.487305 0.512655"
+                      stroke="#FA00FF"
+                    />
+                  </svg>
                 </div>
               </div>
-              <div className="mt-auto mb-auto">
-                <div className="flex items-center justify-center h-full text-white">
-                  {thankYou ? (
-                    <div className="flex flex-col justify-center text-white items-center ">
-                      <div className="text-center mb-4 font-bold text-lg">
-                        Thank you for registering your domain with us!{" "}
-                      </div>
-                      <div className="text-center mb-4 ">
-                        We're excited to have you on board and look forward to
-                        supporting you as you build and grow your online
-                        presence.{" "}
-                      </div>
-                      <div className="flex justify-center items-center">
-                        <Link
-                          href="/user/referral/dashboard"
-                          className="px-4 py-2 bg-famViolate rounded-lg "
-                        >
-                          Visit Profile
-                        </Link>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="z-10 text-center max-w-3xl">
-                      <div className="flex justify-center items-center gap-3 flex-wrap mb-2">
-                        <div className="w-16 h-16">
-                          <img
-                            className="w-full h-full object-cover "
-                            src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png"
-                            alt="fam protocol"
-                          />
-                        </div>
-                        <div className="flex flex-col justify-start items-start">
-                          <span className="text-4xl text-white font-famFont text-wrap">
-                            FAM PROTOCOL
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-center text-2xl text-gray-300 font-famFont ">
-                        Fam's Gonna Make It
-                      </div>
-                      <p className="mt-6 text-gray-400 leading-relaxed text-xl font-famFont ">
-                        Community Owned Internet Protocol
-                      </p>
-                      <div className="mt-8 flex justify-center gap-4">
-                        <Button
-                          // onClick={() => comingSoon()}
-                          onClick={() => handleOpen()}
-                          className="bg-[#5538CE] text-white font-semibold py-2 px-6 rounded-lg hover:bg-[#6243dd] transition duration-300"
-                        >
-                          Get Onboarded
-                        </Button>
-                        <Button
-                          // onClick={() => comingSoon()}
-                          onClick={() => router.push("/home")}
-                          className="bg-white text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
-                        >
-                          Explore
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+              <div className="flex items-center gap-4">
+                <div className="text-white opacity-30 font-famFont ">
+                  SOCIAL MEDIA:
                 </div>
+                <div className="flex items-center gap-1">
+                  {/* twitter */}
+                  <Link target="_blank" href="https://x.com/famprotocol">
+                    <div className="box1 right-trapezium bg-zinc-700 p-[1px]">
+                      <div className="box2 right-trapezium p-2 bg-[#111111]">
+                        <i className="bi bi-twitter-x"></i>
+                      </div>
+                    </div>
+                  </Link>
+                  {/* telegram */}
+                  <Link target="_blank" href="https://t.me/FamProtocol">
+                    <div className="box1 empty-left-trapezium bg-zinc-700 p-[1px]">
+                      <div className="box2 empty-left-trapezium p-2 bg-[#111111]">
+                        <i className="bi bi-telegram"></i>
+                      </div>
+                    </div>
+                  </Link>
+                  {/* <div className="box1 left-trapezium w-[2rem] h-[2rem] bg-[#ffffff33] p-[1px]">
+                         <i className="bi bi-discord"></i>
+                      </div> */}
+                </div>
+              </div>
+            </div>
+            <div className="h-full flex items-center justify-center ">
+              <div className="flex items-center justify-center h-full text-white">
+                {thankYou ? (
+                  <div className="flex flex-col justify-center text-white items-center ">
+                    <div className="text-center mb-4 font-bold text-lg">
+                      Thank you for registering your domain with us!{" "}
+                    </div>
+                    <div className="text-center mb-4 ">
+                      We're excited to have you on board and look forward to
+                      supporting you as you build and grow your online presence.{" "}
+                    </div>
+                    <div className="flex justify-center items-center">
+                      <Link
+                        href="/user/referral/dashboard"
+                        className="px-4 py-2 bg-famViolate rounded-lg "
+                      >
+                        Visit Profile
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="z-10 text-center max-w-3xl">
+                    <div className="flex justify-center items-center gap-3 flex-wrap mb-2">
+                      <div className="w-16 h-16">
+                        <img
+                          className="w-full h-full object-cover "
+                          src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png"
+                          alt="fam protocol"
+                        />
+                      </div>
+                      <div className="flex flex-col justify-start items-start">
+                        <span className="text-4xl text-white font-famFont text-wrap">
+                          FAM PROTOCOL
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-center text-2xl text-gray-300 font-famFont ">
+                      Fam's Gonna Make It
+                    </div>
+                    <p className="mt-6 text-gray-400 leading-relaxed text-xl font-famFont ">
+                      Community Owned Internet Protocol
+                    </p>
+                    <div className="mt-8 flex justify-center gap-4">
+                      <Button
+                        // onClick={() => comingSoon()}
+                        onClick={() => handleOpen()}
+                        className="bg-[#5538CE] text-white font-semibold py-2 px-6 rounded-lg hover:bg-[#6243dd] transition duration-300"
+                      >
+                        Get Onboarded
+                      </Button>
+                      <Button
+                        // onClick={() => comingSoon()}
+                        onClick={() => router.push("/home")}
+                        className="bg-white text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
+                      >
+                        Explore
+                      </Button>
+                      <button
+                        className="bg-white text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
+                        onClick={handlePayment}
+                      >
+                        Payment
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -672,7 +742,7 @@ const LandingPage = () => {
                               htmlFor="domain"
                               className="uppercase text-sm font-famFont "
                             >
-                              Setup Username
+                              Setup Username/Domain
                             </label>
                             <input
                               type="text"
