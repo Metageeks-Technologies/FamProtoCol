@@ -762,7 +762,7 @@ const LandingPage = () => {
                                 onChange={(e) =>
                                   setReferralCode(e.target.value)
                                 }
-                                className="w-full bg-zinc-950 border-1 text-gray-500 border-gray-600 font-famFont  px-4 py-2 hover:border-famViolate-light"
+                                className="w-full bg-zinc-950 border-1 border-gray-600 font-famFont  px-4 py-2 hover:border-famViolate-light"
                                 name="inviteCode"
                                 placeholder="invite code"
                               />
@@ -775,7 +775,7 @@ const LandingPage = () => {
                             >
                               Password
                             </label>
-                            <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between text-gray-500 items-center hover:border-famViolate-light">
+                            <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between items-center hover:border-famViolate-light">
                               <input
                                 name="password"
                                 type={showPassword ? "text" : "password"}
@@ -825,7 +825,7 @@ const LandingPage = () => {
                             >
                               Password
                             </label>
-                            <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between text-gray-500 items-center hover:border-famViolate-light">
+                            <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between items-center hover:border-famViolate-light">
                               <input
                                 name="password"
                                 type={showPassword ? "text" : "password"}
@@ -867,7 +867,7 @@ const LandingPage = () => {
                           onClick={() => {
                             handleBridge(true);
                           }}
-                          className="px-4 py-2 text-white bg-famViolate  rounded-lg"
+                          className="px-4 py-2 text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm text-center me-2 mb-2"
                         >
                           Bridge Currency
                         </Button>
