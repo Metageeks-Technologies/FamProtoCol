@@ -227,7 +227,7 @@ const LandingPage = () => {
       if (walletInfo) {
         if(walletInfo.switch){
           notifyAlert("success", "Network switched successfully.Now you can proceed");
-          setLoader(false);
+          setLoaders({ ...loaders, connectWallet: false });
           return;
         }
         setIsWalletConnected(true);
