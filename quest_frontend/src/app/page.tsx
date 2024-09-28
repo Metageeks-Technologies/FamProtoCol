@@ -393,7 +393,7 @@ const LandingPage = () => {
           if (usdtBalance < usdtAmountDiscount) {
             notifyAlert(
               "error",
-              "Insufficient USDT balance.Please ensure you have at least 2.5 USDT on Arbitrum chain.you can convert your currency to Arbitrum by using bridging"
+              "Insufficient USDT balance. Please ensure you have at least 2.5 USDT & Some gas fees on Arbitrum chain. you can convert your Assets to Arbitrum by using Nitro bridge below"
             );
             setIsbridge(true);
             // nitro
@@ -447,7 +447,7 @@ const LandingPage = () => {
           if (usdtBalance < usdtAmount) {
             notifyAlert(
               "error",
-              "Insufficient USDT balance. Please ensure you have at least 5 USDT on Arbitrum chain.you can convert your currency to Arbitrum by using bridging"
+              "Insufficient USDT balance. Please ensure you have at least 5 USDT & Some gas fees on Arbitrum chain. you can convert your Assets to Arbitrum by using Nitro bridge below"
             );
             setIsbridge(true);
             // nitro
@@ -675,8 +675,8 @@ const LandingPage = () => {
                         Get Onboarded
                       </Button>
                       <Button
-                        // onClick={() => comingSoon()}
-                        onClick={() => router.push("/home")}
+                        onClick={() => comingSoon()}
+                        // onClick={() => router.push("/home")}
                         className="bg-white text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
                       >
                         Explore
