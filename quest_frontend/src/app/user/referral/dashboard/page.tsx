@@ -312,7 +312,7 @@ const ReferralProfile: React.FC = () => {
             </svg>
 
             <div className="listOfFriends font-famFont">
-              People referred By you
+              People referred by you
             </div>
           </div>
           <div className="friendTable">
