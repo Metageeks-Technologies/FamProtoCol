@@ -15,7 +15,7 @@ import { notify } from "@/utils/notify";
 import { connectWallet } from "@/utils/wallet-connect";
 import Swal from "sweetalert2";
 import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
-import usdc from "@/utils/abi/usdc.json";
+import usdt from "@/utils/abi/usdt.json";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import NitroWidget from "./components/nitroWidget/nitro";
@@ -302,15 +302,22 @@ const LandingPage = () => {
 
     const ArbicontractAddress =
       process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
-    const usdcContractAddress = process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS!;
+    const usdtContractAddress = process.env.NEXT_PUBLIC_USDT_CONTRACT_ADDRESS!;
     const contractABI = upgradeableContractAbi;
-    const usdcABI = usdc;
+    const usdtABI = usdt;
 
     if (!ArbicontractAddress || !contractABI || !address) {
       const walletInfo = await connectWallet();
+      console.log("wallet", walletInfo);
       if (walletInfo) {
-        setIsWalletConnected(true);
-        setAddress(walletInfo.address);
+        if(walletInfo.switch){
+          notifyAlert("success", "Network switched successfully");
+          setLoader(false);
+          return;
+        } else{
+          setIsWalletConnected(true);
+          setAddress(walletInfo.address);
+        }
       } else {
         notifyAlert("error", "Failed to connect wallet.");
         setLoader(false);
@@ -351,21 +358,21 @@ const LandingPage = () => {
         );
 
         if (isDiscountMintWhitelisted) {
-          // Discounted mint fee (2.5 USDC)
-          const usdcAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDC with 6 decimals
+          // Discounted mint fee (2.5 USDT)
+          const usdtAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDT with 6 decimals
 
-          // Initialize USDC contract instance
-          const usdcContract = new ethers.Contract(
-            usdcContractAddress,
-            usdcABI,
+          // Initialize USDT contract instance
+          const usdtContract = new ethers.Contract(
+            usdtContractAddress,
+            usdtABI,
             signer
           );
 
-          // Check the user's USDC balance
-          const usdcBalance = await usdcContract.balanceOf(
+          // Check the user's USDT balance
+          const usdtBalance = await usdtContract.balanceOf(
             await signer.getAddress()
           );
-          if (usdcBalance < usdcAmountDiscount) {
+          if (usdtBalance < usdtAmountDiscount) {
             notifyAlert(
               "error",
               "Insufficient USDT balance.Please ensure you have at least 2.5 USDT on Arbitrum chain.you can convert your currency to Arbitrum by using bridging"
@@ -376,10 +383,10 @@ const LandingPage = () => {
             return;
           }
 
-          // Approve the discounted minting fee (2.5 USDC) for your contract
-          const approveTxDiscount = await usdcContract.approve(
+          // Approve the discounted minting fee (2.5 usdt) for your contract
+          const approveTxDiscount = await usdtContract.approve(
             ArbicontractAddress,
-            usdcAmountDiscount
+            usdtAmountDiscount
           );
           await approveTxDiscount.wait();
 
@@ -406,20 +413,20 @@ const LandingPage = () => {
             return;
           }
 
-          // Initialize USDC contract instance
-          const usdcContract = new ethers.Contract(
-            usdcContractAddress,
-            usdcABI,
+          // Initialize usdt contract instance
+          const usdtContract = new ethers.Contract(
+            usdtContractAddress,
+            usdtABI,
             signer
           );
 
-          // Check the user's USDC balance
-          const usdcBalance = await usdcContract.balanceOf(
+          // Check the user's usdt balance
+          const usdtBalance = await usdtContract.balanceOf(
             await signer.getAddress()
           );
-          const usdcAmount = ethers.parseUnits("5", 6); // 5 USDC with 6 decimals
+          const usdtAmount = ethers.parseUnits("5", 6); // 5 usdt with 6 decimals
 
-          if (usdcBalance < usdcAmount) {
+          if (usdtBalance < usdtAmount) {
             notifyAlert(
               "error",
               "Insufficient USDT balance. Please ensure you have at least 5 USDT on Arbitrum chain.you can convert your currency to Arbitrum by using bridging"
@@ -430,10 +437,10 @@ const LandingPage = () => {
             return;
           }
 
-          // Approve the minting fee (5 USDC) for your contract
-          const approveTx = await usdcContract.approve(
+          // Approve the minting fee (5 usdt) for your contract
+          const approveTx = await usdtContract.approve(
             ArbicontractAddress,
-            usdcAmount
+            usdtAmount
           );
           await approveTx.wait();
 
@@ -875,7 +882,7 @@ const LandingPage = () => {
                     )}
                     {activeTab === "signUp" && (
                       <div className="font-qanelas text-white capitalize text-xs mb-2 flex justify-center items-center gap-2">
-                        phase 1 domain minting price starts from 5 usdc
+                        phase 1 domain minting price starts from 5 usdt
                       </div>
                     )}
                     <div
