@@ -1,7 +1,7 @@
 
-import { ethers } from "ethers"; // Import ethers.js library
+import { ethers, Wallet } from "ethers"; // Import ethers.js library
 
-export const connectWallet = async (): Promise<{ address: string; balance: string } | null> => {
+export const connectWallet = async (): Promise<{ address: string; balance: string; switch?: boolean } | null> => {
   try {
     // Check if MetaMask is installed
     if (typeof window.ethereum === "undefined") {
@@ -19,11 +19,12 @@ export const connectWallet = async (): Promise<{ address: string; balance: strin
 
     // Check if the user is connected to Arbitrum Sepolia
     const network = await provider.getNetwork();
-    const targetNetwork = BigInt(0x66eee); // Convert to bigint for comparison
+    const targetNetwork = BigInt(0xa4b1); // Convert to bigint for comparison
 
     if (network.chainId !== targetNetwork) {
       try {
-        await provider.send("wallet_switchEthereumChain", [{ chainId: "0x66eee" }]); // Switch to Arbitrum Sepolia
+        await provider.send("wallet_switchEthereumChain", [{ chainId: "0xa4b1" }]); // Switch to Arbitrum One mainnet
+        return {address: '', balance: '', switch: true};
       } catch (switchError: unknown) {
         if ((switchError as { code: number }).code === 4902) {
           try {
@@ -35,7 +36,7 @@ export const connectWallet = async (): Promise<{ address: string; balance: strin
               },
             ]);
           } catch (addError) {
-            console.error("Failed to add Arbitrum One main net", addError);
+            console.error("Failed to add Arbitrum One mainnet", addError);
             return null;
           }
         } else {
@@ -60,6 +61,7 @@ export const connectWallet = async (): Promise<{ address: string; balance: strin
     return {
       address: accountAddress,
       balance: ethers.formatEther(balance),
+      switch: false
     };
   } catch (err) {
     console.log("Error connecting wallet:", err);
