@@ -574,12 +574,14 @@ const LandingPage = () => {
           <div className="flex flex-col justify-between items-center h-full">
             <div className="w-full flex md:flex-row flex-col-reverse md:justify-between items-center gap-3 ">
               <div className="flex items-center gap-1">
-                <div
-                  onClick={() => comingSoon()}
+                <Link
+                  target="_blank"
+                  href="https://fam-protocol.notion.site/Fam-Protocol-Public-Data-Room-10f79f6230bb807d98c7f44992891959"
+                  // onClick={() => comingSoon()}
                   className="text-[#FA00FF] cursor-pointer font-famFont "
                 >
                   VIEW DOCUMENTATION
-                </div>
+                </Link>
                 <div className="mt-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -894,7 +896,7 @@ const LandingPage = () => {
                           }}
                           className="px-4 py-2 text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm text-center me-2 mb-2"
                         >
-                          Bridge Currency
+                          Bridge
                         </Button>
                       </div>
                     )}
