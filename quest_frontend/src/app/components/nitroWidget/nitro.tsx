@@ -27,16 +27,16 @@ const NitroWidget: React.FC = () => {
       isWidget: true,
       widgetId:'183',
       // fromChain: "80001",
-      toChain: "43113",
+      toChain: "42161",
       // fromToken: "0x22bAA8b6cdd31a0C5D1035d6e72043f4Ce6aF054",
-      toToken: "0xb452b513552aa0B57c4b1C9372eFEa78024e5936",
-      ctaColor: "#E8425A",
-      textColor: "#1A1B1C",
-      backgroundColor: "#3fb043",
-      logoURI: "ipfs://QmaznB5PRhMC696u8yZuzN6Uwrnp7Zmfa5CydVUMvLJc9i/aDAI.svg",
+      toToken: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+      ctaColor: "#5538CE",
+      textColor: "#fff",
+      backgroundColor: "#111",
+      logoURI: "https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png",
       display: "vertical",
       isFromSelLocked: "0",
-      isToSelLocked: "0",
+      isToSelLocked: "1",
     };
 
     // Base URL for Nitro widget

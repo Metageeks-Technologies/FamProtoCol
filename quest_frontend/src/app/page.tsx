@@ -39,6 +39,7 @@ const LandingPage = () => {
   const [logo, setLogo] = useState<any>(null);
   const [thankYou, setThankYou] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("login");
+  const [isbridge,setIsbridge]=useState(false);
   const [loaders, setLoaders] = useState({
     connectWallet: false,
     login: false,
@@ -117,6 +118,9 @@ const LandingPage = () => {
     setPassword("");
     notifyAlert("clear");
     setThankYou(false);
+    setIsbridge(false);
+    setLogoPreview("");
+    
     // setIswalletconnected(false)
   };
 
@@ -228,10 +232,8 @@ const LandingPage = () => {
         console.log("response", response.data);
 
         if (response.data.success) {
-          // alert(response.data.message);
           notify("success", response.data.message);
           handleClose();
-          // setShowPasswordField(true);
           router.push("/user/referral/dashboard");
         }
       } else {
@@ -247,6 +249,7 @@ const LandingPage = () => {
   const handleDomainMinting = async () => {
     setLoader(true);
     notifyAlert("clear");
+    setIsbridge(false);
     // Validate domain name
     if (!domain || domain.length < 3) {
       notifyAlert("error", "Domain name must be at least 4 characters long");
@@ -274,12 +277,21 @@ const LandingPage = () => {
       notifyAlert("error", "Please upload logo");
       return;
     }
+
     if (!["image/jpeg", "image/png", "image/jpg"].includes(logo.type)) {
       setLoader(false);
       notifyAlert("error", "Only JPEG, PNG,JPG images are allowed");
       return;
     }
+
+    if(!referralCode || referralCode.trim().length===0 ){
+       setLoader(false);
+      notifyAlert("error","Invite Code Required");
+      return ;
+    }
+
     if (!password) {
+       setLoader(false);
       notifyAlert("error", "Password Required");
       return;
     }
@@ -354,8 +366,10 @@ const LandingPage = () => {
           if (usdcBalance < usdcAmountDiscount) {
             notifyAlert(
               "error",
-              "Insufficient USDC balance. Please ensure you have at least 2.5 USDC."
+              "Insufficient USDT balance. Please ensure you have at least 2.5 USDT on Arbitrum chain.you can convert your currency to Arbitrum by using bridge "
             );
+            setIsbridge(true);
+            // nitro
             setLoader(false);
             return;
           }
@@ -406,8 +420,10 @@ const LandingPage = () => {
           if (usdcBalance < usdcAmount) {
             notifyAlert(
               "error",
-              "Insufficient USDC balance. Please ensure you have at least 5 USDC."
+              "Insufficient USDT balance. Please ensure you have at least 5 USDT.Convert your currency into USDT Arbitrum using bridging method"
             );
+            setIsbridge(true);
+            // nitro
             setLoader(false);
             return;
           }
@@ -864,16 +880,22 @@ const LandingPage = () => {
                   )}
 
                   {error && (
-                    <div className=" text-red-600 font-famFont  text-small text-start mb-4">
+                    <div className=" text-red-600 font-famFont text-small text-center mb-4">
                       {error}
                     </div>
                   )}
                   {alertMessage && (
-                    <div className="text-small font-famFont  text-start mb-4 text-green-600">
+                    <div className="text-small font-famFont text-center mb-4 text-green-600">
                       {alertMessage}
                     </div>
                   )}
-
+                  {
+                    isbridge && (
+                      <div className="flex justify-center items-center mb-2" >
+                        <Link target="_blank" href="/payment-bridge" className="px-4 py-2 bg-famViolate rounded-md">Bridge</Link>
+                      </div>
+                    )
+                  }
                   {activeTab === "signUp" && (
                     <div className="font-qanelas text-white capitalize text-xs mb-2 flex justify-center items-center gap-2">
                       phase 1 domain minting price starts from 5 usdc
