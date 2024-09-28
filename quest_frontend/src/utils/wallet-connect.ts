@@ -29,13 +29,13 @@ export const connectWallet = async (): Promise<{ address: string; balance: strin
           try {
             await provider.send("wallet_addEthereumChain", [
               {
-                chainId: "0x66eee",
-                chainName: "Arbitrum Sepolia",
-                rpcUrls: ["https://sepolia-rollup.arbitrum.io/rpc"],
+                chainId: "0xa4b1",
+                chainName: "Arbitrum One",
+                rpcUrls: ["https://arb1.arbitrum.io/rpc"],
               },
             ]);
           } catch (addError) {
-            console.error("Failed to add Arbitrum Sepolia network", addError);
+            console.error("Failed to add Arbitrum One main net", addError);
             return null;
           }
         } else {

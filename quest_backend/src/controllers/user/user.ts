@@ -22,13 +22,13 @@ export const signUpDomain = async (req: Request, res: Response) => {
     } = req.body;
 
     if (!domainAddress || !domainAddress.endsWith(".fam")) {
-      return res.status(400).json({ message: "Invalid domain address" });
+      return res.status(400).json({ message: "Invalid domain address"});
     }
     if (!hashCode || !walletAddress) {
-      return res.status(400).json({ message: "Invalid wallet address." });
+      return res.status(400).json({ message: "Wallet not connected.try again later" });
     }
     if (!password) {
-      return res.status(400).json({ message: "Password is required" });
+      return res.status(400).json({ message: "Password is required to create an account" });
     }
 
     const existingUser = await User.findOne({
@@ -37,7 +37,7 @@ export const signUpDomain = async (req: Request, res: Response) => {
     if (existingUser) {
       return res
         .status(400)
-        .json({ message: "Username address already exists.Try another" });
+        .json({ message: "This domain address is already in use. Please choose another" });
     }
 
     let referrer = null;
@@ -103,7 +103,7 @@ export const signUpDomain = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "An error occurred while creating the user account. Please try again later" });
   }
 };
 
@@ -112,7 +112,7 @@ export const loginDomain = async (req: Request, res: Response) => {
   console.log("req.body", req.body);
   try {
     if (!domainAddress && !password && !walletAddress) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "Please provide a domain with password or connect with a wallet address for authentication"});
     }
 
     if (domainAddress && password) {
@@ -121,14 +121,14 @@ export const loginDomain = async (req: Request, res: Response) => {
       });
 
       if (!user) {
-        return res.status(400).json({ message: "Invalid credentials" });
+        return res.status(400).json({ message: "No account found with the provided domain address. Please check your domain and try again"});
       }
       // Check if password matches
 
       const isMatch = await bcrypt.compare(password, user.domain.password);
 
       if (!isMatch) {
-        return res.status(400).json({ message: "Invalid credentials" });
+        return res.status(400).json({ message: "The password you entered is incorrect. Please verify your password and try again" });
       }
 
       // Generate JWT token
@@ -161,7 +161,7 @@ export const loginDomain = async (req: Request, res: Response) => {
       });
 
       if (!user) {
-        return res.status(400).json({ message: "Invalid credentials" });
+        return res.status(400).json({ message: "No account associated with the provided wallet address. Please check your wallet address and try again" });
       }
       // Generate JWT token
       const token = jwt.sign(
@@ -187,7 +187,7 @@ export const loginDomain = async (req: Request, res: Response) => {
         .json({ success: true, message: "Login successful", user });
     }
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: "An unexpected error occurred during login. Please try again later", error });
   }
 };
 

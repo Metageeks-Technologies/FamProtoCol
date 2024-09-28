@@ -18,6 +18,7 @@ import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
 import usdc from "@/utils/abi/usdc.json";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import NitroWidget from "./components/nitroWidget/nitro";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -39,7 +40,8 @@ const LandingPage = () => {
   const [logo, setLogo] = useState<any>(null);
   const [thankYou, setThankYou] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("login");
-  const [isbridge,setIsbridge]=useState(false);
+  const [isbridge, setIsbridge] = useState(false);
+  const [isBridgeActive, setIsBridgeActive] = useState(false);
   const [loaders, setLoaders] = useState({
     connectWallet: false,
     login: false,
@@ -120,7 +122,7 @@ const LandingPage = () => {
     setThankYou(false);
     setIsbridge(false);
     setLogoPreview("");
-    
+
     // setIswalletconnected(false)
   };
 
@@ -284,14 +286,14 @@ const LandingPage = () => {
       return;
     }
 
-    if(!referralCode || referralCode.trim().length===0 ){
-       setLoader(false);
-      notifyAlert("error","Invite Code Required");
-      return ;
+    if (!referralCode || referralCode.trim().length === 0) {
+      setLoader(false);
+      notifyAlert("error", "Invite Code Required");
+      return;
     }
 
     if (!password) {
-       setLoader(false);
+      setLoader(false);
       notifyAlert("error", "Password Required");
       return;
     }
@@ -366,7 +368,7 @@ const LandingPage = () => {
           if (usdcBalance < usdcAmountDiscount) {
             notifyAlert(
               "error",
-              "Insufficient USDT balance. Please ensure you have at least 2.5 USDT on Arbitrum chain.you can convert your currency to Arbitrum by using bridge "
+              "Insufficient USDT balance.Please ensure you have at least 2.5 USDT on Arbitrum chain.you can convert your currency to Arbitrum by using bridging"
             );
             setIsbridge(true);
             // nitro
@@ -420,7 +422,7 @@ const LandingPage = () => {
           if (usdcBalance < usdcAmount) {
             notifyAlert(
               "error",
-              "Insufficient USDT balance. Please ensure you have at least 5 USDT.Convert your currency into USDT Arbitrum using bridging method"
+              "Insufficient USDT balance. Please ensure you have at least 5 USDT on Arbitrum chain.you can convert your currency to Arbitrum by using bridging"
             );
             setIsbridge(true);
             // nitro
@@ -534,46 +536,11 @@ const LandingPage = () => {
     notifyAlert("clear");
   };
 
-  const handlePayment = () => {
-    console.log("payment called");
-    const options = {
-      method: "POST",
-      url: "https://api.copperx.dev/api/v1/checkout/sessions",
-      headers: {
-        accept: "application/json",
-        "content-type": "application/json",
-        authorization:
-          "Bearer pav1_RqsZegSQDQ28KaZWiVmmifsqfoJeoAgFvBfinHV28UMLL53fhCComfRF8rDVwZ1c",
-      },
-      data: {
-        successUrl: "https://copperx.io/success?cid={CHECKOUT_SESSION_ID}",
-        lineItems: {
-          data: [
-            {
-              priceData: {
-                currency: "usdc",
-                unitAmount: "100000000",
-                productData: {
-                  name: "Basic",
-                  description:
-                    "For early stage projects who are getting started",
-                },
-              },
-            },
-          ],
-        },
-      },
-    };
-
-    axios
-      .request(options)
-      .then(function (response) {
-        console.log("response", response.data);
-      })
-      .catch(function (error) {
-        console.error("error", error);
-      });
-  };
+  const handleBridge=(state:boolean)=>{
+    notifyAlert("clear");
+    setIsBridgeActive(state);
+    setIsbridge(false);
+  }
 
   return (
     <>
@@ -687,12 +654,6 @@ const LandingPage = () => {
                       >
                         Explore
                       </Button>
-                      <button
-                        className="bg-white text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
-                        onClick={handlePayment}
-                      >
-                        Payment
-                      </button>
                     </div>
                   </div>
                 )}
@@ -715,50 +676,137 @@ const LandingPage = () => {
           {(onClose) => (
             <>
               <ModalBody className="text-white p-8 ">
-                <div className="flex flex-col justify-center items-center  ">
-                  <div className="text-2xl font-bold font-qanelas uppercase mb-6 md:mb-4 ">
-                    Get Onboarded
+                {isBridgeActive ? (
+                  <div className="flex flex-col justify-center items-center">
+                    <NitroWidget />
+                    <button onClick={()=>{handleBridge(false)}} className="font-qanelas rounded-lg px-4 py-2 bg-famViolate text-white ">
+                      Go Back
+                    </button>
                   </div>
-                  {activeTab === "signUp" ? (
-                    <div className="flex gap-4 mb-4 md:flex-row flex-col justify-between items-center rounded-lg">
-                      <div className="w-full md:w-1/3 flex justify-center items-center">
-                        <div
-                          className="bg-zinc-950 border border-gray-600 h-36 w-36 flex items-center justify-center cursor-pointer overflow-hidden transition-all duration-300 hover:border-famViolate-light "
-                          onClick={() => {
-                            fileInputRef.current?.click();
-                          }}
-                        >
-                          {logoPreview ? (
-                            <img
-                              src={logoPreview}
-                              alt="Uploaded logo"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="text-center">
+                ) : (
+                  <div className="flex flex-col justify-center items-center  ">
+                    <div className="text-2xl font-bold font-qanelas uppercase mb-6 md:mb-4 ">
+                      Get Onboarded
+                    </div>
+                    {activeTab === "signUp" ? (
+                      <div className="flex gap-4 mb-4 md:flex-row flex-col justify-between items-center rounded-lg">
+                        <div className="w-full md:w-1/3 flex justify-center items-center">
+                          <div
+                            className="bg-zinc-950 border border-gray-600 h-36 w-36 flex items-center justify-center cursor-pointer overflow-hidden transition-all duration-300 hover:border-famViolate-light "
+                            onClick={() => {
+                              fileInputRef.current?.click();
+                            }}
+                          >
+                            {logoPreview ? (
                               <img
-                                src="https://clusterprotocol2024.s3.amazonaws.com/others/gallery-add.png"
-                                alt="upload image"
+                                src={logoPreview}
+                                alt="Uploaded logo"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="text-center">
+                                <img
+                                  src="https://clusterprotocol2024.s3.amazonaws.com/others/gallery-add.png"
+                                  alt="upload image"
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleLogoUpload}
+                            accept="image/*"
+                            className="hidden"
+                          />
+                        </div>
+                        <div className="flex flex-col justify-center gap-4">
+                          <div className="flex gap-4 flex-row justify-between">
+                            <div>
+                              <label
+                                htmlFor="domain"
+                                className="uppercase text-sm font-famFont "
+                              >
+                                Setup Username/Domain
+                              </label>
+                              <input
+                                type="text"
+                                disabled={showPasswordField}
+                                value={domain}
+                                onChange={(e) => handleDomainChange(e)}
+                                className="w-full bg-zinc-950 border-1 font-famFont border-gray-600 px-4 py-2 hover:border-famViolate-light"
+                                name="domain"
+                                placeholder="e.g. JohnDoe"
+                              />
+                              {domain && isDomainAvailable === "false" && (
+                                <div className="text-red-600 font-famFont  text-xs text-end">
+                                  Domain already exists
+                                </div>
+                              )}
+                              {domain && isDomainAvailable === "true" && (
+                                <div className="text-green-600 font-famFont  text-xs text-end">
+                                  Domain available
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="inviteCode"
+                                className="uppercase text-sm font-famFont "
+                              >
+                                Invite Code
+                              </label>
+                              <input
+                                type="text"
+                                value={referralCode}
+                                onChange={(e) =>
+                                  setReferralCode(e.target.value)
+                                }
+                                className="w-full bg-zinc-950 border-1 text-gray-500 border-gray-600 font-famFont  px-4 py-2 hover:border-famViolate-light"
+                                name="inviteCode"
+                                placeholder="invite code"
                               />
                             </div>
-                          )}
-                        </div>
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          onChange={handleLogoUpload}
-                          accept="image/*"
-                          className="hidden"
-                        />
-                      </div>
-                      <div className="flex flex-col justify-center gap-4">
-                        <div className="flex gap-4 flex-row justify-between">
+                          </div>
                           <div>
+                            <label
+                              htmlFor="password"
+                              className="uppercase text-sm font-famFont "
+                            >
+                              Password
+                            </label>
+                            <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between text-gray-500 items-center hover:border-famViolate-light">
+                              <input
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                className="w-full bg-zinc-950 focus:border-famViolate-light  px-4 py-2 font-famFont  "
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                              />
+                              <span
+                                className="cursor-pointer px-4 py-2"
+                                onClick={() => setShowPassword(!showPassword)}
+                              >
+                                {showPassword ? (
+                                  <i className="bi bi-eye-slash-fill"></i>
+                                ) : (
+                                  <i className="bi bi-eye-fill"></i>
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-[80%] mx-auto mb-4">
+                        <div className="w-full flex flex-col justify-center gap-4">
+                          <div className="w-full">
                             <label
                               htmlFor="domain"
                               className="uppercase text-sm font-famFont "
                             >
-                              Setup Username/Domain
+                              Username
                             </label>
                             <input
                               type="text"
@@ -769,214 +817,144 @@ const LandingPage = () => {
                               name="domain"
                               placeholder="e.g. JohnDoe"
                             />
-                            {domain && isDomainAvailable === "false" && (
-                              <div className="text-red-600 font-famFont  text-xs text-end">
-                                Domain already exists
-                              </div>
-                            )}
-                            {domain && isDomainAvailable === "true" && (
-                              <div className="text-green-600 font-famFont  text-xs text-end">
-                                Domain available
-                              </div>
-                            )}
                           </div>
-                          <div>
+                          <div className="w-full">
                             <label
-                              htmlFor="inviteCode"
+                              htmlFor="password"
                               className="uppercase text-sm font-famFont "
                             >
-                              Invite Code
+                              Password
                             </label>
-                            <input
-                              type="text"
-                              value={referralCode}
-                              onChange={(e) => setReferralCode(e.target.value)}
-                              className="w-full bg-zinc-950 border-1 text-gray-500 border-gray-600 font-famFont  px-4 py-2 hover:border-famViolate-light"
-                              name="inviteCode"
-                              placeholder="invite code"
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <label
-                            htmlFor="password"
-                            className="uppercase text-sm font-famFont "
-                          >
-                            Password
-                          </label>
-                          <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between text-gray-500 items-center hover:border-famViolate-light">
-                            <input
-                              name="password"
-                              type={showPassword ? "text" : "password"}
-                              className="w-full bg-zinc-950 focus:border-famViolate-light  px-4 py-2 font-famFont  "
-                              placeholder="Password"
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
-                            />
-                            <span
-                              className="cursor-pointer px-4 py-2"
-                              onClick={() => setShowPassword(!showPassword)}
-                            >
-                              {showPassword ? (
-                                <i className="bi bi-eye-slash-fill"></i>
-                              ) : (
-                                <i className="bi bi-eye-fill"></i>
-                              )}
-                            </span>
+                            <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between text-gray-500 items-center hover:border-famViolate-light">
+                              <input
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                className="w-full bg-zinc-950  px-4 py-2 font-famFont  "
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                              />
+                              <span
+                                className="cursor-pointer px-4 py-2"
+                                onClick={() => setShowPassword(!showPassword)}
+                              >
+                                {showPassword ? (
+                                  <i className="bi bi-eye-slash-fill"></i>
+                                ) : (
+                                  <i className="bi bi-eye-fill"></i>
+                                )}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="w-[80%] mx-auto mb-4">
-                      <div className="w-full flex flex-col justify-center gap-4">
-                        <div className="w-full">
-                          <label
-                            htmlFor="domain"
-                            className="uppercase text-sm font-famFont "
-                          >
-                            Username
-                          </label>
-                          <input
-                            type="text"
-                            disabled={showPasswordField}
-                            value={domain}
-                            onChange={(e) => handleDomainChange(e)}
-                            className="w-full bg-zinc-950 border-1 font-famFont border-gray-600 px-4 py-2 hover:border-famViolate-light"
-                            name="domain"
-                            placeholder="e.g. JohnDoe"
-                          />
-                        </div>
-                        <div className="w-full">
-                          <label
-                            htmlFor="password"
-                            className="uppercase text-sm font-famFont "
-                          >
-                            Password
-                          </label>
-                          <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between text-gray-500 items-center hover:border-famViolate-light">
-                            <input
-                              name="password"
-                              type={showPassword ? "text" : "password"}
-                              className="w-full bg-zinc-950  px-4 py-2 font-famFont  "
-                              placeholder="Password"
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
-                            />
-                            <span
-                              className="cursor-pointer px-4 py-2"
-                              onClick={() => setShowPassword(!showPassword)}
-                            >
-                              {showPassword ? (
-                                <i className="bi bi-eye-slash-fill"></i>
-                              ) : (
-                                <i className="bi bi-eye-fill"></i>
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                    )}
 
-                  {error && (
-                    <div className=" text-red-600 font-famFont text-small text-center mb-4">
-                      {error}
-                    </div>
-                  )}
-                  {alertMessage && (
-                    <div className="text-small font-famFont text-center mb-4 text-green-600">
-                      {alertMessage}
-                    </div>
-                  )}
-                  {
-                    isbridge && (
-                      <div className="flex justify-center items-center mb-2" >
-                        <Link target="_blank" href="/payment-bridge" className="px-4 py-2 bg-famViolate rounded-md">Bridge</Link>
+                    {error && (
+                      <div className=" text-red-600 font-famFont text-small text-center mb-4">
+                        {error}
                       </div>
-                    )
-                  }
-                  {activeTab === "signUp" && (
-                    <div className="font-qanelas text-white capitalize text-xs mb-2 flex justify-center items-center gap-2">
-                      phase 1 domain minting price starts from 5 usdc
-                    </div>
-                  )}
-                  <div
-                    className={` ${
-                      activeTab === "signUp" ? "w-full" : "w-[80%] mx-auto"
-                    }  mb-4`}
-                  >
-                    {activeTab === "signUp" ? (
-                      showPasswordField ? (
+                    )}
+                    {alertMessage && (
+                      <div className="text-small font-famFont text-center mb-4 text-green-600">
+                        {alertMessage}
+                      </div>
+                    )}
+                    {isbridge && (
+                      <div className="flex justify-center items-center mb-4">
                         <Button
-                          radius="md"
-                          className="w-full text-white bg-[#5538CE] "
-                          onPress={handleSignUpDomain}
+
+                          onClick={() => {
+                            handleBridge(true);
+                          }}
+                          className="px-4 py-2 text-white bg-famViolate  rounded-lg"
                         >
-                          {loader ? (
-                            <Spinner color="white" size="sm" />
-                          ) : (
-                            <span>SignUp</span>
-                          )}
-                        </Button>
-                      ) : (
-                        <Button
-                          radius="md"
-                          className="bg-[#5538CE] text-white w-full"
-                          onPress={handleDomainMinting}
-                        >
-                          {loader ? (
-                            <Spinner color="white" size="sm" />
-                          ) : isWalletConnected ? (
-                            <span>Mint</span>
-                          ) : (
-                            <span>Connect Wallet</span>
-                          )}
-                        </Button>
-                      )
-                    ) : (
-                      <div className="flex flex-col">
-                        <Button
-                          radius="md"
-                          className="w-full text-white bg-[#5538CE] "
-                          onPress={handleLoginDomain}
-                        >
-                          {loaders.login ? (
-                            <Spinner color="white" size="sm" />
-                          ) : (
-                            <span>LogIn</span>
-                          )}
-                        </Button>
-                        <div className="text-center py-2">OR</div>
-                        <Button
-                          radius="md"
-                          className="text-white bg-[#5538CE] "
-                          onPress={handleLoginWithWallet}
-                        >
-                          {loaders.connectWallet ? (
-                            <Spinner color="white" size="sm" />
-                          ) : (
-                            <span>Connect Wallet</span>
-                          )}
+                          Bridge Currency
                         </Button>
                       </div>
                     )}
-                  </div>
-
-                  <div className="font-qanelas flex justify-center items-center gap-2">
-                    <span>
-                      {activeTab === "signUp"
-                        ? "Already have an account?"
-                        : "Don't have an account yet? "}
-                    </span>
-                    <span
-                      onClick={handleActiveTabChanged}
-                      className="text-blue-700 text-md cursor-pointer font-bold"
+                    {activeTab === "signUp" && (
+                      <div className="font-qanelas text-white capitalize text-xs mb-2 flex justify-center items-center gap-2">
+                        phase 1 domain minting price starts from 5 usdc
+                      </div>
+                    )}
+                    <div
+                      className={` ${
+                        activeTab === "signUp" ? "w-full" : "w-[80%] mx-auto"
+                      }  mb-4`}
                     >
-                      {activeTab === "signUp" ? "LogIn" : "SignUp"}
-                    </span>
+                      {activeTab === "signUp" ? (
+                        showPasswordField ? (
+                          <Button
+                            radius="md"
+                            className="w-full text-white bg-[#5538CE] "
+                            onPress={handleSignUpDomain}
+                          >
+                            {loader ? (
+                              <Spinner color="white" size="sm" />
+                            ) : (
+                              <span>SignUp</span>
+                            )}
+                          </Button>
+                        ) : (
+                          <Button
+                            radius="md"
+                            className="bg-[#5538CE] text-white w-full"
+                            onPress={handleDomainMinting}
+                          >
+                            {loader ? (
+                              <Spinner color="white" size="sm" />
+                            ) : isWalletConnected ? (
+                              <span>Mint</span>
+                            ) : (
+                              <span>Connect Wallet</span>
+                            )}
+                          </Button>
+                        )
+                      ) : (
+                        <div className="flex flex-col">
+                          <Button
+                            radius="md"
+                            className="w-full text-white bg-[#5538CE] "
+                            onPress={handleLoginDomain}
+                          >
+                            {loaders.login ? (
+                              <Spinner color="white" size="sm" />
+                            ) : (
+                              <span>LogIn</span>
+                            )}
+                          </Button>
+                          <div className="text-center py-2">OR</div>
+                          <Button
+                            radius="md"
+                            className="text-white bg-[#5538CE] "
+                            onPress={handleLoginWithWallet}
+                          >
+                            {loaders.connectWallet ? (
+                              <Spinner color="white" size="sm" />
+                            ) : (
+                              <span>Connect Wallet</span>
+                            )}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="font-qanelas flex justify-center items-center gap-2">
+                      <span>
+                        {activeTab === "signUp"
+                          ? "Already have an account?"
+                          : "Don't have an account yet? "}
+                      </span>
+                      <span
+                        onClick={handleActiveTabChanged}
+                        className="text-blue-700 text-md cursor-pointer font-bold"
+                      >
+                        {activeTab === "signUp" ? "LogIn" : "SignUp"}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                )}
               </ModalBody>
             </>
           )}

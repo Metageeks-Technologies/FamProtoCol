@@ -50,12 +50,10 @@ const NitroWidget: React.FC = () => {
   }, []);
 
   return (
-    <div>
       <iframe
         id="widget__iframe"
         src={iframeSrc}
-        width="420px"
-        height="610px"
+        className="w-full h-[50vh] sm:min-h-[80vh]"
         style={{
           border: "none",
           borderRadius: "11px",
@@ -63,7 +61,6 @@ const NitroWidget: React.FC = () => {
         }}
         allowFullScreen
       />
-    </div>
   );
 };
 
