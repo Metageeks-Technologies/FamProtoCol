@@ -225,11 +225,15 @@ const LandingPage = () => {
       const walletInfo = await connectWallet();
       console.log("wallet", walletInfo);
       if (walletInfo) {
+        if(walletInfo.switch){
+          notifyAlert("success", "Network switched successfully.Now you can proceed");
+          setLoader(false);
+          return;
+        }
         setIsWalletConnected(true);
-
         const response = await axiosInstance.post("/user/loginDomain", {
           walletAddress: walletInfo.address,
-        });
+      });
 
         console.log("response", response.data);
 
