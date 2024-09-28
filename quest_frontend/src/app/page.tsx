@@ -86,10 +86,24 @@ const LandingPage = () => {
     }
   }, []);
 
+  useEffect(()=>{
+    handleValidDomain();
+  },[domain])
+
   const isAlphanumericWithHyphen = (str: string): boolean => {
     const regex = /^[a-zA-Z0-9-]+$/;
     return regex.test(str);
   };
+
+  const handleValidDomain=()=>{
+    const checkDomain = domain + ".fam";
+    const isExistingDomain = existingDomain.includes(checkDomain);
+    if (isExistingDomain) {
+      setIsDomainAvailable("false");
+      return ;
+    }
+    setIsDomainAvailable("true");
+  }
 
   const handleDomainChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     notifyAlert("clear");
