@@ -86,24 +86,24 @@ const LandingPage = () => {
     }
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     handleValidDomain();
-  },[domain])
+  }, [domain]);
 
   const isAlphanumericWithHyphen = (str: string): boolean => {
     const regex = /^[a-zA-Z0-9-]+$/;
     return regex.test(str);
   };
 
-  const handleValidDomain=()=>{
+  const handleValidDomain = () => {
     const checkDomain = domain + ".fam";
     const isExistingDomain = existingDomain.includes(checkDomain);
     if (isExistingDomain) {
       setIsDomainAvailable("false");
-      return ;
+      return;
     }
     setIsDomainAvailable("true");
-  }
+  };
 
   const handleDomainChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     notifyAlert("clear");
@@ -239,15 +239,18 @@ const LandingPage = () => {
       const walletInfo = await connectWallet();
       // console.log("wallet", walletInfo);
       if (walletInfo) {
-        if(walletInfo.switch){
-          notifyAlert("success", "Network switched successfully.Now you can proceed");
+        if (walletInfo.switch) {
+          notifyAlert(
+            "success",
+            "Network switched successfully.Now you can proceed"
+          );
           setLoaders({ ...loaders, connectWallet: false });
           return;
         }
         setIsWalletConnected(true);
         const response = await axiosInstance.post("/user/loginDomain", {
           walletAddress: walletInfo.address,
-      });
+        });
 
         // console.log("response", response.data);
 
@@ -328,11 +331,11 @@ const LandingPage = () => {
       const walletInfo = await connectWallet();
       // console.log("wallet", walletInfo);
       if (walletInfo) {
-        if(walletInfo.switch){
+        if (walletInfo.switch) {
           notifyAlert("success", "Network switched successfully");
           setLoader(false);
           return;
-        } else{
+        } else {
           setIsWalletConnected(true);
           setAddress(walletInfo.address);
         }
@@ -358,6 +361,7 @@ const LandingPage = () => {
       const isFreeMintWhitelisted = await contract.freeMintWhitelist(
         await signer.getAddress()
       );
+      // console.log("is free",isFreeMintWhitelisted);
 
       if (isFreeMintWhitelisted) {
         // Call free mint function
@@ -476,15 +480,25 @@ const LandingPage = () => {
           setShowPasswordField(true);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       if (typeof error === "object" && error !== null && "reason" in error) {
+        console.log("error", error);
         notifyAlert("error", `${(error as { reason: string }).reason}`);
       } else if (
         typeof error === "object" &&
         error !== null &&
         "message" in error
       ) {
-        notifyAlert("error", `${(error as { message: string }).message}`);
+        if (
+          error.code ==="BAD_DATA"
+        ) {
+          // Show a custom error message to the user
+          console.log(error.message);
+          notifyAlert("error", "Minting is only allowed on Arbitrum chain");
+        } else {
+          console.log("error", error);
+          notifyAlert("error", `${(error as { message: string }).message}`);
+        }
       } else {
         notifyAlert("error", "An unknown error occurred");
       }
@@ -561,11 +575,11 @@ const LandingPage = () => {
     notifyAlert("clear");
   };
 
-  const handleBridge=(state:boolean)=>{
+  const handleBridge = (state: boolean) => {
     notifyAlert("clear");
     setIsBridgeActive(state);
     setIsbridge(false);
-  }
+  };
 
   return (
     <>
@@ -706,7 +720,12 @@ const LandingPage = () => {
                 {isBridgeActive ? (
                   <div className="flex flex-col justify-center items-center">
                     <NitroWidget />
-                    <button onClick={()=>{handleBridge(false)}} className="font-qanelas rounded-lg px-4 py-2 bg-famViolate text-white ">
+                    <button
+                      onClick={() => {
+                        handleBridge(false);
+                      }}
+                      className="font-qanelas rounded-lg px-4 py-2 bg-famViolate text-white "
+                    >
                       Go Back
                     </button>
                   </div>
@@ -890,7 +909,6 @@ const LandingPage = () => {
                     {isbridge && (
                       <div className="flex justify-center items-center mb-4">
                         <Button
-
                           onClick={() => {
                             handleBridge(true);
                           }}
