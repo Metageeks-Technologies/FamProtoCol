@@ -1,6 +1,7 @@
 // components/NitroWidget.tsx
 "use client"
 import React, { useEffect, useState } from "react";
+import { TailSpinLoader } from "@/app/components/loader";
 
 interface WidgetConfig {
   isWidget: boolean;
@@ -20,7 +21,7 @@ interface WidgetConfig {
 
 const NitroWidget: React.FC = () => {
   const [iframeSrc, setIframeSrc] = useState("");
-
+  const [loading, setLoading] = useState(true); // Loader state
   useEffect(() => {
     // Widget configuration
     const configuration: WidgetConfig = {
@@ -48,8 +49,18 @@ const NitroWidget: React.FC = () => {
     // Set the iframe source dynamically
     setIframeSrc(`${baseUrl}?${paramString}`);
   }, []);
+  
+  const handleIframeLoad = () => {
+    setLoading(false); 
+  };
 
   return (
+    <>
+      {loading && (
+        <div className="flex justify-center items-center" >
+          <TailSpinLoader/>
+        </div>
+      )}
       <iframe
         id="widget__iframe"
         src={iframeSrc}
@@ -59,8 +70,10 @@ const NitroWidget: React.FC = () => {
           borderRadius: "11px",
           boxShadow: "3px 3px 10px 4px rgba(0, 0, 0, 0.05)",
         }}
+        onLoad={handleIframeLoad}
         allowFullScreen
       />
+      </>
   );
 };
 
