@@ -13,11 +13,11 @@ export const getUsersByRewardsOrder = async (req:Request, res:Response) => {
 
 export const getReferrers = async (req: Request, res: Response) => {
   try {
-    const users = await User.aggregate([
+    let users = await User.aggregate([
       {
         $match: {
-          domain: { $exists: true, $ne: null } // Ensure the domain field exists and is not null
-        }
+          domain: { $exists: true, $ne: null }, // Ensure the domain field exists and is not null
+        },
       },
       {
         $project: {
@@ -26,20 +26,22 @@ export const getReferrers = async (req: Request, res: Response) => {
           image: 1,
           rewards: 1,
           referredUserCount: { $size: { $ifNull: ["$referredUsers", []] } }, // Count the number of referred users
-          createdAt: 1 // Include creation date to break ties
-        }
+          createdAt: 1, // Include creation date to break ties
+        },
       },
       {
-        $setWindowFields: {
-          sortBy: { referredUserCount: -1 }, // Sort only by referredUserCount for ranking
-          output: {
-            rankByReferredUser: {
-              $denseRank: {} // Rank based on referredUserCount only
-            }
-          }
-        }
-      }
+        $sort: {
+          referredUserCount: -1, // Sort by referredUserCount in descending order
+          createdAt: 1,          // Sort by createdAt in ascending order to break ties
+        },
+      },
     ]);
+
+    // Assign unique ranks manually
+    users = users.map((user, index) => ({
+      ...user,
+      rankByReferredUser: index + 1, // Assign unique rank based on index
+    }));
 
     res.send({ success: true, users, message: "Users fetched successfully" });
   } catch (error) {
@@ -47,5 +49,11 @@ export const getReferrers = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error fetching users' });
   }
 };
+
+
+
+
+
+
 
 
