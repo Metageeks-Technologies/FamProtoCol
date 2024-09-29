@@ -35,7 +35,7 @@ const Sidebar = () => {
       router.push("/home");
     }
     if (pathname === "/" || pathname === "" || pathname === "/user/referral/dashboard") {
-      console.log("landing page", pathname);
+      // console.log("landing page", pathname);
       setIsLandingPage(true);
     } else {
       setIsLandingPage(false);

@@ -93,7 +93,7 @@ const PointsParlor = () => {
   const [completedTask, setCompletedTask] = useState<string[]>([]);
   const [activeTasks, setActiveTasks] = useState<FamTasks[]>([]);
   const user: any = useSelector((state: RootState) => state.login.user);
-  console.log("user",user);
+  // console.log("user",user);
   useEffect(() => {
     if (user) {
       const percentage = (user.famTasks.length / tasks.length) * 100;
@@ -103,7 +103,7 @@ const PointsParlor = () => {
     }
   }, [user]);
 
-  console.log("user", user);
+  // console.log("user", user);
   useEffect(() => {
     dispatch(fetchUserData());
   }, [dispatch]);
@@ -331,7 +331,7 @@ const FamTaskCard: React.FC<FamTaskCardProps> = ({ task, taskCompleted,completed
       const balance = await provider.getBalance(accountAddress);
       setBalance(ethers.formatEther(balance));
 
-      console.log("Wallet connected:", accountAddress);
+      // console.log("Wallet connected:", accountAddress);
       
       // Update the backend and refresh task data
       await taskCompleted(task,accountAddress);
@@ -426,7 +426,7 @@ const FamTaskCard: React.FC<FamTaskCardProps> = ({ task, taskCompleted,completed
     try {
       if (!address) {
         await connectWallet();
-        console.log("user address is missing");
+        // console.log("user address is missing");
         return;
       }
       const { message, nonce } = await getSigningMessage();

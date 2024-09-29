@@ -37,7 +37,7 @@ const ReferralProfile: React.FC = () => {
   const baseReferralUrl = `${process.env.NEXT_PUBLIC_CLIENT_URL}/?referralCode=`;
 
   const user: any = useSelector((state: RootState) => state.login.user);
-  console.log("user", user);
+  // console.log("user", user);
 
   const onGenerateReferral = async () => {
     try {
@@ -96,7 +96,7 @@ const ReferralProfile: React.FC = () => {
   const getReferredUsers = async () => {
     try {
       const response = await axiosInstance.get('/user/referred');
-      console.log("referred users", response.data);
+      // console.log("referred users", response.data);
       setReferredUsers(response.data.referredUsers);
     } catch (error) {
       console.error(error);
@@ -105,7 +105,7 @@ const ReferralProfile: React.FC = () => {
   const getReferrerUser = async () => {
     try {
       const response = await axiosInstance.get('/user/leaderboard/referrer');
-      console.log("referrers", response);
+      // console.log("referrers", response);
       setReferrer(response.data.users);
     } catch (err) {
       console.log("error while fetching referrer:", err);

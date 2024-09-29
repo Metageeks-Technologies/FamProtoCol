@@ -44,7 +44,7 @@ const NitroWidget: React.FC = () => {
 
     // Generate paramString from the configuration object
     const paramString = new URLSearchParams(configuration as any).toString();
-    console.log("params",paramString);
+    // console.log("params",paramString);
     // Set the iframe source dynamically
     setIframeSrc(`${baseUrl}?${paramString}`);
   }, []);

@@ -237,7 +237,7 @@ const LandingPage = () => {
       setLoaders({ ...loaders, connectWallet: true });
       notifyAlert("clear");
       const walletInfo = await connectWallet();
-      console.log("wallet", walletInfo);
+      // console.log("wallet", walletInfo);
       if (walletInfo) {
         if(walletInfo.switch){
           notifyAlert("success", "Network switched successfully.Now you can proceed");
@@ -249,7 +249,7 @@ const LandingPage = () => {
           walletAddress: walletInfo.address,
       });
 
-        console.log("response", response.data);
+        // console.log("response", response.data);
 
         if (response.data.success) {
           notify("success", response.data.message);
@@ -326,7 +326,7 @@ const LandingPage = () => {
 
     if (!ArbicontractAddress || !contractABI || !address) {
       const walletInfo = await connectWallet();
-      console.log("wallet", walletInfo);
+      // console.log("wallet", walletInfo);
       if (walletInfo) {
         if(walletInfo.switch){
           notifyAlert("success", "Network switched successfully");

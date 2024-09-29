@@ -37,7 +37,7 @@ const UserCard = () => {
       setLoading(false);
     }
   };
-  console.log("Users :-", data);
+  // console.log("Users :-", data);
 
   useEffect(() => {
     getAllUser();
