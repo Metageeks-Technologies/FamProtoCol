@@ -96,6 +96,9 @@ const LandingPage = () => {
   };
 
   const handleValidDomain = () => {
+    if(domain.length < 3){
+      return;
+    }
     const checkDomain = domain + ".fam";
     const isExistingDomain = existingDomain.includes(checkDomain);
     if (isExistingDomain) {
@@ -136,7 +139,6 @@ const LandingPage = () => {
     setThankYou(false);
     setIsbridge(false);
     setLogoPreview("");
-
     // setIswalletconnected(false)
   };
 
@@ -275,7 +277,7 @@ const LandingPage = () => {
     setIsbridge(false);
     // Validate domain name
     if (!domain || domain.length < 3) {
-      notifyAlert("error", "Domain name must be at least 4 characters long");
+      notifyAlert("error", "Domain name must be at least 3 characters long");
       setLoader(false);
       return;
     }
