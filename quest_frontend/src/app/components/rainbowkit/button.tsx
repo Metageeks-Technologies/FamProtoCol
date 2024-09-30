@@ -34,7 +34,7 @@ const WalletConnectButton = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} className='px-4 py-2 rounded-md bg-famViolate text-white' type="button">
+                  <button onClick={openConnectModal} className="bg-[#5538CE] text-white w-full rounded-lg px-4 py-2" type="button">
                     Connect Wallet
                   </button>
                 );
@@ -47,10 +47,10 @@ const WalletConnectButton = () => {
                 );
               }
               return (
-                <div className="bg-slate-600 text-white" style={{ display: 'flex', gap: 12 }}>
+                <div className="bg-zinc-950 border-gray-1 border-gray-600 px-4 py-2 rounded-full text-white" style={{ display: 'flex', gap: 12 }}>
                   <button
                     onClick={openChainModal}
-                    className="px-2 py-1"
+                    className="px-2 py-1 bg-famViolate rounded-full "
                     style={{ display: 'flex', alignItems: 'center' }}
                     type="button"
                   >
@@ -64,6 +64,7 @@ const WalletConnectButton = () => {
                           overflow: 'hidden',
                           marginRight: 4,
                         }}
+                        className="text-white"
                       >
                         {chain.iconUrl && (
                           <img

@@ -962,7 +962,7 @@ const LandingPage = () => {
                           {
                             address && <Button
                               radius="md"
-                              className="bg-[#5538CE] text-white w-full"
+                              className="bg-[#5538CE] text-white w-full mb-2"
                               onPress={handleDomainMinting}
                             >
                               {loader ? (
@@ -972,7 +972,16 @@ const LandingPage = () => {
                               )}
                             </Button>
                           }
-                          <div className="flex justify-center items-center" ><WalletConnectButton/></div>
+                          <div className="w-full flex justify-center items-center" >
+                          {(domain && password && logo && referralCode) && (
+                            <WalletConnectButton/>
+                          ) }
+                          {
+                            (!domain || !password || !logo || !referralCode) && (
+                              <button disabled={true} className="bg-[#5538CE] opacity-60 text-white w-full rounded-lg px-4 py-2">Connect Walllet</button>
+                            )
+                          }
+                          </div>
                           </>
                         )
                       ) : (
