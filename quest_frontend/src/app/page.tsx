@@ -726,7 +726,9 @@ const LandingPage = () => {
                 {isBridgeActive ? (
                   <div className="flex flex-col justify-center items-center">
                     <NitroWidget />
-                    <div className="w-full text-sm flex justify-start items-center sm:px-6 opacity-55 mb-4">Note: Bridge ETH to Arbitrum Chain</div>
+                    <div className="w-full text-sm flex justify-start items-center sm:px-6 opacity-55 mb-4">
+                      Note: Bridge ETH to Arbitrum Chain
+                    </div>
                     <button
                       onClick={() => {
                         handleBridge(false);
@@ -964,7 +966,10 @@ const LandingPage = () => {
                               </Button>
                             )}
                             <div className="w-full flex justify-center items-center">
-                                <WalletConnectButton />
+                              {domain &&
+                                password &&
+                                logoPreview &&
+                                referralCode && <WalletConnectButton />}
                               {(!domain ||
                                 !password ||
                                 !logoPreview ||
