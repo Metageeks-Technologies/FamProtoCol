@@ -151,6 +151,7 @@ const LandingPage = () => {
 
   const handleClose = () => {
     notifyAlert("clear");
+    setReferralCode("");
     onClose();
   };
 
@@ -965,23 +966,8 @@ const LandingPage = () => {
                                 )}
                               </Button>
                             )}
-                            <div className="w-full flex justify-center items-center">
-                              {domain &&
-                                password &&
-                                logoPreview &&
-                                referralCode && <WalletConnectButton />}
-                              {(!domain ||
-                                !password ||
-                                !logoPreview ||
-                                !referralCode) &&
-                                !address && (
-                                  <button
-                                    disabled={true}
-                                    className="bg-[#5538CE] opacity-60 text-white w-full rounded-lg px-4 py-2"
-                                  >
-                                    Connect Wallet
-                                  </button>
-                                )}
+                            <div className={`w-full flex justify-center items-center ${((!domain || !password || !logoPreview || !referralCode) && !address ) && "disabled-button"} `}>
+                                <WalletConnectButton />
                             </div>
                           </>
                         )

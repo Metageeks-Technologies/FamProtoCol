@@ -979,3 +979,8 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
 }
+
+.disabled-button {
+  pointer-events: none;
+  opacity: 0.5;
+}
