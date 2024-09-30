@@ -161,7 +161,7 @@ export const loginDomain = async (req: Request, res: Response) => {
       });
 
       if (!user) {
-        return res.status(400).json({ message: "No account associated with the provided wallet address. Please check your wallet address and try again" });
+        return res.status(400).json({ message: "No account found with this wallet address. Please sign up to continue" });
       }
       // Generate JWT token
       const token = jwt.sign(
