@@ -494,7 +494,7 @@ const LandingPage = () => {
         ) {
           // Show a custom error message to the user
           console.log(error.message);
-          notifyAlert("error", "Minting is only allowed on Arbitrum chain");
+          notifyAlert("error", "Minting is only allowed on Arbitrum mainnet network.Please add Arbitrum mainnet network");
         } else {
           console.log("error", error);
           notifyAlert("error", `${(error as { message: string }).message}`);
