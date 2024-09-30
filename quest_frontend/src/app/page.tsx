@@ -191,7 +191,7 @@ const LandingPage = () => {
         image: path,
         password: password,
         hashCode: hash,
-        walletAddress: walletAddress as string,
+        walletAddress: address as string,
         referralCode,
       });
 
@@ -255,7 +255,7 @@ const LandingPage = () => {
         }
         setIsWalletConnected(true);
         const response = await axiosInstance.post("/user/loginDomain", {
-          walletAddress: walletInfo.address,
+          walletAddress: address,
         });
 
         // console.log("response", response.data);
@@ -338,27 +338,20 @@ const LandingPage = () => {
     const contractABI = upgradeableContractAbi;
     const usdtABI = usdt;
 
-    // if (!ArbicontractAddress || !contractABI || !walletAddress) {
-    //   const walletInfo = await connectWallet();
+    if (!ArbicontractAddress || !contractABI || !address) {
+      // const walletInfo = await connectWallet();
      
-    //   setWalletAddress(address);
-    //   // console.log("wallet", walletInfo);
-    //   if (walletInfo) {
-    //     if (walletInfo.switch) {
-    //       notifyAlert("success", "Network switched successfully");
-    //       setLoader(false);
-    //       return;
-    //     } else {
-    //       setIsWalletConnected(true);
-    //       setWalletAddress(walletInfo.address);
-    //     }
-    //   } else {
-    //     notifyAlert("error", "Failed to connect wallet.");
-    //     setLoader(false);
-    //     return;
-    //   }
-    // }
-
+      setWalletAddress(address);
+      // console.log("wallet", walletInfo);
+      if (address) {
+          setIsWalletConnected(true);
+      } else {
+        notifyAlert("error", "Failed to connect wallet.");
+        setLoader(false);
+        return;
+      }
+    }
+  
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
@@ -369,6 +362,7 @@ const LandingPage = () => {
         contractABI,
         signer
       );
+      console.log("signer details", signer);
 
       // Check if the user is whitelisted for free mint
       const isFreeMintWhitelisted = await contract.freeMintWhitelist(
