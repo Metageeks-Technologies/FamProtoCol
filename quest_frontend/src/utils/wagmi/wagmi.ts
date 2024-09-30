@@ -12,11 +12,7 @@ export const config = getDefaultConfig({
   appName: 'RainbowKit demo',
   projectId: process.env.NEXT_PUBLIC_RAINBOW_PROJECT_ID as string,
   chains: [
-    mainnet,
-    polygon,
-    optimism,
     arbitrum,
-    base,
     ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
   ],
   ssr: true,
