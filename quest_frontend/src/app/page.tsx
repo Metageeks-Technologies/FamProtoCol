@@ -19,6 +19,8 @@ import usdt from "@/utils/abi/usdt.json";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import NitroWidget from "./components/nitroWidget/nitro";
+import WalletConnectButton from "@/app/components/rainbowkit/button"
+import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -27,7 +29,7 @@ const LandingPage = () => {
   const [isDomainAvailable, setIsDomainAvailable] = useState<string>("");
   const [referralCode, setReferralCode] = useState("");
   const [error, setError] = useState("");
-  const [address, setAddress] = useState<string>("");
+  const [walletAddress, setWalletAddress] = useState<any>("");
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [loader, setLoader] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -47,6 +49,8 @@ const LandingPage = () => {
     login: false,
   });
   const router = useRouter();
+  const { address } = useAccount();
+  // console.log("wallet address from rainbow",address);
 
   const notifyAlert = (type: string, message?: string) => {
     if (type === "success") {
@@ -96,7 +100,7 @@ const LandingPage = () => {
   };
 
   const handleValidDomain = () => {
-    if(domain.length < 3){
+    if (domain.length < 3) {
       return;
     }
     const checkDomain = domain + ".fam";
@@ -187,7 +191,7 @@ const LandingPage = () => {
         image: path,
         password: password,
         hashCode: hash,
-        walletAddress: address,
+        walletAddress: walletAddress as string,
         referralCode,
       });
 
@@ -321,6 +325,11 @@ const LandingPage = () => {
       return;
     }
 
+    if(!address){
+      setLoader(false);
+      notifyAlert("error","Connect wallet first");
+    }
+
     const updatedDomain = domain + ".fam";
 
     const ArbicontractAddress =
@@ -329,24 +338,26 @@ const LandingPage = () => {
     const contractABI = upgradeableContractAbi;
     const usdtABI = usdt;
 
-    if (!ArbicontractAddress || !contractABI || !address) {
-      const walletInfo = await connectWallet();
-      // console.log("wallet", walletInfo);
-      if (walletInfo) {
-        if (walletInfo.switch) {
-          notifyAlert("success", "Network switched successfully");
-          setLoader(false);
-          return;
-        } else {
-          setIsWalletConnected(true);
-          setAddress(walletInfo.address);
-        }
-      } else {
-        notifyAlert("error", "Failed to connect wallet.");
-        setLoader(false);
-        return;
-      }
-    }
+    // if (!ArbicontractAddress || !contractABI || !walletAddress) {
+    //   const walletInfo = await connectWallet();
+     
+    //   setWalletAddress(address);
+    //   // console.log("wallet", walletInfo);
+    //   if (walletInfo) {
+    //     if (walletInfo.switch) {
+    //       notifyAlert("success", "Network switched successfully");
+    //       setLoader(false);
+    //       return;
+    //     } else {
+    //       setIsWalletConnected(true);
+    //       setWalletAddress(walletInfo.address);
+    //     }
+    //   } else {
+    //     notifyAlert("error", "Failed to connect wallet.");
+    //     setLoader(false);
+    //     return;
+    //   }
+    // }
 
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
@@ -491,12 +502,13 @@ const LandingPage = () => {
         error !== null &&
         "message" in error
       ) {
-        if (
-          error.code ==="BAD_DATA"
-        ) {
+        if (error.code === "BAD_DATA") {
           // Show a custom error message to the user
           console.log(error.message);
-          notifyAlert("error", "Minting is only allowed on Arbitrum mainnet network.Please add Arbitrum mainnet network");
+          notifyAlert(
+            "error",
+            "Minting is only allowed on Arbitrum mainnet network.Please add Arbitrum mainnet network"
+          );
         } else {
           console.log("error", error);
           notifyAlert("error", `${(error as { message: string }).message}`);
@@ -709,6 +721,8 @@ const LandingPage = () => {
         backdrop="blur"
         placement="center"
         shadow="sm"
+        isDismissable={false} 
+        isKeyboardDismissDisabled={true}
         size="xl"
         radius="none"
         isOpen={isOpen}
@@ -944,19 +958,22 @@ const LandingPage = () => {
                             )}
                           </Button>
                         ) : (
-                          <Button
-                            radius="md"
-                            className="bg-[#5538CE] text-white w-full"
-                            onPress={handleDomainMinting}
-                          >
-                            {loader ? (
-                              <Spinner color="white" size="sm" />
-                            ) : isWalletConnected ? (
-                              <span>Mint</span>
-                            ) : (
-                              <span>Connect Wallet</span>
-                            )}
-                          </Button>
+                          <>
+                          {
+                            address && <Button
+                              radius="md"
+                              className="bg-[#5538CE] text-white w-full"
+                              onPress={handleDomainMinting}
+                            >
+                              {loader ? (
+                                <Spinner color="white" size="sm" />
+                              ) : (
+                                <span>Mint</span>
+                              )}
+                            </Button>
+                          }
+                          <div className="flex justify-center items-center" ><WalletConnectButton/></div>
+                          </>
                         )
                       ) : (
                         <div className="flex flex-col">

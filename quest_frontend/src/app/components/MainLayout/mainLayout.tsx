@@ -8,6 +8,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import Sidebar from '@/app/components/sidebar/sidebar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {RainBowProviders} from '@/app/components/rainbowkit/rainbowKitWrapper'
 
 const MainLayout = ( {
   children,
@@ -21,6 +22,7 @@ const MainLayout = ( {
 
   return (
     <div>
+      <RainBowProviders>
       <NextUIProvider>
         { isAdminRoute ? ( <AdminNavbar /> ) : ( !isLandingRoute && <Navbar /> )}
         {!isAdminRoute && <Sidebar />}
@@ -28,6 +30,7 @@ const MainLayout = ( {
         <ToastContainer />
       {/* {(!isLandingRoute || !isAdminRoute) &&  <Footer /> } */}
       </NextUIProvider>
+      </RainBowProviders>
     </div>
   );
 };
