@@ -64,7 +64,7 @@ const NitroWidget: React.FC = () => {
       <iframe
         id="widget__iframe"
         src={iframeSrc}
-        className="w-full h-[50vh] sm:min-h-[80vh]"
+        className="w-full h-[50vh] sm:min-h-[78vh]"
         style={{
           border: "none",
           borderRadius: "11px",

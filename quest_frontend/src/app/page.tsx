@@ -398,7 +398,7 @@ const LandingPage = () => {
           if (usdtBalance < usdtAmountDiscount) {
             notifyAlert(
               "error",
-              "Insufficient USDT balance. Please ensure you have at least 2.5 USDT & Some gas fees on Arbitrum chain. you can convert your Assets to Arbitrum by using Nitro bridge below"
+              "Insufficient USDT balance.Please ensure you have at least 2.5 USDT & Some gas fees on Arbitrum chain.Make sure you have assets on Arbitrum chain. You can convert your Assets to Arbitrum by using Nitro bridge below"
             );
             setIsbridge(true);
             // nitro
@@ -452,7 +452,7 @@ const LandingPage = () => {
           if (usdtBalance < usdtAmount) {
             notifyAlert(
               "error",
-              "Insufficient USDT balance. Please ensure you have at least 5 USDT & Some gas fees on Arbitrum chain. you can convert your Assets to Arbitrum by using Nitro bridge below"
+              "Insufficient USDT balance.Please ensure you have at least 5 USDT & Some gas fees on Arbitrum chain.Make sure you have assets on Arbitrum chain.You can convert your Assets to Arbitrum by using Nitro bridge below"
             );
             setIsbridge(true);
             // nitro
@@ -726,6 +726,7 @@ const LandingPage = () => {
                 {isBridgeActive ? (
                   <div className="flex flex-col justify-center items-center">
                     <NitroWidget />
+                    <div className="w-full text-sm flex justify-start items-center sm:px-6 opacity-55 mb-4">Note: Bridge ETH to Arbitrum Chain</div>
                     <button
                       onClick={() => {
                         handleBridge(false);
@@ -963,12 +964,10 @@ const LandingPage = () => {
                               </Button>
                             )}
                             <div className="w-full flex justify-center items-center">
-                              {domain && password && logo && referralCode && (
                                 <WalletConnectButton />
-                              )}
                               {(!domain ||
                                 !password ||
-                                !logo ||
+                                !logoPreview ||
                                 !referralCode) &&
                                 !address && (
                                   <button
