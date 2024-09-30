@@ -21,7 +21,7 @@ const WalletConnectButton = () => {
           (!authenticationStatus ||
             authenticationStatus === 'authenticated');
         return (
-          <div
+          <div className='w-full flex justify-center'
             {...(!ready && {
               'aria-hidden': true,
               'style': {
@@ -34,7 +34,7 @@ const WalletConnectButton = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button onClick={openConnectModal} className="bg-[#5538CE] text-white w-full rounded-lg px-4 py-2" type="button">
+                  <button onClick={openConnectModal} className="w-full bg-[#5538CE] text-white rounded-lg px-4 py-2" type="button">
                     Connect Wallet
                   </button>
                 );
@@ -79,9 +79,9 @@ const WalletConnectButton = () => {
                   </button>
                   <button onClick={openAccountModal} type="button">
                     {account.displayName}
-                    {account.displayBalance
+                    {/* {account.displayBalance
                       ? ` (${account.displayBalance})`
-                      : ''}
+                      : ''} */}
                   </button>
                 </div>
               );

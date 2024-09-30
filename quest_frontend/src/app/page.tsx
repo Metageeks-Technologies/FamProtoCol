@@ -19,8 +19,8 @@ import usdt from "@/utils/abi/usdt.json";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import NitroWidget from "./components/nitroWidget/nitro";
-import WalletConnectButton from "@/app/components/rainbowkit/button"
-import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
+import WalletConnectButton from "@/app/components/rainbowkit/button";
+import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -52,6 +52,9 @@ const LandingPage = () => {
   const { address } = useAccount();
   // console.log("wallet address from rainbow",address);
 
+  useEffect(() => {
+    notifyAlert("clear");
+  }, [address]);
   const notifyAlert = (type: string, message?: string) => {
     if (type === "success") {
       setAlertMessage(message || "");
@@ -214,7 +217,6 @@ const LandingPage = () => {
     notifyAlert("clear");
     if (!isAlphanumericWithHyphen(domain)) {
       notifyAlert("error", "Invalid username");
-
       setLoaders({ ...loaders, login: false });
       return;
     }
@@ -242,31 +244,23 @@ const LandingPage = () => {
     try {
       setLoaders({ ...loaders, connectWallet: true });
       notifyAlert("clear");
-      const walletInfo = await connectWallet();
+      if (!address) {
+        setLoaders({ ...loaders, connectWallet: false });
+        notifyAlert("error", "Wallet is not connected");
+        return;
+      }
       // console.log("wallet", walletInfo);
-      if (walletInfo) {
-        if (walletInfo.switch) {
-          notifyAlert(
-            "success",
-            "Network switched successfully.Now you can proceed"
-          );
-          setLoaders({ ...loaders, connectWallet: false });
-          return;
-        }
-        setIsWalletConnected(true);
-        const response = await axiosInstance.post("/user/loginDomain", {
-          walletAddress: address,
-        });
 
-        // console.log("response", response.data);
+      setIsWalletConnected(true);
+      const response = await axiosInstance.post("/user/loginDomain", {
+        walletAddress: address,
+      });
 
-        if (response.data.success) {
-          notify("success", response.data.message);
-          handleClose();
-          router.push("/user/referral/dashboard");
-        }
-      } else {
-        notify("error", "Failed to connect wallet");
+      // console.log("response", response.data);
+      if (response.data.success) {
+        notify("success", response.data.message);
+        handleClose();
+        router.push("/user/referral/dashboard");
       }
     } catch (error: any) {
       console.log(error);
@@ -325,9 +319,9 @@ const LandingPage = () => {
       return;
     }
 
-    if(!address){
+    if (!address) {
       setLoader(false);
-      notifyAlert("error","Connect wallet first");
+      notifyAlert("error", "Connect wallet first");
     }
 
     const updatedDomain = domain + ".fam";
@@ -340,18 +334,18 @@ const LandingPage = () => {
 
     if (!ArbicontractAddress || !contractABI || !address) {
       // const walletInfo = await connectWallet();
-     
+
       setWalletAddress(address);
       // console.log("wallet", walletInfo);
       if (address) {
-          setIsWalletConnected(true);
+        setIsWalletConnected(true);
       } else {
         notifyAlert("error", "Failed to connect wallet.");
         setLoader(false);
         return;
       }
     }
-  
+
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
@@ -580,6 +574,8 @@ const LandingPage = () => {
     setPassword("");
     setShowPasswordField(false);
     setDomain("");
+    setLogoPreview("");
+    setReferralCode("");
     notifyAlert("clear");
   };
 
@@ -715,7 +711,7 @@ const LandingPage = () => {
         backdrop="blur"
         placement="center"
         shadow="sm"
-        isDismissable={false} 
+        isDismissable={false}
         isKeyboardDismissDisabled={true}
         size="xl"
         radius="none"
@@ -953,29 +949,36 @@ const LandingPage = () => {
                           </Button>
                         ) : (
                           <>
-                          {
-                            address && <Button
-                              radius="md"
-                              className="bg-[#5538CE] text-white w-full mb-2"
-                              onPress={handleDomainMinting}
-                            >
-                              {loader ? (
-                                <Spinner color="white" size="sm" />
-                              ) : (
-                                <span>Mint</span>
+                            {address && (
+                              <Button
+                                radius="md"
+                                className="bg-[#5538CE] text-white w-full mb-2"
+                                onPress={handleDomainMinting}
+                              >
+                                {loader ? (
+                                  <Spinner color="white" size="sm" />
+                                ) : (
+                                  <span>Mint</span>
+                                )}
+                              </Button>
+                            )}
+                            <div className="w-full flex justify-center items-center">
+                              {domain && password && logo && referralCode && (
+                                <WalletConnectButton />
                               )}
-                            </Button>
-                          }
-                          <div className="w-full flex justify-center items-center" >
-                          {(domain && password && logo && referralCode) && (
-                            <WalletConnectButton/>
-                          ) }
-                          {
-                            (!domain || !password || !logo || !referralCode) && (
-                              <button disabled={true} className="bg-[#5538CE] opacity-60 text-white w-full rounded-lg px-4 py-2">Connect Walllet</button>
-                            )
-                          }
-                          </div>
+                              {(!domain ||
+                                !password ||
+                                !logo ||
+                                !referralCode) &&
+                                !address && (
+                                  <button
+                                    disabled={true}
+                                    className="bg-[#5538CE] opacity-60 text-white w-full rounded-lg px-4 py-2"
+                                  >
+                                    Connect Wallet
+                                  </button>
+                                )}
+                            </div>
                           </>
                         )
                       ) : (
@@ -988,21 +991,28 @@ const LandingPage = () => {
                             {loaders.login ? (
                               <Spinner color="white" size="sm" />
                             ) : (
-                              <span>LogIn</span>
+                              <span>Login</span>
                             )}
                           </Button>
                           <div className="text-center py-2">OR</div>
-                          <Button
-                            radius="md"
-                            className="text-white bg-[#5538CE] "
-                            onPress={handleLoginWithWallet}
-                          >
-                            {loaders.connectWallet ? (
-                              <Spinner color="white" size="sm" />
-                            ) : (
-                              <span>Connect Wallet</span>
-                            )}
-                          </Button>
+                          {address && (
+                            <Button
+                              radius="md"
+                              className="text-white bg-[#5538CE] mb-2"
+                              onPress={handleLoginWithWallet}
+                            >
+                              {loaders.connectWallet ? (
+                                <Spinner color="white" size="sm" />
+                              ) : (
+                                <span>Login with Wallet</span>
+                              )}
+                            </Button>
+                          )}
+                          {
+                            <div className="w-full flex justify-center items-center">
+                              <WalletConnectButton />
+                            </div>
+                          }
                         </div>
                       )}
                     </div>
