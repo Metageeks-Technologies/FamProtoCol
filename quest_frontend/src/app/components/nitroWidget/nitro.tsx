@@ -9,7 +9,7 @@ interface WidgetConfig {
   // fromChain: string;
   toChain: string;
   // fromToken: string;
-  toToken: string;
+  // toToken: string;
   ctaColor: string;
   textColor: string;
   backgroundColor: string;
@@ -30,14 +30,14 @@ const NitroWidget: React.FC = () => {
       // fromChain: "80001",
       toChain: "42161",
       // fromToken: "0x22bAA8b6cdd31a0C5D1035d6e72043f4Ce6aF054",
-      toToken: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+      // toToken: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
       ctaColor: "#5538CE",
       textColor: "#fff",
       backgroundColor: "#111",
       logoURI: "https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png",
       display: "vertical",
       isFromSelLocked: "0",
-      isToSelLocked: "1",
+      isToSelLocked: "0",
     };
 
     // Base URL for Nitro widget
