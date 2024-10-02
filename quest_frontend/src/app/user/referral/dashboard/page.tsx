@@ -6,7 +6,6 @@ import ModalForm from "@/app/components/ModalForm";
 import { fetchUserData } from "@/redux/reducer/authSlice";
 import type { Referrer, ReferredUser } from "@/types/types";
 import UserTable from "@/app/components/table/userTable";
-import axios from "axios";
 import { notify } from "@/utils/notify";
 import { TailSpinLoader } from "@/app/components/loader";
 import { ethers } from "ethers";
@@ -14,6 +13,8 @@ import { connectWallet } from "@/utils/wallet-connect"; // Import your wallet co
 import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
 import Link from "next/link";
 import axiosInstance from "@/utils/axios/axios";
+import { useAccount} from "wagmi";
+import WalletConnectButton from "@/app/components/rainbowkit/button";
 
 const referralColumns = [
   { name: "NAME", uid: "name" },
@@ -35,9 +36,19 @@ const ReferralProfile: React.FC = () => {
   const [referredUsers, setReferredUsers] = useState<ReferredUser[]>([]);
   const [showReferral, setShowReferral] = useState(false);
   const baseReferralUrl = `${process.env.NEXT_PUBLIC_CLIENT_URL}/?referralCode=`;
-
+  const [isWalletConnected,setIsWalletConnected]=useState(false);
+  const { address } = useAccount();
   const user: any = useSelector((state: RootState) => state.login.user);
   // console.log("user", user);
+
+  useEffect(() => {
+    if(address){
+      setIsWalletConnected(true);
+    }
+    else{
+      setIsWalletConnected(false);
+    }
+  }, [address]);
 
   const onGenerateReferral = async () => {
     try {
@@ -49,11 +60,16 @@ const ReferralProfile: React.FC = () => {
         // Notify the user about the successful generation
 
         // Connect the wallet if not already connected
-        const walletData = await connectWallet();
-        if (!walletData) {
-          notify("error", "Wallet connection failed. Please try again.");
+        // const walletData = await connectWallet();
+        if (!address) {
+           setIsWalletConnected(false);
+          notify(
+            "error",
+            "Please connect your wallet to generate a referral code."
+          )
           return;
         }
+        console.log("wallet address present");
 
         // Use ethers to connect to the smart contract
         const provider = new ethers.BrowserProvider(window.ethereum);
@@ -85,11 +101,10 @@ const ReferralProfile: React.FC = () => {
         else{
           notify("error", "Failed to save referral code.");
         }
-       
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error generating referral code:", error);
-      notify("error", "Failed to generate and save referral code.");
+      notify("error", error.reason);
     }
   };
 
@@ -131,12 +146,13 @@ const ReferralProfile: React.FC = () => {
   return (
     <>
       <div className="flex flex-col gap-2 py-4">
-        <div className="flex justify-end items-center mb-4 md:mb-0 w-[90%] mx-auto">
+        <div className="flex justify-between sm:justify-end items-center gap-4 mb-4 md:mb-4 w-[90%] mx-auto">
+          <div><WalletConnectButton/></div>
           <Link
             href="/"
             className="bg-famViolate hover:bg-famViolate-light px-2 py-1 md:px-4 md:py-2 rounded-md font-famFont"
           >
-            Go Back to Home
+            Go Back
           </Link>
         </div>
         {/* user info */}
@@ -196,7 +212,7 @@ const ReferralProfile: React.FC = () => {
                         {(!user.inviteCode ||
                           user.inviteCode.trim().length === 0) && (
                           <button
-                            className="w-full rounded-md bg-famViolate font-famFont text-white text-nowrap px-4 py-2 hover:bg-famViolate-light transition-colors duration-300"
+                            className="w-full mb-2 rounded-md bg-famViolate text-white text-nowrap px-4 py-2 hover:bg-famViolate-light transition-colors duration-300"
                             onClick={onGenerateReferral}
                           >
                             Generate Referral

@@ -12,7 +12,6 @@ import { ethers } from "ethers";
 import axiosInstance from "@/utils/axios/axios";
 import axios from "axios";
 import { notify } from "@/utils/notify";
-import { connectWallet } from "@/utils/wallet-connect";
 import Swal from "sweetalert2";
 import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
 import usdt from "@/utils/abi/usdt.json";
@@ -20,7 +19,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import NitroWidget from "./components/nitroWidget/nitro";
 import WalletConnectButton from "@/app/components/rainbowkit/button";
-import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
+import { useAccount} from "wagmi";
+import {WalletX} from "@/types/types";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -42,8 +42,12 @@ const LandingPage = () => {
   const [logo, setLogo] = useState<any>(null);
   const [thankYou, setThankYou] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("login");
-  const [isbridge, setIsbridge] = useState(false);
+  const [isBridge, setIsBridge] = useState(false);
   const [isBridgeActive, setIsBridgeActive] = useState(false);
+  const [walletXProvider, setWalletXProvider] = useState<any>(null);
+  const [walletX,setWalletX]=useState<WalletX>({
+    address:"",
+  })
   const [loaders, setLoaders] = useState({
     connectWallet: false,
     login: false,
@@ -144,7 +148,7 @@ const LandingPage = () => {
     setPassword("");
     notifyAlert("clear");
     setThankYou(false);
-    setIsbridge(false);
+    setIsBridge(false);
     setLogoPreview("");
     // setIswalletconnected(false)
   };
@@ -273,7 +277,7 @@ const LandingPage = () => {
   const handleDomainMinting = async () => {
     setLoader(true);
     notifyAlert("clear");
-    setIsbridge(false);
+    setIsBridge(false);
     // Validate domain name
     if (!domain || domain.length < 3) {
       notifyAlert("error", "Domain name must be at least 3 characters long");
@@ -401,7 +405,7 @@ const LandingPage = () => {
               "error",
               "Insufficient USDT balance.Please ensure you have at least 2.5 USDT & Some gas fees on Arbitrum chain.Make sure you have assets on Arbitrum chain. You can convert your Assets to Arbitrum by using Nitro bridge below"
             );
-            setIsbridge(true);
+            setIsBridge(true);
             // nitro
             setLoader(false);
             return;
@@ -455,7 +459,7 @@ const LandingPage = () => {
               "error",
               "Insufficient USDT balance.Please ensure you have at least 5 USDT & Some gas fees on Arbitrum chain.Make sure you have assets on Arbitrum chain.You can convert your Assets to Arbitrum by using Nitro bridge below"
             );
-            setIsbridge(true);
+            setIsBridge(true);
             // nitro
             setLoader(false);
             return;
@@ -577,14 +581,67 @@ const LandingPage = () => {
     setDomain("");
     setLogoPreview("");
     setReferralCode("");
+    setIsBridge(false);
     notifyAlert("clear");
   };
 
   const handleBridge = (state: boolean) => {
     notifyAlert("clear");
     setIsBridgeActive(state);
-    setIsbridge(false);
+    setIsBridge(false);
   };
+
+ const detectEip6963 = () => {
+    const handleAnnounceProvider = (event: Event) => {
+      const customEvent = event as CustomEvent;
+
+      if (customEvent.detail.info.name === "WalletX") {
+        setWalletXProvider(customEvent.detail.provider);
+        // console.log(customEvent.detail.provider, "This is walletXProvider");
+      }
+    };
+
+    window.addEventListener("eip6963:announceProvider", handleAnnounceProvider);
+    window.addEventListener(
+      "eip6963:announceProvider:walletx",
+      handleAnnounceProvider,
+    );
+
+    window.dispatchEvent(new Event("eip6963:requestProvider"));
+    window.dispatchEvent(new Event("eip6963:requestProvider:walletx"));
+
+    return () => {
+      window.removeEventListener(
+        "eip6963:announceProvider",
+        handleAnnounceProvider,
+      );
+      window.removeEventListener(
+        "eip6963:announceProvider:walletx",
+        handleAnnounceProvider,
+      );
+    };
+  };
+
+  useEffect(()=>{
+    detectEip6963();
+  },[]);
+
+  const handleWalletX=async()=>{
+    try{
+       const response=await walletXProvider.enable();
+    console.log("response",response)
+      setWalletX({...walletX,address:response[0]});
+      console.log("walletX",walletXProvider);
+      // const sign = await walletXProvider.request({
+      //   method: "personal_sign",
+      //   params: [_msg,address, "Example password"],
+      // });
+      // console.log("sign",sign);
+    }
+    catch(error){
+      console.log("error",error);
+    }
+  }
 
   return (
     <>
@@ -916,7 +973,7 @@ const LandingPage = () => {
                         {alertMessage}
                       </div>
                     )}
-                    {isbridge && (
+                    {isBridge && (
                       <div className="flex justify-center items-center mb-4">
                         <Button
                           onClick={() => {
@@ -969,6 +1026,16 @@ const LandingPage = () => {
                             <div className={`w-full flex justify-center items-center ${((!domain || !password || !logoPreview || !referralCode) && !address ) && "disabled-button"} `}>
                                 <WalletConnectButton />
                             </div>
+                            <div className="w-full flex justify-center item-center">OR</div>
+                              <div className="flex justify-center items-center">
+                                {
+                                  walletXProvider?(
+                                    <Button className="px-4 py-2 rounded-full border-1 hover:border-gray-400 border-famViolate bg-zinc-950 text-white" onPress={handleWalletX}>Connect WalletX for Gasless Mint</Button>
+                                  ):(
+                                    <Link target="_blank" href="https://chromewebstore.google.com/detail/walletx-a-gasless-smart-w/mdjjoodeandllhefapdpnffjolechflh" className="px-4 py-2 rounded-full border-1 hover:border-gray-400 border-famViolate bg-zinc-950 text-white" >Mint Gasless with WalletX</Link>
+                                  )
+                                }
+                              </div>
                           </>
                         )
                       ) : (
