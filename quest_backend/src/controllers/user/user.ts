@@ -429,3 +429,22 @@ export const famTaskComplete=async (req: any, res: Response) => {
     res.send({ success: false, message: "internal server error" });
   }
 }
+
+export const isValidReferral=async (req:any,res:Response)=>{
+  try{
+    console.log("req.body",req.body);
+    const {referralCode}=req.body;
+    const free_referral=process.env.FREE_REFERRAL;
+    const discount_referral=process.env.DISCOUNT_REFERRAL;
+    if(referralCode===free_referral){
+      return res.send({success:true,isFreeReferral:true,isDiscountReferral:false});
+    }
+    if(referralCode===discount_referral){
+      return res.send({success:true,isFreeReferral:false,isDiscountReferral:true});
+    }
+    return res.send({success:false,isFreeReferral:false,isDiscountReferral:false})
+  }
+  catch(error){
+    return res.send({success:false,message:"internal server error"});
+  }
+}

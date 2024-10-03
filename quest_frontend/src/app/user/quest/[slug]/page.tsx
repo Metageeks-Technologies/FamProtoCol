@@ -1,5 +1,4 @@
 "use client";
-import Cookies from "js-cookie";
 import QuizPollCarousel from "@/app/components/QuizPollCarousel";
 import React, { useEffect, useState, useCallback } from "react";
 import {
@@ -369,7 +368,6 @@ const Popup: React.FC<{
   const [connectWalletIndex,setConnectWalletIndex]=useState<any>([]);
   const [stampArray, setStampArray] = useState<Array<Stamp>>([]);
   const user = useSelector((state: RootState) => state.login.user);
-  const authToken = `Bearer ${Cookies.get("_fam_token")}`;
 
   // console.log("selectedCard",selectedCard);
 

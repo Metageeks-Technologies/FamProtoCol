@@ -12,7 +12,6 @@ import { ethers } from "ethers";
 import axiosInstance from "@/utils/axios/axios";
 import axios from "axios";
 import { notify } from "@/utils/notify";
-import { connectWallet } from "@/utils/wallet-connect";
 import Swal from "sweetalert2";
 import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
 import usdt from "@/utils/abi/usdt.json";
@@ -20,7 +19,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import NitroWidget from "./components/nitroWidget/nitro";
 import WalletConnectButton from "@/app/components/rainbowkit/button";
-import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
+import { useAccount, useWalletClient } from "wagmi";
+import { isAlphanumericWithHyphen } from "@/utils/helper/helper";
 
 const LandingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -29,10 +29,8 @@ const LandingPage = () => {
   const [isDomainAvailable, setIsDomainAvailable] = useState<string>("");
   const [referralCode, setReferralCode] = useState("");
   const [error, setError] = useState("");
-  const [walletAddress, setWalletAddress] = useState<any>("");
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [loader, setLoader] = useState(false);
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [showPasswordField, setShowPasswordField] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
@@ -42,19 +40,26 @@ const LandingPage = () => {
   const [logo, setLogo] = useState<any>(null);
   const [thankYou, setThankYou] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("login");
-  const [isbridge, setIsbridge] = useState(false);
+  const [isBridge, setIsBridge] = useState(false);
   const [isBridgeActive, setIsBridgeActive] = useState(false);
+  const [referralType,setReferralType]=useState("");
+  // const [walletXProvider, setWalletXProvider] = useState<any>(null);
+  // const [walletX, setWalletX] = useState<WalletX>({
+  //   address: "",
+  // });
   const [loaders, setLoaders] = useState({
     connectWallet: false,
     login: false,
   });
   const router = useRouter();
   const { address } = useAccount();
+  const { data: walletClient } = useWalletClient(); // Get signer for transactions
   // console.log("wallet address from rainbow",address);
 
   useEffect(() => {
     notifyAlert("clear");
   }, [address]);
+
   const notifyAlert = (type: string, message?: string) => {
     if (type === "success") {
       setAlertMessage(message || "");
@@ -81,6 +86,27 @@ const LandingPage = () => {
     }
   };
 
+  const checkReferral=async()=>{
+    try{
+      const response:any=await axiosInstance.post("/user/isValidReferral",{referralCode});
+      console.log("checkReferral",response);
+      if(response.data.success){
+        if(response.data.isFreeReferral===true){
+          setReferralType("free");
+          return;
+        }
+        if(response.data.isDiscountReferral){
+          setReferralType("discount");
+          return;
+        }
+      }
+    }
+    catch(error){
+      console.log("error:",error);
+      return;
+    }
+  }
+
   useEffect(() => {
     fetchDomains();
     if (typeof window !== "undefined") {
@@ -96,11 +122,6 @@ const LandingPage = () => {
   useEffect(() => {
     handleValidDomain();
   }, [domain]);
-
-  const isAlphanumericWithHyphen = (str: string): boolean => {
-    const regex = /^[a-zA-Z0-9-]+$/;
-    return regex.test(str);
-  };
 
   const handleValidDomain = () => {
     if (domain.length < 3) {
@@ -144,14 +165,14 @@ const LandingPage = () => {
     setPassword("");
     notifyAlert("clear");
     setThankYou(false);
-    setIsbridge(false);
+    setIsBridge(false);
     setLogoPreview("");
-    // setIswalletconnected(false)
   };
 
   const handleClose = () => {
     notifyAlert("clear");
     setReferralCode("");
+
     onClose();
   };
 
@@ -213,6 +234,7 @@ const LandingPage = () => {
       setLoader(false);
     }
   };
+
   const handleLoginDomain = async () => {
     setLoaders({ ...loaders, login: true });
     notifyAlert("clear");
@@ -250,9 +272,6 @@ const LandingPage = () => {
         notifyAlert("error", "Wallet is not connected");
         return;
       }
-      // console.log("wallet", walletInfo);
-
-      setIsWalletConnected(true);
       const response = await axiosInstance.post("/user/loginDomain", {
         walletAddress: address,
       });
@@ -270,10 +289,33 @@ const LandingPage = () => {
     setLoaders({ ...loaders, connectWallet: false });
   };
 
+  // await walletXProvider.request({
+  //       method: 'disconnect',
+  //       params: [{ userAddress }],
+  //     });
+
+  // const handleWalletXMint = async () => {
+  //   const res = await window.walletx.request({
+  //     method: "eth_sendTransaction",
+  //     // The following sends an EIP-1559 transaction. Legacy transactions are also supported.
+  //     params: [
+  //       {
+  //         // The user's active address.
+  //         from: walletX.address,
+  //         // Required except during contract publications.
+  //         to: process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS,
+  //         // Only required to send ether to the recipient from the initiating external account.
+  //         data: "0x092ca2d0000000000000000000000000c6e60b2e0a3bc5529fa521d173b1cf7d94fc0c43",
+  //       },
+  //     ],
+  //   });
+  //   console.log("mint walletx", res);
+  // };
+
   const handleDomainMinting = async () => {
     setLoader(true);
     notifyAlert("clear");
-    setIsbridge(false);
+    setIsBridge(false);
     // Validate domain name
     if (!domain || domain.length < 3) {
       notifyAlert("error", "Domain name must be at least 3 characters long");
@@ -323,7 +365,9 @@ const LandingPage = () => {
     if (!address) {
       setLoader(false);
       notifyAlert("error", "Connect wallet first");
+      return;
     }
+    // await checkReferral();
 
     const updatedDomain = domain + ".fam";
 
@@ -334,54 +378,67 @@ const LandingPage = () => {
     const usdtABI = usdt;
 
     if (!ArbicontractAddress || !contractABI || !address) {
-      // const walletInfo = await connectWallet();
+      
+        notifyAlert("error", "Failed to connect wallet.");
+        setLoader(false);
 
-      setWalletAddress(address);
-      // console.log("wallet", walletInfo);
-      if (address) {
-        setIsWalletConnected(true);
-      } else {
+        return;
+    }
+
+    try {
+      // const provider = new ethers.BrowserProvider(window?.ethereum);
+      // const signer = await provider.getSigner();
+
+      if (!walletClient) {
         notifyAlert("error", "Failed to connect wallet.");
         setLoader(false);
         return;
       }
-    }
+      console.log("walletCLient", walletClient);
 
-    try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-
+      // Get the provider and signer
+      const provider = new ethers.BrowserProvider(walletClient);
+      console.log("provider", provider);
+      const signer = await provider.getSigner(); // Get signer from the provider
+      console.log("signer details", signer);
       // Initialize the contract instance
       const contract = new ethers.Contract(
         ArbicontractAddress,
         contractABI,
         signer
       );
-      console.log("signer details", signer);
 
+      console.log("contract", contract);
+      console.log("signer", signer.address);
+      const add = await signer.getAddress();
+      console.log("add", add);
       // Check if the user is whitelisted for free mint
       const isFreeMintWhitelisted = await contract.freeMintWhitelist(
         await signer.getAddress()
       );
-      // console.log("is free",isFreeMintWhitelisted);
+      console.log("is free", isFreeMintWhitelisted);
 
-      if (isFreeMintWhitelisted) {
+      if (isFreeMintWhitelisted && referralType==="free") {
         // Call free mint function
         const tx = await contract.freeMintDomain(updatedDomain, referralCode);
+        console.log("tx")
         await tx.wait();
+        console.log("tx1")
         notifyAlert(
           "success",
           `Domain ${updatedDomain} minted for free successfully`
         );
         setHash(tx.hash);
         setShowPasswordField(true);
-      } else {
+      
+      }
+       else {
         // Check if the user is whitelisted for discount mint
         const isDiscountMintWhitelisted = await contract.discountMintWhitelist(
           await signer.getAddress()
         );
 
-        if (isDiscountMintWhitelisted) {
+        if (isDiscountMintWhitelisted && referralType==="discount") {
           // Discounted mint fee (2.5 USDT)
           const usdtAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDT with 6 decimals
 
@@ -401,7 +458,7 @@ const LandingPage = () => {
               "error",
               "Insufficient USDT balance.Please ensure you have at least 2.5 USDT & Some gas fees on Arbitrum chain.Make sure you have assets on Arbitrum chain. You can convert your Assets to Arbitrum by using Nitro bridge below"
             );
-            setIsbridge(true);
+            setIsBridge(true);
             // nitro
             setLoader(false);
             return;
@@ -426,17 +483,8 @@ const LandingPage = () => {
           );
           setHash(tx.hash);
           setShowPasswordField(true);
-        } else {
-          // If not whitelisted, check referral code validity and call mintDomainWithReferral
-          if (!referralCode || referralCode === "") {
-            notifyAlert(
-              "error",
-              "You must provide a valid referral code to mint."
-            );
-            setLoader(false);
-            return;
-          }
-
+        } 
+        else {
           // Initialize usdt contract instance
           const usdtContract = new ethers.Contract(
             usdtContractAddress,
@@ -455,8 +503,7 @@ const LandingPage = () => {
               "error",
               "Insufficient USDT balance.Please ensure you have at least 5 USDT & Some gas fees on Arbitrum chain.Make sure you have assets on Arbitrum chain.You can convert your Assets to Arbitrum by using Nitro bridge below"
             );
-            setIsbridge(true);
-            // nitro
+            setIsBridge(true);
             setLoader(false);
             return;
           }
@@ -483,30 +530,53 @@ const LandingPage = () => {
         }
       }
     } catch (error: any) {
-      if (typeof error === "object" && error !== null && "reason" in error) {
         console.log("error", error);
-        notifyAlert("error", `${(error as { reason: string }).reason}`);
-      } else if (
-        typeof error === "object" &&
-        error !== null &&
-        "message" in error
-      ) {
-        if (error.code === "BAD_DATA") {
+        if (error.code === "CALL_EXCEPTION") {
+          console.error(
+            "Transaction failed due to a contract revert or failure."
+          );
+          if (error.reason) {
+            console.error("Revert reason:", error.reason);
+            notifyAlert("error", `Transaction failed: ${error.reason}`);
+          } else if (error.data) {
+            console.error("Revert data:", error.data);
+            notifyAlert(
+              "error",
+              `Transaction failed: ${error.data}`
+            );
+          } else {
+            console.error("Missing revert data.");
+            notifyAlert(
+              "error",
+              "Transaction failed: Try with different wallet address"
+            );
+          }
+        } else if (error.code === "INSUFFICIENT_FUNDS") {
+          notifyAlert(
+            "error",
+            "You have insufficient funds to complete this transaction."
+          );
+        } else if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
+          notifyAlert("error", "The gas limit could not be estimated.");
+        }
+        else if (error.code === "ACTION_REJECTED"){
+          notifyAlert("error", "Request Rejected");
+        }
+        else if (error.code === "BAD_DATA") {
           // Show a custom error message to the user
           console.log(error.message);
           notifyAlert(
             "error",
             "Minting is only allowed on Arbitrum mainnet network.Please add Arbitrum mainnet network"
           );
-        } else {
-          console.log("error", error);
-          notifyAlert("error", `${(error as { message: string }).message}`);
         }
-      } else {
-        notifyAlert("error", "An unknown error occurred");
-      }
+         else {
+          // Log generic error for other types
+          console.error("Transaction failed with an unknown error:", error);
+          notifyAlert("error", "Transaction failed due to an unknown error.Try again later");
+        }
+        setLoader(false);
     }
-
     setLoader(false);
   };
 
@@ -577,15 +647,67 @@ const LandingPage = () => {
     setDomain("");
     setLogoPreview("");
     setReferralCode("");
+    setIsBridge(false);
     notifyAlert("clear");
   };
 
   const handleBridge = (state: boolean) => {
     notifyAlert("clear");
     setIsBridgeActive(state);
-    setIsbridge(false);
+    setIsBridge(false);
   };
 
+  // const detectEip6963 = () => {
+  //   const handleAnnounceProvider = (event: Event) => {
+  //     const customEvent = event as CustomEvent;
+
+  //     if (customEvent.detail.info.name === "WalletX") {
+  //       setWalletXProvider(customEvent.detail.provider);
+  //       // console.log(customEvent.detail.provider, "This is walletXProvider");
+  //     }
+  //   };
+
+  //   window.addEventListener("eip6963:announceProvider", handleAnnounceProvider);
+  //   window.addEventListener(
+  //     "eip6963:announceProvider:walletx",
+  //     handleAnnounceProvider
+  //   );
+
+  //   window.dispatchEvent(new Event("eip6963:requestProvider"));
+  //   window.dispatchEvent(new Event("eip6963:requestProvider:walletx"));
+
+  //   return () => {
+  //     window.removeEventListener(
+  //       "eip6963:announceProvider",
+  //       handleAnnounceProvider
+  //     );
+  //     window.removeEventListener(
+  //       "eip6963:announceProvider:walletx",
+  //       handleAnnounceProvider
+  //     );
+  //   };
+  // };
+
+  // useEffect(() => {
+  //   detectEip6963();
+  // }, []);
+
+  // const handleWalletX = async () => {
+  //   try {
+  //     const response = await walletXProvider.enable();
+  //     console.log("response", response);
+  //     setWalletX({ ...walletX, address: response[0] });
+  //     console.log("walletX", walletXProvider);
+
+  //     // const sign = await walletXProvider.request({
+  //     //   method: "personal_sign",
+  //     //   params: ["sign",response[0], "Example password"],
+  //     // });
+  //     // console.log("sign",sign);
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
+  // };
   return (
     <>
       <div className="landing-page h-screen">
@@ -691,7 +813,7 @@ const LandingPage = () => {
                         onClick={() => handleOpen()}
                         className="bg-[#5538CE] text-white font-semibold py-2 px-6 rounded-lg hover:bg-[#6243dd] transition duration-300"
                       >
-                        Get Onboarded
+                        Get OnBoarded
                       </Button>
                       <Button
                         onClick={() => comingSoon()}
@@ -742,7 +864,7 @@ const LandingPage = () => {
                 ) : (
                   <div className="flex flex-col justify-center items-center  ">
                     <div className="text-2xl font-bold font-qanelas uppercase mb-6 md:mb-4 ">
-                      Get Onboarded
+                      Get OnBoarded
                     </div>
                     {activeTab === "signUp" ? (
                       <div className="flex gap-4 mb-4 md:flex-row flex-col justify-between items-center rounded-lg">
@@ -783,7 +905,7 @@ const LandingPage = () => {
                                 htmlFor="domain"
                                 className="uppercase text-sm font-famFont "
                               >
-                                Setup Username/Domain
+                                Setup Username / Domain
                               </label>
                               <input
                                 type="text"
@@ -818,9 +940,9 @@ const LandingPage = () => {
                                 onChange={(e) =>
                                   setReferralCode(e.target.value)
                                 }
-                                className="w-full bg-zinc-950 border-1 border-gray-600 font-famFont  px-4 py-2 hover:border-famViolate-light"
+                                className="w-full bg-zinc-950 border-1 border-gray-600 font-famFont px-4 py-2 hover:border-famViolate-light"
                                 name="inviteCode"
-                                placeholder="invite code"
+                                placeholder="Invite Code"
                               />
                             </div>
                           </div>
@@ -862,7 +984,7 @@ const LandingPage = () => {
                               htmlFor="domain"
                               className="uppercase text-sm font-famFont "
                             >
-                              Username
+                              Username / Domain
                             </label>
                             <input
                               type="text"
@@ -916,7 +1038,7 @@ const LandingPage = () => {
                         {alertMessage}
                       </div>
                     )}
-                    {isbridge && (
+                    {isBridge && (
                       <div className="flex justify-center items-center mb-4">
                         <Button
                           onClick={() => {
@@ -958,6 +1080,8 @@ const LandingPage = () => {
                                 radius="md"
                                 className="bg-[#5538CE] text-white w-full mb-2"
                                 onPress={handleDomainMinting}
+                                // onPress={handlewalletX}
+                                // onPress={handleFreeMint}
                               >
                                 {loader ? (
                                   <Spinner color="white" size="sm" />
@@ -966,9 +1090,39 @@ const LandingPage = () => {
                                 )}
                               </Button>
                             )}
-                            <div className={`w-full flex justify-center items-center ${((!domain || !password || !logoPreview || !referralCode) && !address ) && "disabled-button"} `}>
-                                <WalletConnectButton />
+                            <div
+                              className={`w-full flex justify-center items-center ${
+                                (!domain ||
+                                  !password ||
+                                  !logoPreview ||
+                                  !referralCode) &&
+                                !address &&
+                                "disabled-button"
+                              } `}
+                            >
+                              <WalletConnectButton />
                             </div>
+                            {/* <div className="w-full flex justify-center item-center">
+                              OR
+                            </div> */}
+                            {/* <div className="flex justify-center items-center">
+                              {walletXProvider ? (
+                                <Button
+                                  className="px-4 py-2 rounded-full border-1 hover:border-gray-400 border-famViolate bg-zinc-950 text-white"
+                                  onPress={handleWalletX}
+                                >
+                                  Connect WalletX for Gasless Mint
+                                </Button>
+                              ) : (
+                                <Link
+                                  target="_blank"
+                                  href="https://chromewebstore.google.com/detail/walletx-a-gasless-smart-w/mdjjoodeandllhefapdpnffjolechflh"
+                                  className="px-4 py-2 rounded-full border-1 hover:border-gray-400 border-famViolate bg-zinc-950 text-white"
+                                >
+                                  Mint Gasless with WalletX
+                                </Link>
+                              )}
+                            </div> */}
                           </>
                         )
                       ) : (

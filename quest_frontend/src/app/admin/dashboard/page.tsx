@@ -67,7 +67,6 @@ const AdminDashboardPage = (props: Props) => {
     }
   };
   
-
   useEffect(() => {
     if (!isValidToken()) {
       redirect('/admin/login'); // Redirect to login page if token is not valid
@@ -78,9 +77,7 @@ const AdminDashboardPage = (props: Props) => {
        
       <div className='text-xl '>
         Welcome to the admin dashboard.
-
       </div>
-
     </div>
   )
 }
