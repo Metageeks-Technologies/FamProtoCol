@@ -13,8 +13,9 @@ import { connectWallet } from "@/utils/wallet-connect"; // Import your wallet co
 import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
 import Link from "next/link";
 import axiosInstance from "@/utils/axios/axios";
-import { useAccount} from "wagmi";
+import { useAccount,useWalletClient} from "wagmi";
 import WalletConnectButton from "@/app/components/rainbowkit/button";
+import { TailSpin } from "react-loader-spinner";
 
 const referralColumns = [
   { name: "NAME", uid: "name" },
@@ -37,7 +38,11 @@ const ReferralProfile: React.FC = () => {
   const [showReferral, setShowReferral] = useState(false);
   const baseReferralUrl = `${process.env.NEXT_PUBLIC_CLIENT_URL}/?referralCode=`;
   const [isWalletConnected,setIsWalletConnected]=useState(false);
+  const [loaders,setLoaders]=useState({
+    generateReferral:false,
+  })
   const { address } = useAccount();
+  const { data: walletClient } = useWalletClient(); 
   const user: any = useSelector((state: RootState) => state.login.user);
   // console.log("user", user);
 
@@ -52,6 +57,7 @@ const ReferralProfile: React.FC = () => {
 
   const onGenerateReferral = async () => {
     try {
+      setLoaders({...loaders,generateReferral:true});
       // Fetch referral code from the backend
       const response=await axiosInstance.get('/user/generateRefferalCode');
 
@@ -67,12 +73,20 @@ const ReferralProfile: React.FC = () => {
             "error",
             "Please connect your wallet to generate a referral code."
           )
+          setLoaders({...loaders,generateReferral:false});
           return;
         }
         console.log("wallet address present");
 
         // Use ethers to connect to the smart contract
-        const provider = new ethers.BrowserProvider(window.ethereum);
+         if (!walletClient) {
+          notify("error", "Failed to connect wallet.");
+          setLoaders({...loaders,generateReferral:false});
+        return;
+      }
+      console.log("walletCLient", walletClient);
+
+        const provider = new ethers.BrowserProvider(walletClient);
         const signer = await provider.getSigner();
 
         const contractAddress =
@@ -100,12 +114,15 @@ const ReferralProfile: React.FC = () => {
         }
         else{
           notify("error", "Failed to save referral code.");
+          setLoaders({...loaders,generateReferral:false});
         }
       }
     } catch (error:any) {
       console.error("Error generating referral code:", error);
       notify("error", error.reason);
+
     }
+    setLoaders({...loaders,generateReferral:false});
   };
 
   const getReferredUsers = async () => {
@@ -215,7 +232,12 @@ const ReferralProfile: React.FC = () => {
                             className="w-full mb-2 rounded-md bg-famViolate text-white text-nowrap px-4 py-2 hover:bg-famViolate-light transition-colors duration-300"
                             onClick={onGenerateReferral}
                           >
-                            Generate Referral
+                           <div className="flex justify-center items-center gap-2" >
+                           {
+                            loaders.generateReferral && <span><TailSpin width={20} height={20} /></span>
+                           }
+                           <span>Generate Referral</span>
+                           </div>
                           </button>
                         )}
                       </div>
