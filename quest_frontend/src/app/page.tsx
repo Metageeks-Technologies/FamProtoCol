@@ -419,7 +419,7 @@ const LandingPage = () => {
       );
       console.log("is free", isFreeMintWhitelisted);
 
-      if (isFreeMintWhitelisted && referralType==="free") {
+      if (isFreeMintWhitelisted) {
         // Call free mint function
         const tx = await contract.freeMintDomain(updatedDomain, referralCode);
         console.log("tx")
@@ -439,7 +439,7 @@ const LandingPage = () => {
           await signer.getAddress()
         );
 
-        if (isDiscountMintWhitelisted && referralType==="discount") {
+        if (isDiscountMintWhitelisted) {
           // Discounted mint fee (2.5 USDT)
           const usdtAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDT with 6 decimals
 
