@@ -17,7 +17,7 @@ import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
 import usdt from "@/utils/abi/usdt.json";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import NitroWidget from "./components/nitroWidget/nitro";
+import NitroWidget from "@/app/components/nitroWidget/nitro";
 import WalletConnectButton from "@/app/components/rainbowkit/button";
 import { useAccount, useWalletClient } from "wagmi";
 import { isAlphanumericWithHyphen } from "@/utils/helper/helper";
@@ -379,10 +379,8 @@ const LandingPage = () => {
     const usdtABI = usdt;
 
     if (!ArbicontractAddress || !contractABI || !address) {
-      
         notifyAlert("error", "Failed to connect wallet.");
         setLoader(false);
-
         return;
     }
 
