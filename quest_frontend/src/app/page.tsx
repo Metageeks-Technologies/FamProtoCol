@@ -547,7 +547,7 @@ const LandingPage = () => {
             console.error("Missing revert data.");
             notifyAlert(
               "error",
-              "Transaction failed: Try with different wallet address"
+              "Transaction failed: Check your balance or Try with some other address."
             );
           }
         } else if (error.code === "INSUFFICIENT_FUNDS") {
