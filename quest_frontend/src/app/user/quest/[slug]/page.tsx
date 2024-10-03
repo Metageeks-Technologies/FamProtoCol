@@ -732,7 +732,7 @@ const Popup: React.FC<{
   const checkCivicPass = async (taskId: any) => {
     if (!contractAddress || !contractABI || !address) {
       await connectWallet();
-      console.log("Contract address, ABI is missing");
+      // console.log("Contract address, ABI is missing");
       return;
     }
     try {

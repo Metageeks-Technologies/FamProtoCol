@@ -76,7 +76,7 @@ const ReferralProfile: React.FC = () => {
           setLoaders({...loaders,generateReferral:false});
           return;
         }
-        console.log("wallet address present");
+        // console.log("wallet address present");
 
         // Use ethers to connect to the smart contract
          if (!walletClient) {
@@ -84,7 +84,7 @@ const ReferralProfile: React.FC = () => {
           setLoaders({...loaders,generateReferral:false});
         return;
       }
-      console.log("walletCLient", walletClient);
+      // console.log("walletCLient", walletClient);
 
         const provider = new ethers.BrowserProvider(walletClient);
         const signer = await provider.getSigner();
@@ -177,7 +177,7 @@ const ReferralProfile: React.FC = () => {
           <div className="flex flex-col lg:flex-row gap-4 items-start justify-between lg:pt-20 mx-4 lg:mx-10">
             {/* user info */}
             <div className="lg:w-2/5 w-full">
-              <div className="flex flex-col lg:flex-row items-center gap-4">
+              <div className="flex flex-col lg:flex-row items-center gap-0 lg:gap-4">
                 <div className="bottom-trapezium w-40 h-40 flex justify-center items-center">
                   {user ? (
                     <img

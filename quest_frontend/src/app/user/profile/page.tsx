@@ -26,7 +26,7 @@ const Profile: React.FC = () => {
   const [allFriends, setAllFriends] = useState<any>([]);
 
   const user: any = useSelector((state: RootState) => state.login.user);
-  console.log("user", user);
+  // console.log("user", user);
 
   const getFriendIds = (user: any) => {
     // Combine followers and following into a single array
