@@ -12,7 +12,7 @@ export function RainBowProviders({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider coolMode theme={darkTheme({
+        <RainbowKitProvider theme={darkTheme({
       accentColor: '#7b3fe4',
       accentColorForeground: 'white',
       borderRadius: 'small',
