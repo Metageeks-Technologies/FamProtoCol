@@ -411,6 +411,16 @@ const LandingPage = () => {
       console.log("signer", signer.address);
       const add = await signer.getAddress();
       console.log("add", add);
+
+      const hasMinted= await contract.hasMintedDomain(await signer.getAddress());
+      console.log("hasMinted", hasMinted);
+
+      if(hasMinted){
+        notifyAlert("error", "Domain already minted with this wallet address");
+        setLoader(false);
+        return;
+      }
+
       // Check if the user is whitelisted for free mint
       const isFreeMintWhitelisted = await contract.freeMintWhitelist(
         await signer.getAddress()
@@ -455,7 +465,7 @@ const LandingPage = () => {
           if (usdtBalance < usdtAmountDiscount) {
             notifyAlert(
               "error",
-              "Insufficient USDT balance.Please ensure you have at least 2.5 USDT & Some gas fees on Arbitrum chain.Make sure you have assets on Arbitrum chain. You can convert your Assets to Arbitrum by using Nitro bridge below"
+              "Insufficient USDT balance. Please ensure you have at least 2.5 USDT & Some gas fees on Arbitrum chain. Make sure you have assets on Arbitrum chain. You can convert your Assets to Arbitrum by using Nitro bridge below"
             );
             setIsBridge(true);
             // nitro
@@ -500,7 +510,7 @@ const LandingPage = () => {
           if (usdtBalance < usdtAmount) {
             notifyAlert(
               "error",
-              "Insufficient USDT balance.Please ensure you have at least 5 USDT & Some gas fees on Arbitrum chain.Make sure you have assets on Arbitrum chain.You can convert your Assets to Arbitrum by using Nitro bridge below"
+              "Insufficient USDT balance. Please ensure you have at least 5 USDT & Some gas fees on Arbitrum chain. Make sure you have assets on Arbitrum chain. You can convert your Assets to Arbitrum by using Nitro bridge below"
             );
             setIsBridge(true);
             setLoader(false);
@@ -530,6 +540,8 @@ const LandingPage = () => {
       }
     } catch (error: any) {
         console.log("error", error);
+        console.log("error code",error.code);
+        console.log("error message",error.message);
         if (error.code === "CALL_EXCEPTION") {
           console.error(
             "Transaction failed due to a contract revert or failure."
@@ -569,6 +581,14 @@ const LandingPage = () => {
             "Minting is only allowed on Arbitrum mainnet network.Please add Arbitrum mainnet network"
           );
         }
+        else if (error && error.error) {
+    console.error("Error message:", error.error.message);
+    console.error("Error code:", error.error.code);
+    console.error("Error details:", error.error);
+    if(error.error.code==-32603){
+      notifyAlert("error","Request Rejected");
+    }
+  }
          else {
           // Log generic error for other types
           console.error("Transaction failed with an unknown error:", error);
