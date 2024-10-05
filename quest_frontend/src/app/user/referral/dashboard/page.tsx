@@ -13,7 +13,7 @@ import { connectWallet } from "@/utils/wallet-connect"; // Import your wallet co
 import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
 import Link from "next/link";
 import axiosInstance from "@/utils/axios/axios";
-import { useAccount,useWalletClient} from "wagmi";
+import { useAccount, useWalletClient } from "wagmi";
 import WalletConnectButton from "@/app/components/rainbowkit/button";
 import { TailSpin } from "react-loader-spinner";
 
@@ -37,54 +37,55 @@ const ReferralProfile: React.FC = () => {
   const [referredUsers, setReferredUsers] = useState<ReferredUser[]>([]);
   const [showReferral, setShowReferral] = useState(false);
   const baseReferralUrl = `${process.env.NEXT_PUBLIC_CLIENT_URL}/?referralCode=`;
-  const [isWalletConnected,setIsWalletConnected]=useState(false);
-  const [loaders,setLoaders]=useState({
-    generateReferral:false,
-  })
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const [loaders, setLoaders] = useState({
+    generateReferral: false,
+  });
   const { address } = useAccount();
-  const { data: walletClient } = useWalletClient(); 
+  const { data: walletClient } = useWalletClient();
   const user: any = useSelector((state: RootState) => state.login.user);
   // console.log("user", user);
 
   useEffect(() => {
-    if(address){
+    if (address) {
       setIsWalletConnected(true);
-    }
-    else{
+    } else {
       setIsWalletConnected(false);
     }
   }, [address]);
+  const [generatetedRefferalCode, setGeneratedReferalcode] = useState("");
 
   const onGenerateReferral = async () => {
     try {
-      setLoaders({...loaders,generateReferral:true});
+      setLoaders({ ...loaders, generateReferral: true });
       // Fetch referral code from the backend
-      const response=await axiosInstance.get('/user/generateRefferalCode');
+      const response = await axiosInstance.get("/user/generateRefferalCode");
 
       if (response.data.success) {
         const referralCode = response.data.referralCode;
+        setGeneratedReferalcode(referralCode);
         // Notify the user about the successful generation
 
         // Connect the wallet if not already connected
         // const walletData = await connectWallet();
         if (!address) {
-           setIsWalletConnected(false);
+          setIsWalletConnected(false);
           notify(
             "error",
             "Please connect your wallet to generate a referral code."
-          )
-          setLoaders({...loaders,generateReferral:false});
+          );
+          setLoaders({ ...loaders, generateReferral: false });
           return;
         }
         // console.log("wallet address present");
 
         // Use ethers to connect to the smart contract
-         if (!walletClient) {
+        if (!walletClient) {
           notify("error", "Failed to connect wallet.");
-          setLoaders({...loaders,generateReferral:false});
-        return;
-      }
-      // console.log("walletCLient", walletClient);
+          setLoaders({ ...loaders, generateReferral: false });
+          return;
+        }
+        // console.log("walletCLient", walletClient);
 
         const provider = new ethers.BrowserProvider(walletClient);
         const signer = await provider.getSigner();
@@ -104,30 +105,27 @@ const ReferralProfile: React.FC = () => {
         const tx = await contract.createReferralCode(referralCode);
         await tx.wait();
 
-        const res = await axiosInstance.post("/user/setReferralCode", {referralCode});
-        if(res.data.success){
-          notify(
-          "success",
-          "Referral code generated and saved successfully!"
-          );
+        const res = await axiosInstance.post("/user/setReferralCode", {
+          referralCode,
+        });
+        if (res.data.success) {
+          notify("success", "Referral code generated and saved successfully!");
           dispatch(fetchUserData());
-        }
-        else{
+        } else {
           notify("error", "Failed to save referral code.");
-          setLoaders({...loaders,generateReferral:false});
+          setLoaders({ ...loaders, generateReferral: false });
         }
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.error("Error generating referral code:", error);
       notify("error", error.reason);
-
     }
-    setLoaders({...loaders,generateReferral:false});
+    setLoaders({ ...loaders, generateReferral: false });
   };
 
   const getReferredUsers = async () => {
     try {
-      const response = await axiosInstance.get('/user/referred');
+      const response = await axiosInstance.get("/user/referred");
       // console.log("referred users", response.data);
       setReferredUsers(response.data.referredUsers);
     } catch (error) {
@@ -136,7 +134,7 @@ const ReferralProfile: React.FC = () => {
   };
   const getReferrerUser = async () => {
     try {
-      const response = await axiosInstance.get('/user/leaderboard/referrer');
+      const response = await axiosInstance.get("/user/leaderboard/referrer");
       // console.log("referrers", response);
       setReferrer(response.data.users);
     } catch (err) {
@@ -164,7 +162,9 @@ const ReferralProfile: React.FC = () => {
     <>
       <div className="flex flex-col gap-2 py-4">
         <div className="flex justify-between sm:justify-end items-center gap-4 mb-4 md:mb-4 w-[90%] mx-auto">
-          <div><WalletConnectButton/></div>
+          <div>
+            <WalletConnectButton />
+          </div>
           <Link
             href="/"
             className="bg-famViolate hover:bg-famViolate-light px-2 py-1 md:px-4 md:py-2 rounded-md font-famFont"
@@ -228,17 +228,21 @@ const ReferralProfile: React.FC = () => {
                         <ModalForm />
                         {(!user.inviteCode ||
                           user.inviteCode.trim().length === 0) && (
-                          <button
-                            className="w-full mb-2 rounded-md bg-famViolate text-white text-nowrap px-4 py-2 hover:bg-famViolate-light transition-colors duration-300"
-                            onClick={onGenerateReferral}
-                          >
-                           <div className="flex justify-center items-center gap-2" >
-                           {
-                            loaders.generateReferral && <span><TailSpin width={20} height={20} /></span>
-                           }
-                           <span>Generate Referral</span>
-                           </div>
-                          </button>
+                          <div>
+                            <button
+                              className="w-full mb-2 rounded-md bg-famViolate text-white text-nowrap px-4 py-2 hover:bg-famViolate-light transition-colors duration-300"
+                              onClick={onGenerateReferral}
+                            >
+                              <div className="flex justify-center items-center gap-2">
+                                {loaders.generateReferral && (
+                                  <span>
+                                    <TailSpin width={20} height={20} />
+                                  </span>
+                                )}
+                                <span>Generate Referral</span>
+                              </div>
+                            </button>
+                          </div>
                         )}
                       </div>
                       {user.inviteCode && (
@@ -256,7 +260,11 @@ const ReferralProfile: React.FC = () => {
                               }}
                               className="absolute top-1/2 right-2 transform -translate-y-1/2 text-sm text-white hover:text-famViolate-light"
                             >
-                              {showReferral ? <i className="bi bi-eye-slash"></i> : <i className="bi bi-eye"></i>}
+                              {showReferral ? (
+                                <i className="bi bi-eye-slash"></i>
+                              ) : (
+                                <i className="bi bi-eye"></i>
+                              )}
                             </button>
                           </div>
                           <button
@@ -286,6 +294,18 @@ const ReferralProfile: React.FC = () => {
                               />
                             </svg>
                           </button>
+                          <div>
+                            <Link
+                              target="_blank"
+                              href={`https://twitter.com/intent/tweet?text=Internet Just got Evolved. Be a part of this revolution \n referral link: ${
+                                baseReferralUrl + user.inviteCode
+                              }`}
+                              className="p-2 rounded-2xl block bg-purple-600 text-white px-4 m-3 hover:bg-purple-700 transition-colors duration-300"
+                            >
+                              {" "}
+                              Share on X{" "}
+                            </Link>
+                          </div>
                         </div>
                       )}
                     </div>

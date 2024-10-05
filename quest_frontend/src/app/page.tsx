@@ -21,8 +21,12 @@ import NitroWidget from "@/app/components/nitroWidget/nitro";
 import WalletConnectButton from "@/app/components/rainbowkit/button";
 import { useAccount, useWalletClient } from "wagmi";
 import { isAlphanumericWithHyphen } from "@/utils/helper/helper";
+import { fetchUserData } from "@/redux/reducer/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
 
 const LandingPage = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [domain, setDomain] = useState<string>("");
   const [existingDomain, setExistingDomain] = useState<string[]>([]);
@@ -42,14 +46,16 @@ const LandingPage = () => {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [isBridge, setIsBridge] = useState(false);
   const [isBridgeActive, setIsBridgeActive] = useState(false);
-  const [referralType,setReferralType]=useState("");
+  const [referralType, setReferralType] = useState("");
   // const [walletXProvider, setWalletXProvider] = useState<any>(null);
   // const [walletX, setWalletX] = useState<WalletX>({
   //   address: "",
   // });
+
   const [loaders, setLoaders] = useState({
     connectWallet: false,
     login: false,
+    generateReferral: false,
   });
   const router = useRouter();
   const { address } = useAccount();
@@ -87,26 +93,27 @@ const LandingPage = () => {
     }
   };
 
-  const checkReferral=async()=>{
-    try{
-      const response:any=await axiosInstance.post("/user/isValidReferral",{referralCode});
-      console.log("checkReferral",response);
-      if(response.data.success){
-        if(response.data.isFreeReferral===true){
+  const checkReferral = async () => {
+    try {
+      const response: any = await axiosInstance.post("/user/isValidReferral", {
+        referralCode,
+      });
+      console.log("checkReferral", response);
+      if (response.data.success) {
+        if (response.data.isFreeReferral === true) {
           setReferralType("free");
           return;
         }
-        if(response.data.isDiscountReferral){
+        if (response.data.isDiscountReferral) {
           setReferralType("discount");
           return;
         }
       }
-    }
-    catch(error){
-      console.log("error:",error);
+    } catch (error) {
+      console.log("error:", error);
       return;
     }
-  }
+  };
 
   useEffect(() => {
     fetchDomains();
@@ -123,6 +130,10 @@ const LandingPage = () => {
   useEffect(() => {
     handleValidDomain();
   }, [domain]);
+
+  useEffect(() => {
+    dispatch(fetchUserData());
+  }, []);
 
   const handleValidDomain = () => {
     if (domain.length < 3) {
@@ -379,9 +390,9 @@ const LandingPage = () => {
     const usdtABI = usdt;
 
     if (!ArbicontractAddress || !contractABI || !address) {
-        notifyAlert("error", "Failed to connect wallet.");
-        setLoader(false);
-        return;
+      notifyAlert("error", "Failed to connect wallet.");
+      setLoader(false);
+      return;
     }
 
     try {
@@ -412,10 +423,12 @@ const LandingPage = () => {
       const add = await signer.getAddress();
       console.log("add", add);
 
-      const hasMinted= await contract.hasMintedDomain(await signer.getAddress());
+      const hasMinted = await contract.hasMintedDomain(
+        await signer.getAddress()
+      );
       console.log("hasMinted", hasMinted);
 
-      if(hasMinted){
+      if (hasMinted) {
         notifyAlert("error", "Domain already minted with this wallet address");
         setLoader(false);
         return;
@@ -430,18 +443,16 @@ const LandingPage = () => {
       if (isFreeMintWhitelisted) {
         // Call free mint function
         const tx = await contract.freeMintDomain(updatedDomain, referralCode);
-        console.log("tx")
+        console.log("tx");
         await tx.wait();
-        console.log("tx1")
+        console.log("tx1");
         notifyAlert(
           "success",
           `Domain ${updatedDomain} minted for free successfully`
         );
         setHash(tx.hash);
         setShowPasswordField(true);
-      
-      }
-       else {
+      } else {
         // Check if the user is whitelisted for discount mint
         const isDiscountMintWhitelisted = await contract.discountMintWhitelist(
           await signer.getAddress()
@@ -463,10 +474,7 @@ const LandingPage = () => {
             await signer.getAddress()
           );
           if (usdtBalance < usdtAmountDiscount) {
-            notifyAlert(
-              "error",
-              "Insufficient USDT balance. Please ensure you have at least 2.5 USDT & Some gas fees on Arbitrum chain. Make sure you have assets on Arbitrum chain. You can convert your Assets to Arbitrum by using Nitro bridge below"
-            );
+            notifyAlert("error", "Insufficient USDT balance.");
             setIsBridge(true);
             // nitro
             setLoader(false);
@@ -492,8 +500,7 @@ const LandingPage = () => {
           );
           setHash(tx.hash);
           setShowPasswordField(true);
-        } 
-        else {
+        } else {
           // Initialize usdt contract instance
           const usdtContract = new ethers.Contract(
             usdtContractAddress,
@@ -508,10 +515,7 @@ const LandingPage = () => {
           const usdtAmount = ethers.parseUnits("5", 6); // 5 usdt with 6 decimals
 
           if (usdtBalance < usdtAmount) {
-            notifyAlert(
-              "error",
-              "Insufficient USDT balance. Please ensure you have at least 5 USDT & Some gas fees on Arbitrum chain. Make sure you have assets on Arbitrum chain. You can convert your Assets to Arbitrum by using Nitro bridge below"
-            );
+            notifyAlert("error", "Insufficient USDT balance.");
             setIsBridge(true);
             setLoader(false);
             return;
@@ -539,62 +543,58 @@ const LandingPage = () => {
         }
       }
     } catch (error: any) {
-        console.log("error", error);
-        console.log("error code",error.code);
-        console.log("error message",error.message);
-        if (error.code === "CALL_EXCEPTION") {
-          console.error(
-            "Transaction failed due to a contract revert or failure."
-          );
-          if (error.reason) {
-            console.error("Revert reason:", error.reason);
-            notifyAlert("error", `Transaction failed: ${error.reason}`);
-          } else if (error.data) {
-            console.error("Revert data:", error.data);
-            notifyAlert(
-              "error",
-              `Transaction failed: ${error.data}`
-            );
-          } else {
-            console.error("Missing revert data.");
-            notifyAlert(
-              "error",
-              "Transaction failed: Check your balance or Try with some other address."
-            );
-          }
-        } else if (error.code === "INSUFFICIENT_FUNDS") {
+      console.log("error", error);
+      console.log("error code", error.code);
+      console.log("error message", error.message);
+      if (error.code === "CALL_EXCEPTION") {
+        console.error(
+          "Transaction failed due to a contract revert or failure."
+        );
+        if (error.reason) {
+          console.error("Revert reason:", error.reason);
+          notifyAlert("error", `Transaction failed: ${error.reason}`);
+        } else if (error.data) {
+          console.error("Revert data:", error.data);
+          notifyAlert("error", `Transaction failed: ${error.data}`);
+        } else {
+          console.error("Missing revert data.");
           notifyAlert(
             "error",
-            "You have insufficient funds to complete this transaction."
+            "Transaction failed: Check your balance or Try with some other address."
           );
-        } else if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
-          notifyAlert("error", "The gas limit could not be estimated.");
         }
-        else if (error.code === "ACTION_REJECTED"){
+      } else if (error.code === "INSUFFICIENT_FUNDS") {
+        notifyAlert(
+          "error",
+          "You have insufficient funds to complete this transaction."
+        );
+      } else if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
+        notifyAlert("error", "The gas limit could not be estimated.");
+      } else if (error.code === "ACTION_REJECTED") {
+        notifyAlert("error", "Request Rejected");
+      } else if (error.code === "BAD_DATA") {
+        // Show a custom error message to the user
+        console.log(error.message);
+        notifyAlert(
+          "error",
+          "Minting is only allowed on Arbitrum mainnet network.Please add Arbitrum mainnet network"
+        );
+      } else if (error && error.error) {
+        console.error("Error message:", error.error.message);
+        console.error("Error code:", error.error.code);
+        console.error("Error details:", error.error);
+        if (error.error.code == -32603) {
           notifyAlert("error", "Request Rejected");
         }
-        else if (error.code === "BAD_DATA") {
-          // Show a custom error message to the user
-          console.log(error.message);
-          notifyAlert(
-            "error",
-            "Minting is only allowed on Arbitrum mainnet network.Please add Arbitrum mainnet network"
-          );
-        }
-        else if (error && error.error) {
-    console.error("Error message:", error.error.message);
-    console.error("Error code:", error.error.code);
-    console.error("Error details:", error.error);
-    if(error.error.code==-32603){
-      notifyAlert("error","Request Rejected");
-    }
-  }
-         else {
-          // Log generic error for other types
-          console.error("Transaction failed with an unknown error:", error);
-          notifyAlert("error", "Transaction failed due to an unknown error.Try again later");
-        }
-        setLoader(false);
+      } else {
+        // Log generic error for other types
+        console.error("Transaction failed with an unknown error:", error);
+        notifyAlert(
+          "error",
+          "Transaction failed due to an unknown error.Try again later"
+        );
+      }
+      setLoader(false);
     }
     setLoader(false);
   };
@@ -676,6 +676,82 @@ const LandingPage = () => {
     setIsBridge(false);
   };
 
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  //  const [loaders, setLoaders] = useState({
+  //    generateReferral: false,
+  //  });
+  const [showReferral, setShowReferral] = useState(false);
+
+  const [generatetedRefferalCode, setGeneratedReferalcode] = useState("");
+
+  const onGenerateReferral = async () => {
+    try {
+      setLoaders({ ...loaders, generateReferral: true });
+      // Fetch referral code from the backend
+      const response = await axiosInstance.get("/user/generateRefferalCode");
+
+      if (response.data.success) {
+        const referralCode = response.data.referralCode;
+        setGeneratedReferalcode(referralCode);
+        // Notify the user about the successful generation
+
+        // Connect the wallet if not already connected
+        // const walletData = await connectWallet();
+        if (!address) {
+          setIsWalletConnected(false);
+          notify(
+            "error",
+            "Please connect your wallet to generate a referral code."
+          );
+          setLoaders({ ...loaders, generateReferral: false });
+          return;
+        }
+        // console.log("wallet address present");
+
+        // Use ethers to connect to the smart contract
+        if (!walletClient) {
+          notify("error", "Failed to connect wallet.");
+          setLoaders({ ...loaders, generateReferral: false });
+          return;
+        }
+        // console.log("walletCLient", walletClient);
+
+        const provider = new ethers.BrowserProvider(walletClient);
+        const signer = await provider.getSigner();
+
+        const contractAddress =
+          process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
+        const contractABI = upgradeableContractAbi;
+
+        // Initialize contract instance
+        const contract = new ethers.Contract(
+          contractAddress,
+          contractABI,
+          signer
+        );
+
+        // Call createReferralCode on the smart contract
+        const tx = await contract.createReferralCode(referralCode);
+        await tx.wait();
+
+        const res = await axiosInstance.post("/user/setReferralCode", {
+          referralCode,
+        });
+        if (res.data.success) {
+          notify("success", "Referral code generated and saved successfully!");
+          dispatch(fetchUserData());
+        } else {
+          notify("error", "Failed to save referral code.");
+          setLoaders({ ...loaders, generateReferral: false });
+        }
+      }
+    } catch (error: any) {
+      console.error("Error generating referral code:", error);
+      notify("error", error.reason);
+    }
+    setLoaders({ ...loaders, generateReferral: false });
+  };
+
   // const detectEip6963 = () => {
   //   const handleAnnounceProvider = (event: Event) => {
   //     const customEvent = event as CustomEvent;
@@ -727,6 +803,11 @@ const LandingPage = () => {
   //     console.log("error", error);
   //   }
   // };
+  const user: any = useSelector((state: RootState) => state.login.user);
+  const baseReferralUrl = `${
+    process.env.NEXT_PUBLIC_CLIENT_URL
+  }/?referralCode=${user?.inviteCode || ""}`;
+
   return (
     <>
       <div className="landing-page h-screen">
@@ -789,19 +870,98 @@ const LandingPage = () => {
                 {thankYou ? (
                   <div className="flex flex-col justify-center text-white items-center ">
                     <div className="text-center mb-4 font-bold text-lg">
-                      Thank you for registering your domain with us!{" "}
+                      Thank you for Registering your domain with us!{" "}
                     </div>
                     <div className="text-center mb-4 ">
-                      We're excited to have you on board and look forward to
-                      supporting you as you build and grow your online presence.{" "}
+                      Once the Tier 1 mint is complete, our Dapp will go LIVE.{" "}
                     </div>
-                    <div className="flex justify-center items-center">
+                    <div className="flex justify-center  gap-4 items-start">
                       <Link
                         href="/user/referral/dashboard"
                         className="px-4 py-2 bg-famViolate rounded-lg "
                       >
                         Visit Profile
                       </Link>
+                      {user && user.inviteCode ? (
+                        <div className="flex justify-start gap-2 items-center">
+                          <div className="relative">
+                            <input
+                              type={showReferral ? "text" : "password"} // Toggles between text and password
+                              value={baseReferralUrl + user.inviteCode}
+                              readOnly
+                              className="text-sm pr-8 font-famFont bg-zinc-950 text-white border-1 border-gray-600 focus:border-famViolate-light rounded px-4 py-2 w-full"
+                            />
+                            <button
+                              onClick={() => {
+                                setShowReferral(!showReferral);
+                              }}
+                              className="absolute top-1/2 right-2 transform -translate-y-1/2 text-sm text-white hover:text-famViolate-light"
+                            >
+                              {showReferral ? (
+                                <i className="bi bi-eye-slash"></i>
+                              ) : (
+                                <i className="bi bi-eye"></i>
+                              )}
+                            </button>
+                          </div>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                baseReferralUrl + user.inviteCode
+                              );
+                              notify(
+                                "default",
+                                "Referral code copied to clipboard!"
+                              );
+                            }}
+                            className="bg-famViolate text-white p-2 rounded-lg hover:bg-famViolate-light transition-colors duration-300"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-6 w-6"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col justify-start">
+                          <button
+                            className="px-4 py-2 bg-famViolate rounded-lg "
+                            onClick={onGenerateReferral}
+                          >
+                            Invite & Earn
+                          </button>
+                          <p className="text-[12px]">
+                            *Invite & Earn $2.5 per referral instantly.
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="flex flex-col justify-start">
+                        <Link
+                          target="_blank"
+                          href={`${
+                            user && user.inviteCode
+                              ? `https://twitter.com/intent/tweet?text=Internet Just got Evolved. Be a part of this revolution \n referral link: ${
+                                  baseReferralUrl + user.inviteCode
+                                }`
+                              : ""
+                          }`}
+                          className="p-2 rounded-lg block bg-purple-600 text-white px-4 hover:bg-purple-700 transition-colors duration-300"
+                        >
+                          {" "}
+                          Share on X{" "}
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -1071,7 +1231,8 @@ const LandingPage = () => {
                     )}
                     {activeTab === "signUp" && (
                       <div className="font-qanelas text-white capitalize text-xs mb-2 flex justify-center items-center gap-2">
-                        phase 1 domain minting price starts from 5 usdt
+                        Note: You will need 5 USDT and some ETH in Arbitrum
+                        Chain to mint a domain.
                       </div>
                     )}
                     <div
