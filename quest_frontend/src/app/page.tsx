@@ -131,9 +131,12 @@ const LandingPage = () => {
     handleValidDomain();
   }, [domain]);
 
-  useEffect(() => {
-    dispatch(fetchUserData());
-  }, []);
+  // useEffect(() => {
+  //   const getUser = async () => {
+  //     await dispatch(fetchUserData());
+  //   };
+  //   getUser();
+  // }, []);
 
   const handleValidDomain = () => {
     if (domain.length < 3) {
@@ -803,7 +806,9 @@ const LandingPage = () => {
   //     console.log("error", error);
   //   }
   // };
+
   const user: any = useSelector((state: RootState) => state.login.user);
+
   const baseReferralUrl = `${
     process.env.NEXT_PUBLIC_CLIENT_URL
   }/?referralCode=${user?.inviteCode || ""}`;
@@ -994,13 +999,13 @@ const LandingPage = () => {
                       >
                         Get OnBoarded
                       </Button>
-                      <Button
+                      {/* <Button
                         onClick={() => comingSoon()}
                         // onClick={() => router.push("/home")}
                         className="bg-white text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
                       >
                         Explore
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 )}
