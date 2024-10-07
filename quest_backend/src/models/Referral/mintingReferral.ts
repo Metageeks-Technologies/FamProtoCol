@@ -5,7 +5,7 @@ interface IMintingReferral extends Document {
   type: 'free' | 'discount'; // free or discount code
   maxRedemptions: number; // Limit on the number of times the code can be redeemed
   redeemedCount: number; // Current number of redemptions
-  ExpiryDate: string; // Optional expiration date
+  ExpiryDate: Date; // Optional expiration date
 }
 
 const mintingReferralSchema: Schema = new Schema({
@@ -13,7 +13,7 @@ const mintingReferralSchema: Schema = new Schema({
   type: { type: String, enum: ['free', 'discount'], required: true },
   maxRedemptions: { type: Number, required: true },
   redeemedCount: { type: Number, default: 0 },
-  ExpiryDate:{type:String},
+  ExpiryDate:{type:Date},
 },{
     timestamps: true,
 });

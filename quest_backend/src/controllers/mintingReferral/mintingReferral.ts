@@ -10,7 +10,7 @@ export const createReferral = async (req: Request, res: Response) => {
       referralCode,
       type,
       maxRedemptions,
-      ExpiryDate,
+      ExpiryDate:new Date(ExpiryDate),
     });
 
     await newReferral.save();
@@ -33,11 +33,11 @@ export const getAllReferrals = async (req: Request, res: Response) => {
 export const deleteReferral = async (req: Request, res: Response) => {
     try{
         const { id } = req.params;
-        const deletedReferral = await mintingReferral.findByIdAndDelete(id);
-       return res.send({ message: 'Referral code deleted successfully', deletedReferral });
+        await mintingReferral.findByIdAndDelete(id);
+       return res.send({success: true, message: 'Referral code deleted successfully'});
     }
     catch(error){
-       return res.send({ message: 'Error deleting referral code', error });
+       return res.send({success: false, message: 'Error deleting referral code', error });
     }
 }
 

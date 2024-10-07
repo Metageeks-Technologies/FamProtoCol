@@ -368,7 +368,7 @@ const LandingPage = () => {
       notifyAlert("error", "Connect wallet first");
       return;
     }
-    // await checkReferral();
+    await checkReferral();
 
     const updatedDomain = domain + ".fam";
 
