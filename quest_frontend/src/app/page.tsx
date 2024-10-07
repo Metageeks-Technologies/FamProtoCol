@@ -102,11 +102,11 @@ const LandingPage = () => {
       if (response.data.success) {
         if (response.data.isFreeReferral === true) {
           setReferralType("free");
-          return;
+          return "free";
         }
         if (response.data.isDiscountReferral) {
           setReferralType("discount");
-          return;
+          return "discount";
         }
       }
     } catch (error) {
@@ -131,12 +131,11 @@ const LandingPage = () => {
     handleValidDomain();
   }, [domain]);
 
-  // useEffect(() => {
-  //   const getUser = async () => {
-  //     await dispatch(fetchUserData());
-  //   };
-  //   getUser();
-  // }, []);
+  useEffect(() => {
+    if(thankYou){
+      dispatch(fetchUserData());
+    }
+  }, [dispatch]);
 
   const handleValidDomain = () => {
     if (domain.length < 3) {
@@ -382,8 +381,8 @@ const LandingPage = () => {
       notifyAlert("error", "Connect wallet first");
       return;
     }
-    // await checkReferral();
-
+   const referralDiscount= await checkReferral();
+    setReferralType(referralDiscount as string);
     const updatedDomain = domain + ".fam";
 
     const ArbicontractAddress =
@@ -442,10 +441,11 @@ const LandingPage = () => {
         await signer.getAddress()
       );
       console.log("is free", isFreeMintWhitelisted);
+      console.log("referral Type",referralType);
 
-      if (isFreeMintWhitelisted) {
+      if (isFreeMintWhitelisted && referralDiscount === "free") {
         // Call free mint function
-        const tx = await contract.freeMintDomain(updatedDomain, referralCode);
+        const tx = await contract.freeMintDomain(updatedDomain);
         console.log("tx");
         await tx.wait();
         console.log("tx1");
@@ -461,7 +461,7 @@ const LandingPage = () => {
           await signer.getAddress()
         );
 
-        if (isDiscountMintWhitelisted) {
+        if (isDiscountMintWhitelisted && referralDiscount==="discount" ) {
           // Discounted mint fee (2.5 USDT)
           const usdtAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDT with 6 decimals
 
@@ -493,8 +493,7 @@ const LandingPage = () => {
 
           // Call discount mint function
           const tx = await contract.discountMintDomain(
-            updatedDomain,
-            referralCode
+            updatedDomain
           );
           await tx.wait();
           notifyAlert(
@@ -511,6 +510,13 @@ const LandingPage = () => {
             signer
           );
 
+          const ownerExits=await contract.referralOwners(referralCode);
+          console.log("referral owner",ownerExits);
+          if(ownerExits==0x0000000000000000000000000000000000000000){
+            notifyAlert("error", "Invalid Referral Code");
+            setLoader(false);
+            return;
+          }
           // Check the user's usdt balance
           const usdtBalance = await usdtContract.balanceOf(
             await signer.getAddress()
@@ -961,7 +967,7 @@ const LandingPage = () => {
                                 }`
                               : ""
                           }`}
-                          className="p-2 rounded-lg block bg-purple-600 text-white px-4 hover:bg-purple-700 transition-colors duration-300"
+                          className="rounded-lg block bg-purple-600 text-white px-4 py-2 hover:bg-purple-700 transition-colors duration-300"
                         >
                           {" "}
                           Share on X{" "}

@@ -434,12 +434,13 @@ export const isValidReferral=async (req:any,res:Response)=>{
   try{
     console.log("req.body",req.body);
     const {referralCode}=req.body;
-    const free_referral=process.env.FREE_REFERRAL;
-    const discount_referral=process.env.DISCOUNT_REFERRAL;
-    if(referralCode===free_referral){
+    const free_referral=["freeMint","MintFree","Ref-Free-1"];
+    const discount_referral=["discountMint","MintDiscount","Ref-discount-0"];
+
+    if(free_referral.includes(referralCode)){
       return res.send({success:true,isFreeReferral:true,isDiscountReferral:false});
     }
-    if(referralCode===discount_referral){
+    if(discount_referral.includes(referralCode)){
       return res.send({success:true,isFreeReferral:false,isDiscountReferral:true});
     }
     return res.send({success:false,isFreeReferral:false,isDiscountReferral:false})
@@ -447,4 +448,4 @@ export const isValidReferral=async (req:any,res:Response)=>{
   catch(error){
     return res.send({success:false,message:"internal server error"});
   }
-}
+};

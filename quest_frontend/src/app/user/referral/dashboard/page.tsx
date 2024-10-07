@@ -300,7 +300,7 @@ const ReferralProfile: React.FC = () => {
                               href={`https://twitter.com/intent/tweet?text=Internet Just got Evolved. Be a part of this revolution \n referral link: ${
                                 baseReferralUrl + user.inviteCode
                               }`}
-                              className="p-2 rounded-2xl block bg-purple-600 text-white px-4 m-3 hover:bg-purple-700 transition-colors duration-300"
+                              className="rounded-lg ml-2 block bg-purple-600 text-white px-4 py-2 hover:bg-purple-700 transition-colors duration-300"
                             >
                               {" "}
                               Share on X{" "}
