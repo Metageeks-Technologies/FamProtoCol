@@ -283,7 +283,7 @@ const RateKols = (props: Props) => {
         }
         const res = await response.json();
         setKols(res.kols);
-        console.log("kols", res.kols);
+        // console.log("kols", res.kols);
       } catch (error) {
         console.error("Error fetching KOLs:", error);
       }

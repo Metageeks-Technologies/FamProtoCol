@@ -98,7 +98,7 @@ const LandingPage = () => {
       const response: any = await axiosInstance.post("/user/isValidReferral", {
         referralCode,
       });
-      console.log("checkReferral", response);
+      // console.log("checkReferral", response);
       if (response.data.success) {
         if (response.data.isFreeReferral === true) {
           setReferralType("free");
@@ -406,13 +406,13 @@ const LandingPage = () => {
         setLoader(false);
         return;
       }
-      console.log("walletCLient", walletClient);
+      // console.log("walletCLient", walletClient);
 
       // Get the provider and signer
       const provider = new ethers.BrowserProvider(walletClient);
-      console.log("provider", provider);
+      // console.log("provider", provider);
       const signer = await provider.getSigner(); // Get signer from the provider
-      console.log("signer details", signer);
+      // console.log("signer details", signer);
       // Initialize the contract instance
       const contract = new ethers.Contract(
         ArbicontractAddress,
@@ -420,15 +420,15 @@ const LandingPage = () => {
         signer
       );
 
-      console.log("contract", contract);
-      console.log("signer", signer.address);
+      // console.log("contract", contract);
+      // console.log("signer", signer.address);
       const add = await signer.getAddress();
-      console.log("add", add);
+      // console.log("add", add);
 
       const hasMinted = await contract.hasMintedDomain(
         await signer.getAddress()
       );
-      console.log("hasMinted", hasMinted);
+      // console.log("hasMinted", hasMinted);
 
       if (hasMinted) {
         notifyAlert("error", "Domain already minted with this wallet address");
@@ -440,15 +440,15 @@ const LandingPage = () => {
       const isFreeMintWhitelisted = await contract.freeMintWhitelist(
         await signer.getAddress()
       );
-      console.log("is free", isFreeMintWhitelisted);
-      console.log("referral Type",referralType);
+      // console.log("is free", isFreeMintWhitelisted);
+      // console.log("referral Type",referralType);
 
       if (isFreeMintWhitelisted && referralDiscount === "free") {
         // Call free mint function
         const tx = await contract.freeMintDomain(updatedDomain);
-        console.log("tx");
+        // console.log("tx");
         await tx.wait();
-        console.log("tx1");
+        // console.log("tx1");
         notifyAlert(
           "success",
           `Domain ${updatedDomain} minted for free successfully`
@@ -511,7 +511,7 @@ const LandingPage = () => {
           );
 
           const ownerExits=await contract.referralOwners(referralCode);
-          console.log("referral owner",ownerExits);
+          // console.log("referral owner",ownerExits);
           if(ownerExits==0x0000000000000000000000000000000000000000){
             notifyAlert("error", "Invalid Referral Code");
             setLoader(false);
@@ -552,9 +552,9 @@ const LandingPage = () => {
         }
       }
     } catch (error: any) {
-      console.log("error", error);
-      console.log("error code", error.code);
-      console.log("error message", error.message);
+      // console.log("error", error);
+      // console.log("error code", error.code);
+      // console.log("error message", error.message);
       if (error.code === "CALL_EXCEPTION") {
         console.error(
           "Transaction failed due to a contract revert or failure."
