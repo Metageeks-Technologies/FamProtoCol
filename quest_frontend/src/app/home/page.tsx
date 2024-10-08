@@ -8,7 +8,7 @@ import AllCommunity from "@/app/components/HomeCard/AllCommunity";
 const Homepage = () =>
 {
   return (
-    <div className="w-[90%] mx-auto">
+    <div className="w-[90%] mx-auto py-4">
       <UserCard />
       <EcoCate />
       <AllCommunity/>

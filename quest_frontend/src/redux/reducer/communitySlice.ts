@@ -97,8 +97,8 @@ export const createCommunity = createAsyncThunk(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/community/`,
         communityData
       );
-      // console.log(response.data)
-      return response.data.community;
+      // console.log("create Community",response.data);
+      return response.data.newCommunity;
     } catch (err) {
       return rejectWithValue('Failed to create community');
     }

@@ -47,7 +47,7 @@ const UserCard = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 3,
+    slidesToShow: (data.length<3)?data.length:3,
     slidesToScroll: 1,
     arrows: true,
     prevArrow: (
@@ -74,7 +74,7 @@ const UserCard = () => {
       {
         breakpoint: 1050,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: (data.length<2)?data.length:2,
           slidesToScroll: 1,
         },
       },

@@ -61,12 +61,12 @@ const Navbar: React.FC = () => {
       // console.log(response)
       if (response) {
         await persistor.flush();
-        localStorage.clear();
-        setRefresh(true);
+        // localStorage.clear();
+        // setRefresh(true);
         router.push("/home");
-        window.location.reload();
+        // window.location.reload();
         notify("success", "Logout Successful");
-        setRefresh(false);
+        // setRefresh(false);
       }
     } catch (error) {
       console.error("Error logging out:", error);

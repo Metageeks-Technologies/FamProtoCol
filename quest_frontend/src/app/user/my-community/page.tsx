@@ -31,7 +31,6 @@ const MyCommunities: React.FC = () =>
   useEffect( () =>
   {
     dispatch( fetchUserData() );
-
   }, [ dispatch ] );
 
   const fetchCreatedCommunities = (

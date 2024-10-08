@@ -32,7 +32,7 @@ export const CommunityController = {
                     await sendMessage(chat_id, messageText);
                     await sendDiscord( discord_chat_id, messageText );
                 }
-                res.status( 200 ).json( { newCommunity: newCommunity, msg: "Community Created Successfully" } );
+                res.status( 200 ).json( { newCommunity, msg: "Community Created Successfully" } );
             } else
             {
               res.status( 400 ).json( { message: "Error in creating the Community" } );

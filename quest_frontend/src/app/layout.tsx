@@ -4,7 +4,6 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import localFont from "next/font/local";
 import { Providers } from "./provider";
 import MainLayout from "@/app/components/MainLayout/mainLayout";
-import { Suspense } from "react";
 
 // laptop 1440x900
 // mobile 375x667

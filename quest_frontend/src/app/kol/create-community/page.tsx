@@ -158,8 +158,9 @@ const CreateCommunity: React.FC = () => {
       // console.log("newCommunity ",newCommunity)
       const resultAction = await dispatch(createCommunity(newCommunity));
       if (createCommunity.fulfilled.match(resultAction)) {
+        // console.log("community",resultAction);
         notify("success", "Community created successfully");
-        router.push("/user/my-community");
+        router.push("/kol/community-project/" + resultAction.payload._id);
       } else {
         notify("error", "Failed to create community");
       }
