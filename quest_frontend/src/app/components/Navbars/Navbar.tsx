@@ -55,7 +55,7 @@ const Navbar: React.FC = () => {
   }, [feedItems.length]);
 
   const logoutClient = useCallback(async () => {
-    console.log("logout called");
+    // console.log("logout called");
     try {
       const response = await dispatch(logoutUser());
       // console.log(response)
@@ -75,11 +75,11 @@ const Navbar: React.FC = () => {
 
 
   const handleToggleNav=async()=>{
-    console.log("nav toggled",navOpen)
+    // console.log("nav toggled",navOpen)
     try {
       const response = await dispatch(toggleNav(!navOpen));
-      console.log("response", response);
-      console.log("navOpen", navOpen);
+      // console.log("response", response);
+      // console.log("navOpen", navOpen);
     } catch (error) {
       console.error("Error toggling nav:", error);
     }

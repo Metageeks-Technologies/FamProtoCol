@@ -72,7 +72,7 @@ export const fetchTasks = createAsyncThunk(
   async (_, { rejectWithValue }):Promise<any> => {
     try {
       const response = await axios.get( API_BASE_URL );
-      console.log("response in task:-",response)
+      // console.log("response in task:-",response)
       return response.data;
     } catch (error) {
       return rejectWithValue('Failed to fetch tasks');
@@ -127,7 +127,7 @@ export const connectToWallets = createAsyncThunk(
   async ({ taskId,  address }: { taskId: string, address: string },{rejectWithValue}) : Promise<any> => {
     try {
       const response = await axios.post( `${ API_BASE_URL }/connect-wallet`, {taskId,address} );
-      console.log( "wallet connect response:-", response )
+      // console.log( "wallet connect response:-", response )
       notify("success","Wallet connect successfully");
       return response.data;
     } catch ( error )
@@ -150,7 +150,7 @@ export const completeTask = createAsyncThunk(
       const response = await axios.post( `${ API_BASE_URL }/complete`,
          { taskId, userId, submission, userName }
       );
-      console.log("response in complete task:-",response.data)
+      // console.log("response in complete task:-",response.data)
 
       const {coins,xps}=response.data;
       SweetAlert("taskCompleted","Task Completed",`Congratulations! You've earned ${coins} coins and ${xps} XPs for completing the task!`);

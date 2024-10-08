@@ -215,10 +215,10 @@ const AddTask = ({ params }: { params: { id: string } }) => {
     };
 
     const taskData = taskDataMap[selectedTask.name] || baseTask;
-    console.log("taskdata:-", taskData);
+    // console.log("taskdata:-", taskData);
     try {
       const response = await dispatch(createTask(taskData));
-      console.log("response in adding the task:-", response);
+      // console.log("response in adding the task:-", response);
       notify("success", response?.payload?.msg || "Task created successfully");
       closeTaskModal();
     } catch (error) {

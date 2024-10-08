@@ -120,7 +120,7 @@ const Grantspage = () => {
         },
       });
       if (response.status === 200) {
-        console.log("File uploaded successfully");
+        // console.log("File uploaded successfully");
         return true;
       } else {
         console.log("File upload failed", response);

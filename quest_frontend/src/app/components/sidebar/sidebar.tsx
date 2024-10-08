@@ -35,7 +35,7 @@ const Sidebar = () => {
       router.push("/home");
     }
     if (pathname === "/" || pathname === "" || pathname === "/user/referral/dashboard") {
-      console.log("landing page", pathname);
+      // console.log("landing page", pathname);
       setIsLandingPage(true);
     } else {
       setIsLandingPage(false);
@@ -57,10 +57,10 @@ const Sidebar = () => {
         </Link>
         <div className="flex-1 flex items-center justify-center ">
           <button
-            // className={` hidden border-none text-white text-2xl cursor-pointer`}//comment this and uncomment below
-            className={`${
-              isLandingPage ? "hidden" : "flex items-center justify-center"
-            }`}
+            className={`hidden border-none text-white text-2xl cursor-pointer`}//comment this and uncomment below
+            // className={`${
+            //   isLandingPage ? "hidden" : "flex items-center justify-center"
+            // }`}
             onClick={handleNav}
           >
             {!navOpen ? (

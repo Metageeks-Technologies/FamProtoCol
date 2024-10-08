@@ -15,13 +15,13 @@ const EcosystemPage = (params: { params: { slug: any } }) => {
   // console.log( eco );
   const communityData = useSelector((state: any) => state.adminCommunity);
 
-  console.log(communityData);
+  // console.log(communityData);
 
   const ecosystem = communityData.ecosystems.slice(0, 7);
 
   const currentEcosystem = ecosystem.find((item: any) => item.name === eco);
 
-  console.log(currentEcosystem);
+  // console.log(currentEcosystem);
 
   const cardData = useSelector(
     (state: any) => state?.community?.allCommunities

@@ -144,3 +144,7 @@ export interface ReferredUser{
   }
   image:string;
 }
+
+export interface WalletX{
+  address:string
+}

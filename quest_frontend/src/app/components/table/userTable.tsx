@@ -164,7 +164,7 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
          return (
           <div className="flex gap-2 items-start justify-start">
             {/* <div className=" uppercase sm:px-2 font-famFont text-white opacity-30">Earnings </div> */}
-            <div className="flex justify-start gap-1" ><span>{(user?.referredUserCount)*2.5 || cellValue || 0 }</span><span>USDC</span></div>
+            <div className="flex justify-start gap-1 text-green-400 " ><span>{(user?.referredUserCount)*2.5 || cellValue || 0 }</span><span>USDT</span></div>
           </div>
         );
       case "referralCount":

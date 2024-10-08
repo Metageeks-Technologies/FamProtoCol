@@ -96,7 +96,7 @@ export const fetchUserData = createAsyncThunk(
     try
     {
       const response = await axiosInstance.get( '/auth/profile');
-      console.log("response from userslice:", response.data );
+      // console.log("response from userslice:", response.data );
       const data = response.data;
       return data;
     } catch ( err )

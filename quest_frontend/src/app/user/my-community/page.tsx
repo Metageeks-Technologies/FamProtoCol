@@ -48,11 +48,11 @@ const MyCommunities: React.FC = () =>
           body: JSON.stringify( { communityIds: temp } ),
         } );
         const data = await response.json();
-        console.log("created community: ", data.communities);
+        // console.log("created community: ", data.communities);
         setCreatedCommunity( data.communities );
         setTotalPagesCreatedCommunity(Math.ceil(data.communities.length/createdCommunitiesPerPage));
 
-        console.log("total pages: ",totalPagesCreatedCommunity);
+        // console.log("total pages: ",totalPagesCreatedCommunity);
         setFilteredCreatedCommunity(data.communities.slice(0,createdCommunitiesPerPage));
 
       } catch ( error )
@@ -85,8 +85,8 @@ const MyCommunities: React.FC = () =>
       dispatch( fetchCommunitiesByIds( userCommunityIds ) );
     }
     fetchCreatedCommunities();
-    console.log("created community: ", createdCommunity);
-    console.log("filtered created community: ", filteredCreatedCommunity);
+    // console.log("created community: ", createdCommunity);
+    // console.log("filtered created community: ", filteredCreatedCommunity);
 
   }, [] );
 

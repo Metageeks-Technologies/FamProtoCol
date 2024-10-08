@@ -20,6 +20,7 @@ import cookieParser from "cookie-parser";
 import grantRouter from "./routes/grants/grant";
 import telegramRouter from "./routes/telegram/telegram";
 import twitterRouter from "./routes/twitter/twitter";
+import referralRouter from "./routes/mintingReferral/mintingReferrals";
 
 dotenv.config();
 const port = process.env.PORT || 8080;
@@ -74,6 +75,7 @@ app.use("/grant", grantRouter);
 app.use("/task", taskRouter);
 app.use("/telegram", telegramRouter);
 app.use("/twitter", twitterRouter);
+app.use("/referral",referralRouter);
 // Example route
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript server");

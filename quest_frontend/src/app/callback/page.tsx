@@ -18,7 +18,7 @@ const CallBackPageContent = () => {
         `/twitter/auth/callback?state=${state}&code=${code}`,
       );
       router.push("/user/profile");
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       router.push("/home");
       console.log(error);

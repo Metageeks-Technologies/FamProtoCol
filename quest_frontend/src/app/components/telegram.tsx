@@ -32,11 +32,11 @@ const TeleApp: React.FC = () => {
       try {
         // Call your API route to save Telegram data
        
-        console.log("step1, telegramData:",telegramData);
+        // console.log("step1, telegramData:",telegramData);
         const response = await axiosInstance.get('/auth/telegram/callback', {
           params:telegramData,
         } );
-        console.log("step2, response:",response);
+        // console.log("step2, response:",response);
       } catch (error) {
         console.error('Error saving Telegram data:', error);
         // notify('error','Failed to save Telegram data. Please try again.');

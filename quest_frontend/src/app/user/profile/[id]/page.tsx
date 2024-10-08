@@ -93,7 +93,7 @@ const UserProfile = ( { params }: { params: { id: string; }; } ) =>
   {
     if ( !userId )
     {
-      console.log( "User id not found", userId );
+      // console.log( "User id not found", userId );
       return;
     }
     try

@@ -25,6 +25,9 @@ const AdminSidebar = () => {
     else if(pathname==="/admin/dashboard/grant-section"){
       setActiveTab("grant");
     }
+    else if(pathname==="/admin/dashboard/referral-section"){
+      setActiveTab("referral");
+    }
 
   },[pathname])
 
@@ -81,6 +84,13 @@ const AdminSidebar = () => {
           >
             Grants section
           </Link>
+          <Link
+            href="/admin/dashboard/referral-section"
+            className={`w-full font-bold py-2 px-4 ${activeTab==="referral"?" bg-famViolate text-white ":"hover:bg-gray-300"}  rounded-lg  hover:shadow-md`}
+          >
+            Referral section
+          </Link>
+
 
           <div onClick={handleLogout} className="w-full flex justify-start font-bold py-2 px-4 hover:bg-gray-300 text-red-500 cursor-pointer rounded-lg hover:shadow-md">
               Logout

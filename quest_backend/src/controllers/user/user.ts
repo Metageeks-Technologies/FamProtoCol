@@ -5,6 +5,7 @@ import { generateReferral } from "../../utils/helper/helper";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import mongoose, { ObjectId } from "mongoose";
+import mintingReferral from "../../models/Referral/mintingReferral";
 
 dotenv.config();
 
@@ -161,7 +162,7 @@ export const loginDomain = async (req: Request, res: Response) => {
       });
 
       if (!user) {
-        return res.status(400).json({ message: "No account associated with the provided wallet address. Please check your wallet address and try again" });
+        return res.status(400).json({ message: "No account found with this wallet address. Please sign up to continue" });
       }
       // Generate JWT token
       const token = jwt.sign(
@@ -429,3 +430,42 @@ export const famTaskComplete=async (req: any, res: Response) => {
     res.send({ success: false, message: "internal server error" });
   }
 }
+
+export const isValidReferral=async (req:any,res:Response)=>{
+  try{
+    console.log("req.body",req.body);
+    const {referralCode}=req.body;
+    const currentDate = new Date(); 
+    
+    if(!referralCode){
+      return res.send({success:false,isFreeReferral:false,isDiscountReferral:false});
+    }
+
+    const freeReferrals = await mintingReferral.find({
+      type: 'free',                // Condition for free referral type
+      ExpiryDate: { $gte: currentDate }    // Condition for not expired
+    });
+
+    console.log("free referral",freeReferrals);
+
+    const discountReferrals=await mintingReferral.find({
+      type:'discount',
+       ExpiryDate: { $gte: currentDate }  
+    })
+
+    console.log("discount",discountReferrals);
+    const isFreeReferral=freeReferrals.some(referral => referral.referralCode === referralCode);
+    const isDiscountReferral=discountReferrals.some(referral => referral.referralCode === referralCode);
+
+    if(isFreeReferral){
+      return res.send({success:true,isFreeReferral:true,isDiscountReferral:false});
+    }
+    if(isDiscountReferral){
+      return res.send({success:true,isFreeReferral:false,isDiscountReferral:true});
+    }
+    return res.send({success:false,isFreeReferral:false,isDiscountReferral:false})
+  }
+  catch(error){
+    return res.send({success:false,message:"internal server error"});
+  }
+};

@@ -1,5 +1,4 @@
 "use client";
-import Cookies from "js-cookie";
 import QuizPollCarousel from "@/app/components/QuizPollCarousel";
 import React, { useEffect, useState, useCallback } from "react";
 import {
@@ -104,7 +103,7 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
         // console.log("submission from submission", submission);
         
         if (!validateSubmission(selectedCard?.type, submission)) {
-          console.log(selectedCard);
+          // console.log(selectedCard);
           SweetAlert("error", "Invalid submission", "Please check your input");
           return;
         }
@@ -237,7 +236,7 @@ const QuestPage: React.FC<{ params: { slug: string } }> = ({ params }) => {
           questId,
         }
       );
-      console.log("All tasks completed response:", response.data);
+      // console.log("All tasks completed response:", response.data);
       // SweetAlert("success", "All tasks completed successfully", "You have claimed your rewards");
       // Reset the flag if you want to allow future calls
       // setAllTasksCompletedCalled(false);
@@ -369,9 +368,8 @@ const Popup: React.FC<{
   const [connectWalletIndex,setConnectWalletIndex]=useState<any>([]);
   const [stampArray, setStampArray] = useState<Array<Stamp>>([]);
   const user = useSelector((state: RootState) => state.login.user);
-  const authToken = `Bearer ${Cookies.get("_fam_token")}`;
 
-  console.log("selectedCard",selectedCard);
+  // console.log("selectedCard",selectedCard);
 
   const handleSubmit = () => {
     if (selectedCard.type === "Opinion Scale") {
@@ -490,8 +488,8 @@ const Popup: React.FC<{
       setLocalConnectedWallets((prev: any) => [...prev, accountAddress]);
       setConnectWalletIndex((prev:any)=>[...prev,index]);
 
-      console.log("localconnect wallet",localConnectedWallets);
-      console.log("index",connectWalletIndex);
+      // console.log("localconnect wallet",localConnectedWallets);
+      // console.log("index",connectWalletIndex);
 
       // const connectedWalletsCount = Number(selectedCard?.connectedWallets?.length) ?? 0;
       const newConnectedWalletsCount = localConnectedWallets?.length + 1;
@@ -685,7 +683,7 @@ const Popup: React.FC<{
           console.log("Error adding element to cumulative score:", error);
         }
       } else {
-        console.log(`Stamp ${stampName} not found in GITCOIN_PASSPORT_WEIGHTS`);
+        // console.log(`Stamp ${stampName} not found in GITCOIN_PASSPORT_WEIGHTS`);
       }
     }
 
@@ -734,7 +732,7 @@ const Popup: React.FC<{
   const checkCivicPass = async (taskId: any) => {
     if (!contractAddress || !contractABI || !address) {
       await connectWallet();
-      console.log("Contract address, ABI is missing");
+      // console.log("Contract address, ABI is missing");
       return;
     }
     try {
