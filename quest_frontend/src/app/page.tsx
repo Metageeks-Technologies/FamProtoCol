@@ -551,8 +551,8 @@ const LandingPage = () => {
           setShowPasswordField(true);
         }
       }
-
-      handleSignUpDomain();
+      setLoader(false);
+     await handleSignUpDomain();
 
     } catch (error: any) {
       // console.log("error", error);
