@@ -58,7 +58,9 @@ const Sidebar = () => {
         <div className="flex-1 flex items-center justify-center ">
           <button
             // className={`hidden border-none text-white text-2xl cursor-pointer`}//comment this and uncomment below
-            className="flex items-center justify-center"
+            className={`${
+              isLandingPage ? "hidden" : "flex items-center justify-center"
+            }`}
             onClick={handleNav}
           >
             {!navOpen ? (

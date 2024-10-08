@@ -13,7 +13,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import axios from "axios";
-import { logoutUser } from "@/redux/reducer/authSlice";
+import { fetchUserData, logoutUser } from "@/redux/reducer/authSlice";
 import { AppDispatch, persistor, RootState } from "@/redux/store";
 import { notify } from "@/utils/notify";
 import { toggleNav,selectNavState } from "@/redux/reducer/navSlice";
@@ -58,12 +58,13 @@ const Navbar: React.FC = () => {
     // console.log("logout called");
     try {
       const response = await dispatch(logoutUser());
-      // console.log(response)
+      console.log(response)
       if (response) {
         await persistor.flush();
         // localStorage.clear();
         // setRefresh(true);
         router.push("/home");
+        dispatch(fetchUserData());
         // window.location.reload();
         notify("success", "Logout Successful");
         // setRefresh(false);
