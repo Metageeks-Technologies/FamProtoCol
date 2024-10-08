@@ -551,6 +551,9 @@ const LandingPage = () => {
           setShowPasswordField(true);
         }
       }
+
+      handleSignUpDomain();
+
     } catch (error: any) {
       // console.log("error", error);
       // console.log("error code", error.code);
