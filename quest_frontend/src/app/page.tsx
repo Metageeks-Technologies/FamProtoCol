@@ -24,6 +24,7 @@ import { isAlphanumericWithHyphen } from "@/utils/helper/helper";
 import { fetchUserData } from "@/redux/reducer/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
+import Image from "next/image";
 
 const LandingPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -954,11 +955,13 @@ const LandingPage = () => {
                   <div className="z-10 text-center max-w-3xl">
                     <div className="flex justify-center items-center gap-3 flex-wrap mb-2">
                       <div className="w-16 h-16">
-                        <img
+                        <Image
                           className="w-full h-full object-cover "
-                          src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png"
+                          src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/websiteLogo.png"
                           alt="fam protocol"
-                        />
+                          width={100}
+                          height={100}
+                          />
                       </div>
                       <div className="flex flex-col justify-start items-start">
                         <span className="text-4xl text-white font-famFont text-wrap">

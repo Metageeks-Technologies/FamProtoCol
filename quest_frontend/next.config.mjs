@@ -2,14 +2,32 @@
 const nextConfig = {
   productionBrowserSourceMaps: false,
   images: {
-    domains: [
-      "pbs.twimg.com",
-      "i.ibb.co",
-      "plus.unsplash.com",
-      "drive.google.com",
-      "s3-alpha-sig.figma.com",
-      "lh3.googleusercontent.com",
-      "lh3.googleusercontent.com",
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'clusterprotocol2024.s3.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'drive.google.com',
+      }
+      ,
+      {
+        protocol: 'https',
+        hostname: 's3-alpha-sig.figma.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ibb.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'plus.unsplash.com',
+      }
     ],
   },
   webpack: config => {
