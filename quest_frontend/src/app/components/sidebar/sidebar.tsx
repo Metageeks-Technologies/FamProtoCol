@@ -48,11 +48,12 @@ const Sidebar = () => {
       <div className="w-[4rem] hidden sm:flex flex-col border-r-gray-600/45 bg-[#15151557] z-50 fixed md:h-screen glass_effect top-0">
         <Link
           href="#" //change this to the home page
-          className="fixed top-0 left-0 flex justify-center items-center border-b-gray-600/45 md:border-b border-b w-full h-[5rem]"
+          className="fixed top-0 left-0 flex justify-center items-center border-b-gray-600/45 md:border-b border-b w-full p-2 h-[5rem]"
         >
           <img
             src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/websiteLogo.png"
             alt="logo"
+            className="w-[3rem] h-[3rem]"
           />
         </Link>
         <div className="flex-1 flex items-center justify-center ">
