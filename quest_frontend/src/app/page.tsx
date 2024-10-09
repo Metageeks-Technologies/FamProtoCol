@@ -863,7 +863,7 @@ const LandingPage = () => {
                     <div className="flex justify-center gap-4 items-start">
                       <Link
                         href="/user/referral/dashboard"
-                        className="px-4 py-2 hover:border-[#6a5ef5] border-famViolate border-2 hover:text-[#919092] border-transparent font-qanelas rounded-lg "
+                        className="px-4 py-2 hover:border-[#7a50eb] border-famViolate border-2 hover:text-[#919092] font-qanelas rounded-lg "
                       >
                         Visit Profile
                       </Link>
