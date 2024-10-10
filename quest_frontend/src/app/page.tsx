@@ -187,7 +187,7 @@ const LandingPage = () => {
     setLoader(true);
     notifyAlert("clear");
     if (!isAlphanumericWithHyphen(domain)) {
-      notifyAlert("error", "Invalid username");
+      notifyAlert("error", "Invalid Domain.Domain must contain only alphanumeric characters and hyphens. Spaces are not allowed");
       setLoader(false);
       return;
     }
@@ -254,7 +254,7 @@ const LandingPage = () => {
     setLoaders({ ...loaders, login: true });
     notifyAlert("clear");
     if (!isAlphanumericWithHyphen(domain)) {
-      notifyAlert("error", "Invalid username");
+      notifyAlert("error", "Invalid Domain");
       setLoaders({ ...loaders, login: false });
       return;
     }
@@ -1073,7 +1073,7 @@ const LandingPage = () => {
                                 htmlFor="domain"
                                 className="uppercase text-sm font-famFont "
                               >
-                                Setup Username / Domain
+                                Setup Domain
                               </label>
                               <input
                                 type="text"
@@ -1152,7 +1152,7 @@ const LandingPage = () => {
                               htmlFor="domain"
                               className="uppercase text-sm font-famFont "
                             >
-                              Username / Domain
+                            Domain
                             </label>
                             <input
                               type="text"
