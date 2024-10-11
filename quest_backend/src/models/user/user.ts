@@ -148,10 +148,19 @@ const userSchema: Schema = new mongoose.Schema(
   { timestamps: true }
 );
 
+userSchema.index(
+  { inviteCode: 1 },
+  { 
+    unique: true,
+    partialFilterExpression: { inviteCode: { $type: "string" } }
+  }
+);
+
 // Create the User model
 const UserDb: Model<IUser> = mongoose.model<IUser>("User", userSchema);
-
 export default UserDb;
+
+
 
 export const generateToken=({ids,phone_number}:{ids:string,phone_number:string})=>{
   const jwtToken = jwt.sign({ ids, phone_number }, JWT_SECRET_Token, { expiresIn: '24h' });
