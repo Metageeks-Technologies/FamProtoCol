@@ -220,6 +220,10 @@ export const getProfile = async (req: any, res: Response) => {
   if(!data){
     return res.status(401).send("User is not authenticated");
   }
+
+  if(data.inviteCode && (data.inviteCode === data.domain.domainAddress)){
+    data.inviteCode = undefined;
+  }
   return res.status(200).send(data);
 };
 

@@ -58,6 +58,7 @@ export const signUpDomain = async (req: Request, res: Response) => {
       },
       image: image,
       referredBy: referrer ? referrer._id : undefined,
+      inviteCode:domainAddress
     });
 
     await newUser.save();
