@@ -135,7 +135,7 @@ const userSchema: Schema = new mongoose.Schema(
     createdTasks: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Task' } ],
     createdQuests: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Quest' } ],
     createdCommunities: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Community' } ],
-    inviteCode: { type: String,unique:true,sparse: true },
+    inviteCode: { type: String,unique:true,sparse: true,default:null },
     referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },  // The user ID of the referrer
     referredUsers: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],  // List of user IDs referred by this user
     famTasks:[{type:String}],
