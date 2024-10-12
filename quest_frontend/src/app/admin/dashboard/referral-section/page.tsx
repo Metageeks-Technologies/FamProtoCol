@@ -47,7 +47,7 @@ const ReferralPage = () => {
     try {
       const response = await axiosInstance.post("/referral/", { ...formData });
 
-      console.log("response", response);
+      // console.log("response", response);
       getAllReferrals();
     } catch (error) {
       console.log("error", error);
@@ -58,7 +58,7 @@ const ReferralPage = () => {
     try {
       setLoaders({ ...loaders, getReferral: true });
       const response = await axiosInstance.get("/referral/");
-      console.log("response", response);
+      // console.log("response", response);
       setReferrals(response.data.referrals);
     } catch (error) {
       console.log("error", error);
@@ -98,7 +98,7 @@ const ReferralPage = () => {
         ...editFormData,
       });
 
-      console.log("response", response);
+      // console.log("response", response);
     } catch (error) {
       console.log("error", error);
     }
@@ -108,7 +108,7 @@ const ReferralPage = () => {
   };
 
   const handleDelete = async (id: string) => {
-    console.log("delete id:", id);
+    // console.log("delete id:", id);
     try {
       const response = await axiosInstance.delete(`/referral/${id}`);
 
