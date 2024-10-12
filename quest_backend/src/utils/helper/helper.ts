@@ -1,4 +1,4 @@
-import { randomBytes } from "crypto";
+import  crypto,{randomBytes } from "crypto";
 
 export const generateReferral = (length: number): string => {
   if (length <= 0) {
@@ -9,4 +9,8 @@ export const generateReferral = (length: number): string => {
   const referralCode = randomBuffer.toString("hex").slice(0, length);
 
   return referralCode;
+};
+
+export const hashWalletAddress = (walletAddress: string): string => {
+  return crypto.createHash('sha256').update(walletAddress).digest('hex');
 };
