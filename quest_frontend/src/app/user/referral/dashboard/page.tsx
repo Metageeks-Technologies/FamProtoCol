@@ -212,7 +212,7 @@ const ReferralProfile: React.FC = () => {
                       <div className="text-xl text-famPurple flex items-baseline justify-start ">
                         {/* #{user?.rank} */}
                         <span>@</span>
-                        <span className="font-famFont">
+                        <span className="font-famFont lowercase">
                           {user?.domain?.domainAddress}
                         </span>
                       </div>
