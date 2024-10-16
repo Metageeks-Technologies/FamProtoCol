@@ -379,7 +379,7 @@ const ReferralProfile: React.FC = () => {
               columns={referredColumns}
               rowsPerPage={5}
               noData="Share your referral link to your friends
-                you will get 2.5 USDC for each friend you refer"
+                you will get 2.5 USDT for each friend you refer"
             />
           </div>
         </section>
