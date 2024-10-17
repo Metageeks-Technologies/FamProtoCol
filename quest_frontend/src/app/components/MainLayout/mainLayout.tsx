@@ -18,7 +18,7 @@ const MainLayout = ( {
 {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith( '/admin' );
-  const isLandingRoute = (pathname === '/' || pathname==="/user/referral-dashboard" || pathname==="/payment-bridge");
+  const isLandingRoute = (pathname === '/' || pathname==="/payment-bridge");
 
   return (
     <div>
@@ -28,7 +28,7 @@ const MainLayout = ( {
         {!isAdminRoute && <Sidebar />}
         <main className={`min-h-screen ${isAdminRoute?'':'md:ml-[4rem]'}`}>{ children }</main>
         <ToastContainer />
-      {(!isLandingRoute || !isAdminRoute) &&  <Footer /> }
+      {/* {(!isLandingRoute || !isAdminRoute) &&  <Footer /> } */}
       </NextUIProvider>
       </RainBowProviders>
     </div>
