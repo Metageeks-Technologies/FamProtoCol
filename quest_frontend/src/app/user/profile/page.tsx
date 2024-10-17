@@ -199,7 +199,7 @@ const Profile: React.FC = () => {
                     <div className="w-full flex flex-col items-center md:items-start justify-center lg:justify-start">
                       <div className="flex justify-center items-center md:justify-start md:items-start gap-2 ">
                         <ModalForm />
-                        <Link className="px-4 py-2 bg-famViolate rounded-md " href="/user/referral-dashboard" >Referral dashboard</Link>
+                        <Link className="px-4 py-2 bg-famViolate rounded-md text-nowrap " href="/user/referral-dashboard" >Referral dashboard</Link>
                       </div>
                       <div className="flex flex-wrap justify-center md:justify-start items-center my-4 gap-2">
                           {!user?.teleInfo?.telegramId && (
