@@ -7,7 +7,7 @@ export function middleware(req: NextRequest) {
   // console.log("search ", searchParams);
   // if (
   //   pathname !== "/" &&
-  //   pathname !== "/user/referral/dashboard" &&
+  //   pathname !== "/user/referral-dashboard" &&
   //   !(pathname === "/" && searchParams.has("referralCode"))
   // ) {
   //   return NextResponse.redirect(new URL("/", req.url));

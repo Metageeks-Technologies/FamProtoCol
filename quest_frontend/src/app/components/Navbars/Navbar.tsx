@@ -197,7 +197,7 @@ const Navbar: React.FC = () => {
                     {/* <p className="font-semibold">welcome { data.displayName }</p> */}
                     <p
                       className="font-semibold text-center text-white"
-                      onClick={() => router.push("/user/referral/dashboard")}
+                      onClick={() => router.push("/user/referral-dashboard")}
                     >
                       Referral Dashboard
                     </p>

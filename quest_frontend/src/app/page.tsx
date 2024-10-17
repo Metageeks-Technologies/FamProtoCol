@@ -269,7 +269,7 @@ const LandingPage = () => {
       if (response.data.success) {
         notify("success", response.data.message);
         handleClose();
-        router.push("/user/referral/dashboard");
+        router.push("/user/referral-dashboard");
       }
     } catch (err: any) {
       console.log(err);
@@ -295,7 +295,7 @@ const LandingPage = () => {
       if (response.data.success) {
         notify("success", response.data.message);
         handleClose();
-        router.push("/user/referral/dashboard");
+        router.push("/user/referral-dashboard");
       }
     } catch (error: any) {
       console.log(error);
@@ -862,7 +862,7 @@ const LandingPage = () => {
                     </div>
                     <div className="flex justify-center gap-4 items-start">
                       <Link
-                        href="/user/referral/dashboard"
+                        href="/user/referral-dashboard"
                         className="px-4 py-2 hover:border-[#7a50eb] border-famViolate border-2 hover:text-[#919092] font-qanelas rounded-lg "
                       >
                         Visit Profile
