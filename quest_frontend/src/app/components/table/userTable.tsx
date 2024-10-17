@@ -126,13 +126,15 @@ const UserTable = <T extends { [ key: string ]: any; }> ( { data, columns, rowsP
         );
       case "name":
         return (
-          <div className="flex justify-start md:w-[60%] mx-auto items-center gap-2 font-famFont uppercase">
+          <div className="flex justify-start md:w-[60%] mx-auto items-center gap-2 font-famFont">
           {
             user?.rankByReferredUser && (<span className="font-famFont text-famPurple text-end text-md">#{user?.rankByReferredUser}</span>)
           }
             <User
               classNames={{
-                base:"px-0"
+                base:"px-0", 
+                name:"lowercase",
+                description:"capitalize"
               }}
               avatarProps={ { radius: "md", src: user?.domain?.image || user?.image || '', size: "sm" } }
               name={ user?.domain?.domainAddress || '' }

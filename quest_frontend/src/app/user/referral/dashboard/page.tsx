@@ -212,7 +212,7 @@ const ReferralProfile: React.FC = () => {
                       <div className="text-xl text-famPurple flex items-baseline justify-start ">
                         {/* #{user?.rank} */}
                         <span>@</span>
-                        <span className="font-famFont">
+                        <span className="font-famFont lowercase">
                           {user?.domain?.domainAddress}
                         </span>
                       </div>
@@ -379,7 +379,7 @@ const ReferralProfile: React.FC = () => {
               columns={referredColumns}
               rowsPerPage={5}
               noData="Share your referral link to your friends
-                you will get 2.5 USDC for each friend you refer"
+                you will get 2.5 USDT for each friend you refer"
             />
           </div>
         </section>

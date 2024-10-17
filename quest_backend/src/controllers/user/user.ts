@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User, { IUser } from "../../models/user/user";
-import { generateReferral } from "../../utils/helper/helper";
+import { generateReferral, hashWalletAddress } from "../../utils/helper/helper";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import mongoose, { ObjectId } from "mongoose";
@@ -23,13 +23,17 @@ export const signUpDomain = async (req: Request, res: Response) => {
     } = req.body;
 
     if (!domainAddress || !domainAddress.endsWith(".fam")) {
-      return res.status(400).json({ message: "Invalid domain address"});
+      return res.status(400).json({ message: "Invalid domain address" });
     }
     if (!hashCode || !walletAddress) {
-      return res.status(400).json({ message: "Wallet not connected.try again later" });
+      return res
+        .status(400)
+        .json({ message: "Wallet not connected.try again later" });
     }
     if (!password) {
-      return res.status(400).json({ message: "Password is required to create an account" });
+      return res
+        .status(400)
+        .json({ message: "Password is required to create an account" });
     }
 
     const existingUser = await User.findOne({
@@ -38,7 +42,10 @@ export const signUpDomain = async (req: Request, res: Response) => {
     if (existingUser) {
       return res
         .status(400)
-        .json({ message: "This domain address is already in use. Please choose another" });
+        .json({
+          message:
+            "This domain address is already in use. Please choose another",
+        });
     }
 
     let referrer = null;
@@ -47,17 +54,19 @@ export const signUpDomain = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedWalletAddress = hashWalletAddress(walletAddress);
 
     const newUser = new User({
       domain: {
         domainAddress,
         image,
         hashCode,
-        walletAddress,
+        walletAddress: hashedWalletAddress,
         password: hashedPassword,
       },
       image: image,
       referredBy: referrer ? referrer._id : undefined,
+      inviteCode: domainAddress,
     });
 
     await newUser.save();
@@ -104,7 +113,12 @@ export const signUpDomain = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "An error occurred while creating the user account. Please try again later" });
+    return res
+      .status(500)
+      .json({
+        message:
+          "An error occurred while creating the user account. Please try again later",
+      });
   }
 };
 
@@ -113,7 +127,12 @@ export const loginDomain = async (req: Request, res: Response) => {
   console.log("req.body", req.body);
   try {
     if (!domainAddress && !password && !walletAddress) {
-      return res.status(400).json({ message: "Please provide a domain with password or connect with a wallet address for authentication"});
+      return res
+        .status(400)
+        .json({
+          message:
+            "Please provide a domain with password or connect with a wallet address for authentication",
+        });
     }
 
     if (domainAddress && password) {
@@ -122,14 +141,24 @@ export const loginDomain = async (req: Request, res: Response) => {
       });
 
       if (!user) {
-        return res.status(400).json({ message: "No account found with the provided domain address. Please check your domain and try again"});
+        return res
+          .status(400)
+          .json({
+            message:
+              "No account found with the provided domain address. Please check your domain and try again",
+          });
       }
       // Check if password matches
 
       const isMatch = await bcrypt.compare(password, user.domain.password);
 
       if (!isMatch) {
-        return res.status(400).json({ message: "The password you entered is incorrect. Please verify your password and try again" });
+        return res
+          .status(400)
+          .json({
+            message:
+              "The password you entered is incorrect. Please verify your password and try again",
+          });
       }
 
       // Generate JWT token
@@ -157,13 +186,29 @@ export const loginDomain = async (req: Request, res: Response) => {
     }
 
     if (walletAddress) {
-      const user = await User.findOne({
-        "domain.walletAddress": walletAddress,
-      });
+      const hashedAddress = hashWalletAddress(walletAddress);
 
+      const user = await User.findOne({
+        $or: [
+          { "domain.walletAddress": walletAddress }, // Check plaintext addresses
+          { "domain.walletAddress": hashedAddress }, // Check hashed addresses
+        ],
+      });
       if (!user) {
-        return res.status(400).json({ message: "No account found with this wallet address. Please sign up to continue" });
+        return res
+          .status(400)
+          .json({
+            message:
+              "No account found with this wallet address. Please sign up to continue",
+          });
       }
+      console.log("user wallet address", user?.domain.walletAddress);
+      console.log("wallet address", walletAddress);
+      if (user.domain.walletAddress === walletAddress) {
+        user.domain.walletAddress = hashedAddress; // Update the user record to use the hashed address
+        await user.save(); // Save the updated user back to the database
+      }
+
       // Generate JWT token
       const token = jwt.sign(
         { id: user._id, domain: user.domain.domainAddress },
@@ -188,7 +233,13 @@ export const loginDomain = async (req: Request, res: Response) => {
         .json({ success: true, message: "Login successful", user });
     }
   } catch (error) {
-    res.status(500).json({ message: "An unexpected error occurred during login. Please try again later", error });
+    res
+      .status(500)
+      .json({
+        message:
+          "An unexpected error occurred during login. Please try again later",
+        error,
+      });
   }
 };
 
@@ -347,9 +398,8 @@ export const generateReferralCode = async (req: any, res: Response) => {
 export const setReferralCode = async (req: any, res: Response) => {
   const { id } = req.user;
   try {
-    
     const user = await User.findById(id);
-    if(!user){
+    if (!user) {
       return res.send({ success: false, message: "User not found" });
     }
     const { referralCode } = req.body;
@@ -361,7 +411,7 @@ export const setReferralCode = async (req: any, res: Response) => {
     console.log(error);
     res.status(500).send({ success: false, message: "Internal server error" });
   }
-}
+};
 
 export const getDomains = async (req: Request, res: Response) => {
   try {
@@ -396,29 +446,32 @@ export const referredByUser = async (req: any, res: Response) => {
   }
 };
 
-export const famTaskComplete=async (req: any, res: Response) => {
+export const famTaskComplete = async (req: any, res: Response) => {
   const { id } = req.user;
-  const {task,accountAddress}=req.body;
-  console.log("req.body",req.body);
+  const { task, accountAddress } = req.body;
+  console.log("req.body", req.body);
   try {
     const user = await User.findById(id);
     if (!user) {
       return res.send({ success: false, message: "User not found" });
     }
-    if(task.action!="multipleWalletConnect"){
+    if (task.action != "multipleWalletConnect") {
       user.famTasks.push(task.action);
     }
     user.rewards = user.rewards || { coins: 0, xp: 0 }; // Initialize rewards if undefined
     user.rewards.coins = user.rewards.coins || 0; // Initialize coins if undefined
 
-      // Increment coins
+    // Increment coins
     user.rewards.coins += task.famPoints;
-    if(accountAddress){
+    if (accountAddress) {
       user.famTasksSubmission.connectWallets.push(accountAddress);
 
-      if(task.action==="multipleWalletConnect" && user.famTasksSubmission.connectWallets.length>=10){
+      if (
+        task.action === "multipleWalletConnect" &&
+        user.famTasksSubmission.connectWallets.length >= 10
+      ) {
         user.famTasks.push(task.action);
-     }
+      }
     }
     await user.save();
     return res.send({
@@ -429,43 +482,62 @@ export const famTaskComplete=async (req: any, res: Response) => {
   } catch (err: any) {
     res.send({ success: false, message: "internal server error" });
   }
-}
+};
 
-export const isValidReferral=async (req:any,res:Response)=>{
-  try{
-    console.log("req.body",req.body);
-    const {referralCode}=req.body;
-    const currentDate = new Date(); 
-    
-    if(!referralCode){
-      return res.send({success:false,isFreeReferral:false,isDiscountReferral:false});
+export const isValidReferral = async (req: any, res: Response) => {
+  try {
+    console.log("req.body", req.body);
+    const { referralCode } = req.body;
+    const currentDate = new Date();
+
+    if (!referralCode) {
+      return res.send({
+        success: false,
+        isFreeReferral: false,
+        isDiscountReferral: false,
+      });
     }
 
     const freeReferrals = await mintingReferral.find({
-      type: 'free',                // Condition for free referral type
-      ExpiryDate: { $gte: currentDate }    // Condition for not expired
+      type: "free", // Condition for free referral type
+      ExpiryDate: { $gte: currentDate }, // Condition for not expired
     });
 
-    console.log("free referral",freeReferrals);
+    console.log("free referral", freeReferrals);
 
-    const discountReferrals=await mintingReferral.find({
-      type:'discount',
-       ExpiryDate: { $gte: currentDate }  
-    })
+    const discountReferrals = await mintingReferral.find({
+      type: "discount",
+      ExpiryDate: { $gte: currentDate },
+    });
 
-    console.log("discount",discountReferrals);
-    const isFreeReferral=freeReferrals.some(referral => referral.referralCode === referralCode);
-    const isDiscountReferral=discountReferrals.some(referral => referral.referralCode === referralCode);
+    console.log("discount", discountReferrals);
+    const isFreeReferral = freeReferrals.some(
+      (referral) => referral.referralCode === referralCode
+    );
+    const isDiscountReferral = discountReferrals.some(
+      (referral) => referral.referralCode === referralCode
+    );
 
-    if(isFreeReferral){
-      return res.send({success:true,isFreeReferral:true,isDiscountReferral:false});
+    if (isFreeReferral) {
+      return res.send({
+        success: true,
+        isFreeReferral: true,
+        isDiscountReferral: false,
+      });
     }
-    if(isDiscountReferral){
-      return res.send({success:true,isFreeReferral:false,isDiscountReferral:true});
+    if (isDiscountReferral) {
+      return res.send({
+        success: true,
+        isFreeReferral: false,
+        isDiscountReferral: true,
+      });
     }
-    return res.send({success:false,isFreeReferral:false,isDiscountReferral:false})
-  }
-  catch(error){
-    return res.send({success:false,message:"internal server error"});
+    return res.send({
+      success: false,
+      isFreeReferral: false,
+      isDiscountReferral: false,
+    });
+  } catch (error) {
+    return res.send({ success: false, message: "internal server error" });
   }
 };

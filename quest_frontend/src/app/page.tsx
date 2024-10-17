@@ -24,6 +24,7 @@ import { isAlphanumericWithHyphen } from "@/utils/helper/helper";
 import { fetchUserData } from "@/redux/reducer/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
+import Image from "next/image";
 
 const LandingPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,7 +36,7 @@ const LandingPage = () => {
   const [error, setError] = useState("");
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [loader, setLoader] = useState(false);
-  const [showPasswordField, setShowPasswordField] = useState<boolean>(false);
+  const [domainMinted, setDomainMinted] = useState<boolean>(false);
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
   const [hash, setHash] = useState("");
@@ -47,11 +48,8 @@ const LandingPage = () => {
   const [isBridge, setIsBridge] = useState(false);
   const [isBridgeActive, setIsBridgeActive] = useState(false);
   const [referralType, setReferralType] = useState("");
-  // const [walletXProvider, setWalletXProvider] = useState<any>(null);
-  // const [walletX, setWalletX] = useState<WalletX>({
-  //   address: "",
-  // });
-
+  const [showReferral, setShowReferral] = useState(false);
+  const [referralGenerated, setReferralGenerated] = useState(false);
   const [loaders, setLoaders] = useState({
     connectWallet: false,
     login: false,
@@ -131,14 +129,9 @@ const LandingPage = () => {
     handleValidDomain();
   }, [domain]);
 
-  useEffect(() => {
-    if(thankYou){
-      dispatch(fetchUserData());
-    }
-  }, [dispatch]);
-
   const handleValidDomain = () => {
-    if (domain.length < 3) {
+    if (domain.length < 3 || domain.length > 14) {
+      setIsDomainAvailable("");
       return;
     }
     const checkDomain = domain + ".fam";
@@ -155,7 +148,7 @@ const LandingPage = () => {
     setDomain(event.target.value);
     setIsDomainAvailable("");
 
-    if (domain.length < 3) {
+    if (domain.length < 3 || domain.length > 14) {
       return;
     }
 
@@ -175,7 +168,7 @@ const LandingPage = () => {
     setLoader(false);
     setDomain("");
     onOpen();
-    setShowPasswordField(false);
+    setDomainMinted(false);
     setPassword("");
     notifyAlert("clear");
     setThankYou(false);
@@ -190,11 +183,11 @@ const LandingPage = () => {
     onClose();
   };
 
-  const handleSignUpDomain = async () => {
+  const handleSignUpDomain = async (hashCode: string) => {
     setLoader(true);
     notifyAlert("clear");
     if (!isAlphanumericWithHyphen(domain)) {
-      notifyAlert("error", "Invalid username");
+      notifyAlert("error", "Invalid Domain.Domain must contain only alphanumeric characters and hyphens. Spaces are not allowed");
       setLoader(false);
       return;
     }
@@ -211,7 +204,16 @@ const LandingPage = () => {
       return;
     }
     if (!password) {
+      setLoader(false);
       notifyAlert("error", "Password is required");
+      return;
+    }
+    if (password.length < 8 || password.length > 14) {
+      setLoader(false);
+      notifyAlert(
+        "error",
+        "Password must be at least 8 characters long and less than 14 characters"
+      );
       return;
     }
 
@@ -229,7 +231,7 @@ const LandingPage = () => {
         domainAddress: updatedDomain,
         image: path,
         password: password,
-        hashCode: hash,
+        hashCode: hashCode,
         walletAddress: address as string,
         referralCode,
       });
@@ -240,7 +242,6 @@ const LandingPage = () => {
         setLoader(false);
         setThankYou(true);
         handleClose();
-        setShowPasswordField(true);
       }
     } catch (err: any) {
       console.log(err);
@@ -253,7 +254,7 @@ const LandingPage = () => {
     setLoaders({ ...loaders, login: true });
     notifyAlert("clear");
     if (!isAlphanumericWithHyphen(domain)) {
-      notifyAlert("error", "Invalid username");
+      notifyAlert("error", "Invalid Domain");
       setLoaders({ ...loaders, login: false });
       return;
     }
@@ -303,36 +304,16 @@ const LandingPage = () => {
     setLoaders({ ...loaders, connectWallet: false });
   };
 
-  // await walletXProvider.request({
-  //       method: 'disconnect',
-  //       params: [{ userAddress }],
-  //     });
-
-  // const handleWalletXMint = async () => {
-  //   const res = await window.walletx.request({
-  //     method: "eth_sendTransaction",
-  //     // The following sends an EIP-1559 transaction. Legacy transactions are also supported.
-  //     params: [
-  //       {
-  //         // The user's active address.
-  //         from: walletX.address,
-  //         // Required except during contract publications.
-  //         to: process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS,
-  //         // Only required to send ether to the recipient from the initiating external account.
-  //         data: "0x092ca2d0000000000000000000000000c6e60b2e0a3bc5529fa521d173b1cf7d94fc0c43",
-  //       },
-  //     ],
-  //   });
-  //   console.log("mint walletx", res);
-  // };
-
   const handleDomainMinting = async () => {
     setLoader(true);
     notifyAlert("clear");
     setIsBridge(false);
     // Validate domain name
-    if (!domain || domain.length < 3) {
-      notifyAlert("error", "Domain name must be at least 3 characters long");
+    if (!domain || domain.length < 3 || domain.length > 14) {
+      notifyAlert(
+        "error",
+        "Domain name must be at least 3 characters long and less than 14 characters"
+      );
       setLoader(false);
       return;
     }
@@ -376,12 +357,20 @@ const LandingPage = () => {
       return;
     }
 
+    if (password.length < 8 || password.length > 14) {
+      setLoader(false);
+      notifyAlert(
+        "error",
+        "Password must be at least 8 characters long and less than 14 characters"
+      );
+      return;
+    }
     if (!address) {
       setLoader(false);
       notifyAlert("error", "Connect wallet first");
       return;
     }
-   const referralDiscount= await checkReferral();
+    const referralDiscount = await checkReferral();
     setReferralType(referralDiscount as string);
     const updatedDomain = domain + ".fam";
 
@@ -398,9 +387,6 @@ const LandingPage = () => {
     }
 
     try {
-      // const provider = new ethers.BrowserProvider(window?.ethereum);
-      // const signer = await provider.getSigner();
-
       if (!walletClient) {
         notifyAlert("error", "Failed to connect wallet.");
         setLoader(false);
@@ -420,15 +406,11 @@ const LandingPage = () => {
         signer
       );
 
-      // console.log("contract", contract);
-      // console.log("signer", signer.address);
-      const add = await signer.getAddress();
-      // console.log("add", add);
-
       const hasMinted = await contract.hasMintedDomain(
         await signer.getAddress()
       );
-      // console.log("hasMinted", hasMinted);
+      let hashCode = "";
+      console.log("hasMinted", hasMinted);
 
       if (hasMinted) {
         notifyAlert("error", "Domain already minted with this wallet address");
@@ -440,28 +422,30 @@ const LandingPage = () => {
       const isFreeMintWhitelisted = await contract.freeMintWhitelist(
         await signer.getAddress()
       );
-      // console.log("is free", isFreeMintWhitelisted);
-      // console.log("referral Type",referralType);
+      console.log("is free", isFreeMintWhitelisted);
+      console.log("referral Type", referralType);
 
       if (isFreeMintWhitelisted && referralDiscount === "free") {
         // Call free mint function
         const tx = await contract.freeMintDomain(updatedDomain);
         // console.log("tx");
         await tx.wait();
-        // console.log("tx1");
+        console.log("tx", tx);
         notifyAlert(
           "success",
           `Domain ${updatedDomain} minted for free successfully`
         );
         setHash(tx.hash);
-        setShowPasswordField(true);
+        hashCode = tx.hash;
+        setDomainMinted(true);
+        // await handleSignUpDomain();
       } else {
         // Check if the user is whitelisted for discount mint
         const isDiscountMintWhitelisted = await contract.discountMintWhitelist(
           await signer.getAddress()
         );
 
-        if (isDiscountMintWhitelisted && referralDiscount==="discount" ) {
+        if (isDiscountMintWhitelisted && referralDiscount === "discount") {
           // Discounted mint fee (2.5 USDT)
           const usdtAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDT with 6 decimals
 
@@ -492,16 +476,16 @@ const LandingPage = () => {
           await approveTxDiscount.wait();
 
           // Call discount mint function
-          const tx = await contract.discountMintDomain(
-            updatedDomain
-          );
+          const tx = await contract.discountMintDomain(updatedDomain);
           await tx.wait();
           notifyAlert(
             "success",
             `Domain ${updatedDomain} minted with discount successfully`
           );
           setHash(tx.hash);
-          setShowPasswordField(true);
+          hashCode = tx.hash;
+          setDomainMinted(true);
+          // await handleSignUpDomain();
         } else {
           // Initialize usdt contract instance
           const usdtContract = new ethers.Contract(
@@ -510,9 +494,9 @@ const LandingPage = () => {
             signer
           );
 
-          const ownerExits=await contract.referralOwners(referralCode);
+          const ownerExits = await contract.referralOwners(referralCode);
           // console.log("referral owner",ownerExits);
-          if(ownerExits==0x0000000000000000000000000000000000000000){
+          if (ownerExits == 0x0000000000000000000000000000000000000000) {
             notifyAlert("error", "Invalid Referral Code");
             setLoader(false);
             return;
@@ -548,13 +532,51 @@ const LandingPage = () => {
             `Domain ${updatedDomain} minted successfully with referral`
           );
           setHash(tx.hash);
-          setShowPasswordField(true);
+          hashCode = tx.hash;
+          setDomainMinted(true);
+          // await handleSignUpDomain();
         }
       }
+
+    await handleSignUpDomain(hashCode);
+      // signUpDomain
+      // try {
+      //   const uploadSuccess = await handleUpload();
+      //   // console.log(uploadSuccess);
+      //   if (!uploadSuccess) {
+      //     setLoader(false);
+      //     notifyAlert("error", "Failed to upload image");
+      //     return;
+      //   }
+
+      //   const path = `https://${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}.s3.amazonaws.com/userProfile/${domain}`;
+      //   const response = await axiosInstance.post("/user/signUpDomain", {
+      //     domainAddress: updatedDomain,
+      //     image: path,
+      //     password: password,
+      //     hashCode: hashCode,
+      //     walletAddress: address as string,
+      //     referralCode,
+      //   });
+
+      //   if (response.data.success) {
+      //     // alert(response.data.message);
+      //     notify("success", response.data.message);
+      //     setLoader(false);
+      //     setThankYou(true);
+      //     handleClose();
+      //   }
+      // } catch (err: any) {
+      //   console.log(err);
+      //   notifyAlert("error", err.response.data.message);
+      //   setLoader(false);
+      // }
+
+      setLoader(false);
     } catch (error: any) {
-      // console.log("error", error);
-      // console.log("error code", error.code);
-      // console.log("error message", error.message);
+      console.log("error", error);
+      console.log("error code", error.code);
+      console.log("error message", error.message);
       if (error.code === "CALL_EXCEPTION") {
         console.error(
           "Transaction failed due to a contract revert or failure."
@@ -671,7 +693,7 @@ const LandingPage = () => {
     }
 
     setPassword("");
-    setShowPasswordField(false);
+    setDomainMinted(false);
     setDomain("");
     setLogoPreview("");
     setReferralCode("");
@@ -685,14 +707,6 @@ const LandingPage = () => {
     setIsBridge(false);
   };
 
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
-  //  const [loaders, setLoaders] = useState({
-  //    generateReferral: false,
-  //  });
-  const [showReferral, setShowReferral] = useState(false);
-
-  const [generatetedRefferalCode, setGeneratedReferalcode] = useState("");
-
   const onGenerateReferral = async () => {
     try {
       setLoaders({ ...loaders, generateReferral: true });
@@ -701,13 +715,11 @@ const LandingPage = () => {
 
       if (response.data.success) {
         const referralCode = response.data.referralCode;
-        setGeneratedReferalcode(referralCode);
         // Notify the user about the successful generation
 
         // Connect the wallet if not already connected
         // const walletData = await connectWallet();
         if (!address) {
-          setIsWalletConnected(false);
           notify(
             "error",
             "Please connect your wallet to generate a referral code."
@@ -748,6 +760,7 @@ const LandingPage = () => {
         });
         if (res.data.success) {
           notify("success", "Referral code generated and saved successfully!");
+          setReferralGenerated(true);
           dispatch(fetchUserData());
         } else {
           notify("error", "Failed to save referral code.");
@@ -756,68 +769,29 @@ const LandingPage = () => {
       }
     } catch (error: any) {
       console.error("Error generating referral code:", error);
-      notify("error", error.reason);
+      if(error.code==="ACTION_REJECTED"){
+        notify("error", "Request Rejected");
+      }
+      else if(error.reason){
+        notify("error", error.reason);
+      }
+      else{
+        notify("error", "Failed to generate referral code.");
+      }
     }
     setLoaders({ ...loaders, generateReferral: false });
   };
-
-  // const detectEip6963 = () => {
-  //   const handleAnnounceProvider = (event: Event) => {
-  //     const customEvent = event as CustomEvent;
-
-  //     if (customEvent.detail.info.name === "WalletX") {
-  //       setWalletXProvider(customEvent.detail.provider);
-  //       // console.log(customEvent.detail.provider, "This is walletXProvider");
-  //     }
-  //   };
-
-  //   window.addEventListener("eip6963:announceProvider", handleAnnounceProvider);
-  //   window.addEventListener(
-  //     "eip6963:announceProvider:walletx",
-  //     handleAnnounceProvider
-  //   );
-
-  //   window.dispatchEvent(new Event("eip6963:requestProvider"));
-  //   window.dispatchEvent(new Event("eip6963:requestProvider:walletx"));
-
-  //   return () => {
-  //     window.removeEventListener(
-  //       "eip6963:announceProvider",
-  //       handleAnnounceProvider
-  //     );
-  //     window.removeEventListener(
-  //       "eip6963:announceProvider:walletx",
-  //       handleAnnounceProvider
-  //     );
-  //   };
-  // };
-
-  // useEffect(() => {
-  //   detectEip6963();
-  // }, []);
-
-  // const handleWalletX = async () => {
-  //   try {
-  //     const response = await walletXProvider.enable();
-  //     console.log("response", response);
-  //     setWalletX({ ...walletX, address: response[0] });
-  //     console.log("walletX", walletXProvider);
-
-  //     // const sign = await walletXProvider.request({
-  //     //   method: "personal_sign",
-  //     //   params: ["sign",response[0], "Example password"],
-  //     // });
-  //     // console.log("sign",sign);
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  // };
-
   const user: any = useSelector((state: RootState) => state.login.user);
 
   const baseReferralUrl = `${
     process.env.NEXT_PUBLIC_CLIENT_URL
   }/?referralCode=${user?.inviteCode || ""}`;
+
+  useEffect(() => {
+    if (thankYou) {
+      dispatch(fetchUserData());
+    }
+  }, [dispatch]);
 
   return (
     <>
@@ -884,21 +858,21 @@ const LandingPage = () => {
                       Thank you for Registering your domain with us!{" "}
                     </div>
                     <div className="text-center mb-4 ">
-                      Once the Tier 1 mint is complete, our Dapp will go LIVE.{" "}
+                      Once the Tier 1 mint is complete, our Dapp will go LIVE{" "}
                     </div>
-                    <div className="flex justify-center  gap-4 items-start">
+                    <div className="flex justify-center gap-4 items-start">
                       <Link
                         href="/user/referral/dashboard"
-                        className="px-4 py-2 bg-famViolate rounded-lg "
+                        className="px-4 py-2 hover:border-[#7a50eb] border-famViolate border-2 hover:text-[#919092] font-qanelas rounded-lg "
                       >
                         Visit Profile
                       </Link>
-                      {user && user.inviteCode ? (
+                      {user && referralGenerated && user.inviteCode ? (
                         <div className="flex justify-start gap-2 items-center">
                           <div className="relative">
                             <input
                               type={showReferral ? "text" : "password"} // Toggles between text and password
-                              value={baseReferralUrl + user.inviteCode}
+                              value={baseReferralUrl}
                               readOnly
                               className="text-sm pr-8 font-famFont bg-zinc-950 text-white border-1 border-gray-600 focus:border-famViolate-light rounded px-4 py-2 w-full"
                             />
@@ -917,9 +891,7 @@ const LandingPage = () => {
                           </div>
                           <button
                             onClick={() => {
-                              navigator.clipboard.writeText(
-                                baseReferralUrl + user.inviteCode
-                              );
+                              navigator.clipboard.writeText(baseReferralUrl);
                               notify(
                                 "default",
                                 "Referral code copied to clipboard!"
@@ -942,48 +914,54 @@ const LandingPage = () => {
                               />
                             </svg>
                           </button>
+                          <div className="flex flex-col justify-start">
+                            <Link
+                              target="_blank"
+                              href={`${
+                                user && user.inviteCode
+                                  ? `https://twitter.com/intent/tweet?text=Internet Just got Evolved. Be a part of this revolution \n referral link: ${
+                                      baseReferralUrl
+                                    }`
+                                  : ""
+                              }`}
+                              className="rounded-lg block bg-purple-600 text-white px-4 py-2 hover:bg-purple-700 transition-colors duration-300"
+                            >
+                              {" "}
+                              Share on X{" "}
+                            </Link>
+                          </div>
                         </div>
                       ) : (
                         <div className="flex flex-col justify-start">
                           <button
-                            className="px-4 py-2 bg-famViolate rounded-lg "
+                            disabled={loaders.generateReferral}
+                            className="px-4 py-2 bg-famViolate hover:bg-[#261e74] transition-colors duration-300 font-qanelas rounded-lg "
                             onClick={onGenerateReferral}
                           >
-                            Invite & Earn
+                            {loaders.generateReferral ? (
+                              <Spinner color="white" size="sm" />
+                            ) : (
+                              "Invite & Earn"
+                            )}
                           </button>
                           <p className="text-[12px]">
-                            *Invite & Earn $2.5 per referral instantly.
+                            *Invite & Earn $2.5 per referral instantly
                           </p>
                         </div>
                       )}
-
-                      <div className="flex flex-col justify-start">
-                        <Link
-                          target="_blank"
-                          href={`${
-                            user && user.inviteCode
-                              ? `https://twitter.com/intent/tweet?text=Internet Just got Evolved. Be a part of this revolution \n referral link: ${
-                                  baseReferralUrl + user.inviteCode
-                                }`
-                              : ""
-                          }`}
-                          className="rounded-lg block bg-purple-600 text-white px-4 py-2 hover:bg-purple-700 transition-colors duration-300"
-                        >
-                          {" "}
-                          Share on X{" "}
-                        </Link>
-                      </div>
                     </div>
                   </div>
                 ) : (
                   <div className="z-10 text-center max-w-3xl">
                     <div className="flex justify-center items-center gap-3 flex-wrap mb-2">
                       <div className="w-16 h-16">
-                        <img
+                        <Image
                           className="w-full h-full object-cover "
-                          src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png"
+                          src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/websiteLogo.png"
                           alt="fam protocol"
-                        />
+                          width={100}
+                          height={100}
+                          />
                       </div>
                       <div className="flex flex-col justify-start items-start">
                         <span className="text-4xl text-white font-famFont text-wrap">
@@ -1095,11 +1073,11 @@ const LandingPage = () => {
                                 htmlFor="domain"
                                 className="uppercase text-sm font-famFont "
                               >
-                                Setup Username / Domain
+                                Setup Domain
                               </label>
                               <input
                                 type="text"
-                                disabled={showPasswordField}
+                                disabled={domainMinted}
                                 value={domain}
                                 onChange={(e) => handleDomainChange(e)}
                                 className="w-full bg-zinc-950 border-1 font-famFont border-gray-600 px-4 py-2 hover:border-famViolate-light"
@@ -1174,11 +1152,11 @@ const LandingPage = () => {
                               htmlFor="domain"
                               className="uppercase text-sm font-famFont "
                             >
-                              Username / Domain
+                            Domain
                             </label>
                             <input
                               type="text"
-                              disabled={showPasswordField}
+                              disabled={domainMinted}
                               value={domain}
                               onChange={(e) => handleDomainChange(e)}
                               className="w-full bg-zinc-950 border-1 font-famFont border-gray-600 px-4 py-2 hover:border-famViolate-light"
@@ -1252,74 +1230,67 @@ const LandingPage = () => {
                       }  mb-4`}
                     >
                       {activeTab === "signUp" ? (
-                        showPasswordField ? (
-                          <Button
-                            radius="md"
-                            className="w-full text-white bg-[#5538CE] "
-                            onPress={handleSignUpDomain}
-                          >
-                            {loader ? (
-                              <Spinner color="white" size="sm" />
-                            ) : (
-                              <span>SignUp</span>
-                            )}
-                          </Button>
-                        ) : (
-                          <>
-                            {address && (
+                        <>
+                          {address &&
+                            (domainMinted ? (
                               <Button
                                 radius="md"
+                                disabled={loader}
                                 className="bg-[#5538CE] text-white w-full mb-2"
-                                onPress={handleDomainMinting}
-                                // onPress={handlewalletX}
-                                // onPress={handleFreeMint}
+                                onPress={() => handleSignUpDomain(hash)}
                               >
                                 {loader ? (
-                                  <Spinner color="white" size="sm" />
+                                  <div className="flex justify-center items-center gap-2">
+                                    <span>
+                                      <Spinner color="white" size="sm" />
+                                    </span>
+                                    <span>Signing Up...</span>
+                                  </div>
+                                ) : (
+                                  <span>SignUp</span>
+                                )}
+                              </Button>
+                            ) : (
+                              <Button
+                                radius="md"
+                                disabled={loader}
+                                className="bg-[#5538CE] text-white w-full mb-2"
+                                onPress={handleDomainMinting}
+                              >
+                                {loader ? (
+                                  <div className="flex justify-center items-center gap-2">
+                                    <span>
+                                      <Spinner color="white" size="sm" />
+                                    </span>
+                                    <span>
+                                      {domainMinted
+                                        ? "Signing Up..."
+                                        : "Minting..."}
+                                    </span>
+                                  </div>
                                 ) : (
                                   <span>Mint</span>
                                 )}
                               </Button>
-                            )}
-                            <div
-                              className={`w-full flex justify-center items-center ${
-                                (!domain ||
-                                  !password ||
-                                  !logoPreview ||
-                                  !referralCode) &&
-                                !address &&
-                                "disabled-button"
-                              } `}
-                            >
-                              <WalletConnectButton />
-                            </div>
-                            {/* <div className="w-full flex justify-center item-center">
-                              OR
-                            </div> */}
-                            {/* <div className="flex justify-center items-center">
-                              {walletXProvider ? (
-                                <Button
-                                  className="px-4 py-2 rounded-full border-1 hover:border-gray-400 border-famViolate bg-zinc-950 text-white"
-                                  onPress={handleWalletX}
-                                >
-                                  Connect WalletX for Gasless Mint
-                                </Button>
-                              ) : (
-                                <Link
-                                  target="_blank"
-                                  href="https://chromewebstore.google.com/detail/walletx-a-gasless-smart-w/mdjjoodeandllhefapdpnffjolechflh"
-                                  className="px-4 py-2 rounded-full border-1 hover:border-gray-400 border-famViolate bg-zinc-950 text-white"
-                                >
-                                  Mint Gasless with WalletX
-                                </Link>
-                              )}
-                            </div> */}
-                          </>
-                        )
+                            ))}
+                          <div
+                            className={`w-full flex justify-center items-center ${
+                              (!domain ||
+                                !password ||
+                                !logoPreview ||
+                                !referralCode) &&
+                              !address &&
+                              "disabled-button"
+                            } `}
+                          >
+                            <WalletConnectButton />
+                          </div>
+                        </>
                       ) : (
                         <div className="flex flex-col">
                           <Button
                             radius="md"
+                            disabled={loaders.login}
                             className="w-full text-white bg-[#5538CE] "
                             onPress={handleLoginDomain}
                           >
@@ -1333,6 +1304,7 @@ const LandingPage = () => {
                           {address && (
                             <Button
                               radius="md"
+                              disabled={loaders.connectWallet}
                               className="text-white bg-[#5538CE] mb-2"
                               onPress={handleLoginWithWallet}
                             >

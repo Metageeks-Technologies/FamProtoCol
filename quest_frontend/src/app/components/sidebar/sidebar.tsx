@@ -51,8 +51,9 @@ const Sidebar = () => {
           className="fixed top-0 left-0 flex justify-center items-center border-b-gray-600/45 md:border-b border-b w-full h-[5rem]"
         >
           <img
-            src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/logo.png"
+            src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/websiteLogo.png"
             alt="logo"
+            className="w-[3rem] h-[3rem]"
           />
         </Link>
         <div className="flex-1 flex items-center justify-center ">
