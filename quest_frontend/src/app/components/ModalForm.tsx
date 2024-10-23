@@ -131,7 +131,7 @@ const ModalForm = () => {
       <Button
         onPress={toggleModal}
         variant="bordered"
-        className="w-full font-qanelas border-2 border-gray-600  text-white cursor-pointer px-4 py-2 rounded-md"
+        className="w-full font-qanelas border border-gray-600  text-white cursor-pointer px-4 py-2 rounded-md"
       >
         Edit profile
       </Button>

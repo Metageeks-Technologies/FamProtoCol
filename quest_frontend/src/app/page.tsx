@@ -924,10 +924,9 @@ const LandingPage = () => {
                                     }`
                                   : ""
                               }`}
-                              className="rounded-lg block bg-purple-600 text-white px-4 py-2 hover:bg-purple-700 transition-colors duration-300"
+                              className="rounded-lg block bg-famViolate text-white px-4 py-2 hover:bg-famViolate-light transition-colors duration-300"
                             >
-                              {" "}
-                              Share on X{" "}
+                              Share on X
                             </Link>
                           </div>
                         </div>

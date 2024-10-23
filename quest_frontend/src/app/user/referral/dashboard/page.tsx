@@ -209,12 +209,21 @@ const ReferralProfile: React.FC = () => {
                       <div className="text-2xl font-famFont ">
                         {user?.displayName}
                       </div>
-                      <div className="text-xl text-famPurple flex items-baseline justify-start ">
+                      <div className="text-xl text-famPurple flex items-baseline justify-start mb-2">
                         {/* #{user?.rank} */}
                         <span>@</span>
                         <span className="font-famFont lowercase">
                           {user?.domain?.domainAddress}
                         </span>
+                      </div>
+                      <div>
+                         <Link
+                              target="_blank"
+                               href={`https://twitter.com/intent/tweet?text=Internet Just got Evolved. Be a part of this revolution. \n Mint your domain with  ${process.env.NEXT_PUBLIC_CLIENT_URL}`}
+                              className="text-sm text-white font-qanelas border border-gray-600 px-6 py-2 hover:shadow-md hover:border-famViolate hover:text-famViolate rounded-lg transition-colors duration-300"
+                            >
+                             Click to tweet
+                            </Link>
                       </div>
                     </div>
                   </div>
@@ -252,7 +261,7 @@ const ReferralProfile: React.FC = () => {
                               type={showReferral ? "text" : "password"} // Toggles between text and password
                               value={baseReferralUrl + user.inviteCode}
                               readOnly
-                              className="text-sm pr-8 font-famFont bg-zinc-950 text-white border-1 border-gray-600 focus:border-famViolate-light rounded px-4 py-2 w-full"
+                              className="text-sm pr-8 font-famFont bg-zinc-950 text-white border border-gray-600 focus:border-famViolate-light rounded px-4 py-2 w-full"
                             />
                             <button
                               onClick={() => {
@@ -300,7 +309,7 @@ const ReferralProfile: React.FC = () => {
                               href={`https://twitter.com/intent/tweet?text=Internet Just got Evolved. Be a part of this revolution \n referral link: ${
                                 baseReferralUrl + user.inviteCode
                               }`}
-                              className="rounded-lg ml-2 block bg-purple-600 text-white px-4 py-2 hover:bg-purple-700 transition-colors duration-300"
+                              className="rounded-lg ml-2 block bg-famViolate text-white px-4 py-2 hover:bg-famViolate-light transition-colors duration-300"
                             >
                               {" "}
                               Share on X{" "}
