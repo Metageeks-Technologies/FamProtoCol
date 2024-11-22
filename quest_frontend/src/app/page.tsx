@@ -460,13 +460,13 @@ const LandingPage = () => {
           const usdtBalance = await usdtContract.balanceOf(
             await signer.getAddress()
           );
-          if (usdtBalance < usdtAmountDiscount) {
-            notifyAlert("error", "Insufficient USDT balance.");
-            setIsBridge(true);
-            // nitro
-            setLoader(false);
-            return;
-          }
+          // if (usdtBalance < usdtAmountDiscount) {
+          //   notifyAlert("error", "Insufficient USDT balance.");
+          //   setIsBridge(true);
+          //   // nitro
+          //   setLoader(false);
+          //   return;
+          // }
 
           // Approve the discounted minting fee (2.5 usdt) for your contract
           const approveTxDiscount = await usdtContract.approve(
@@ -502,17 +502,17 @@ const LandingPage = () => {
             return;
           }
           // Check the user's usdt balance
-          const usdtBalance = await usdtContract.balanceOf(
-            await signer.getAddress()
-          );
+          // const usdtBalance = await usdtContract.balanceOf(
+          //   await signer.getAddress()
+          // );
           const usdtAmount = ethers.parseUnits("5", 6); // 5 usdt with 6 decimals
 
-          if (usdtBalance < usdtAmount) {
-            notifyAlert("error", "Insufficient USDT balance.");
-            setIsBridge(true);
-            setLoader(false);
-            return;
-          }
+          // if (usdtBalance < usdtAmount) {
+          //   notifyAlert("error", "Insufficient USDT balance.");
+          //   setIsBridge(true);
+          //   setLoader(false);
+          //   return;
+          // }
 
           // Approve the minting fee (5 usdt) for your contract
           const approveTx = await usdtContract.approve(
