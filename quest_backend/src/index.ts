@@ -32,6 +32,9 @@ const allowedOrigins = [
 
 const app: Express = express();
 
+
+console.log(JSON.stringify(process.env))
+
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
