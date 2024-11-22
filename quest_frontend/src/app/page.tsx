@@ -13,7 +13,7 @@ import axiosInstance from "@/utils/axios/axios";
 import axios from "axios";
 import { notify } from "@/utils/notify";
 import Swal from "sweetalert2";
-import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
+import upgradeableContractAbi from "@/utils/abi/upgradableContractTestnet.json";
 import usdt from "@/utils/abi/usdt.json";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -102,10 +102,10 @@ const LandingPage = () => {
           setReferralType("free");
           return "free";
         }
-        if (response.data.isDiscountReferral) {
-          setReferralType("discount");
-          return "discount";
-        }
+        // if (response.data.isDiscountReferral) {
+        //   setReferralType("discount");
+        //   return "discount";
+        // }
       }
     } catch (error) {
       console.log("error:", error);
@@ -376,15 +376,19 @@ const LandingPage = () => {
 
     const ArbicontractAddress =
       process.env.NEXT_PUBLIC_UPGRADABLECONTRACT_ADDRESS!;
-    const usdtContractAddress = process.env.NEXT_PUBLIC_USDT_CONTRACT_ADDRESS!;
+    // const usdtContractAddress = process.env.NEXT_PUBLIC_USDT_CONTRACT_ADDRESS!;
+
+    //Testnet ABI
     const contractABI = upgradeableContractAbi;
-    const usdtABI = usdt;
+    // const contractABI = upgradeableContractAbi;
+    // const usdtABI = usdt;
 
     if (!ArbicontractAddress || !contractABI || !address) {
       notifyAlert("error", "Failed to connect wallet.");
       setLoader(false);
       return;
     }
+    let hashCode = "";
 
     try {
       if (!walletClient) {
@@ -409,7 +413,6 @@ const LandingPage = () => {
       const hasMinted = await contract.hasMintedDomain(
         await signer.getAddress()
       );
-      let hashCode = "";
       console.log("hasMinted", hasMinted);
 
       if (hasMinted) {
@@ -419,13 +422,14 @@ const LandingPage = () => {
       }
 
       // Check if the user is whitelisted for free mint
-      const isFreeMintWhitelisted = await contract.freeMintWhitelist(
-        await signer.getAddress()
-      );
-      console.log("is free", isFreeMintWhitelisted);
-      console.log("referral Type", referralType);
+      // const isFreeMintWhitelisted = await contract.freeMintWhitelist(
+      //   await signer.getAddress()
+      // );
+      // console.log("is free", isFreeMintWhitelisted);
+      // console.log("referral Type", referralType);
 
-      if (isFreeMintWhitelisted && referralDiscount === "free") {
+      // if (isFreeMintWhitelisted && referralDiscount === "free") {
+        if (referralDiscount === "free") {
         // Call free mint function
         const tx = await contract.freeMintDomain(updatedDomain);
         // console.log("tx");
@@ -439,60 +443,63 @@ const LandingPage = () => {
         hashCode = tx.hash;
         setDomainMinted(true);
         // await handleSignUpDomain();
-      } else {
+      } 
+      // else {
         // Check if the user is whitelisted for discount mint
-        const isDiscountMintWhitelisted = await contract.discountMintWhitelist(
-          await signer.getAddress()
-        );
+        // const isDiscountMintWhitelisted = await contract.discountMintWhitelist(
+        //   await signer.getAddress()
+        // );
 
-        if (isDiscountMintWhitelisted && referralDiscount === "discount") {
+        // if (isDiscountMintWhitelisted && referralDiscount === "discount") {
           // Discounted mint fee (2.5 USDT)
-          const usdtAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDT with 6 decimals
+          // const usdtAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDT with 6 decimals
 
           // Initialize USDT contract instance
-          const usdtContract = new ethers.Contract(
-            usdtContractAddress,
-            usdtABI,
-            signer
-          );
+          // const usdtContract = new ethers.Contract(
+          //   usdtContractAddress,
+          //   usdtABI,
+          //   signer
+          // );
 
           // Check the user's USDT balance
-          const usdtBalance = await usdtContract.balanceOf(
-            await signer.getAddress()
-          );
-          if (usdtBalance < usdtAmountDiscount) {
-            notifyAlert("error", "Insufficient USDT balance.");
-            setIsBridge(true);
-            // nitro
-            setLoader(false);
-            return;
-          }
+          // const usdtBalance = await usdtContract.balanceOf(
+          //   await signer.getAddress()
+          // );
+          // if (usdtBalance < usdtAmountDiscount) {
+          //   notifyAlert("error", "Insufficient USDT balance.");
+          //   setIsBridge(true);
+          //   // nitro
+          //   setLoader(false);
+          //   return;
+          // }
 
           // Approve the discounted minting fee (2.5 usdt) for your contract
-          const approveTxDiscount = await usdtContract.approve(
-            ArbicontractAddress,
-            usdtAmountDiscount
-          );
-          await approveTxDiscount.wait();
+          // const approveTxDiscount = await usdtContract.approve(
+          //   ArbicontractAddress,
+          //   usdtAmountDiscount
+          // );
+          // await approveTxDiscount.wait();
 
           // Call discount mint function
-          const tx = await contract.discountMintDomain(updatedDomain);
-          await tx.wait();
-          notifyAlert(
-            "success",
-            `Domain ${updatedDomain} minted with discount successfully`
-          );
-          setHash(tx.hash);
-          hashCode = tx.hash;
-          setDomainMinted(true);
+          // const tx = await contract.discountMintDomain(updatedDomain);
+          // await tx.wait();
+          // notifyAlert(
+          //   "success",
+          //   `Domain ${updatedDomain} minted with discount successfully`
+          // );
+          // setHash(tx.hash);
+          // hashCode = tx.hash;
+          // setDomainMinted(true);
           // await handleSignUpDomain();
-        } else {
+        // }
+        
+        else {
           // Initialize usdt contract instance
-          const usdtContract = new ethers.Contract(
-            usdtContractAddress,
-            usdtABI,
-            signer
-          );
+          // const usdtContract = new ethers.Contract(
+          //   usdtContractAddress,
+          //   usdtABI,
+          //   signer
+          // );
 
           const ownerExits = await contract.referralOwners(referralCode);
           // console.log("referral owner",ownerExits);
@@ -502,24 +509,24 @@ const LandingPage = () => {
             return;
           }
           // Check the user's usdt balance
-          const usdtBalance = await usdtContract.balanceOf(
-            await signer.getAddress()
-          );
-          const usdtAmount = ethers.parseUnits("5", 6); // 5 usdt with 6 decimals
+          // const usdtBalance = await usdtContract.balanceOf(
+          //   await signer.getAddress()
+          // );
+          // const usdtAmount = ethers.parseUnits("5", 6); // 5 usdt with 6 decimals
 
-          if (usdtBalance < usdtAmount) {
-            notifyAlert("error", "Insufficient USDT balance.");
-            setIsBridge(true);
-            setLoader(false);
-            return;
-          }
+          // if (usdtBalance < usdtAmount) {
+          //   notifyAlert("error", "Insufficient USDT balance.");
+          //   setIsBridge(true);
+          //   setLoader(false);
+          //   return;
+          // }
 
           // Approve the minting fee (5 usdt) for your contract
-          const approveTx = await usdtContract.approve(
-            ArbicontractAddress,
-            usdtAmount
-          );
-          await approveTx.wait();
+          // const approveTx = await usdtContract.approve(
+          //   ArbicontractAddress,
+          //   usdtAmount
+          // );
+          // await approveTx.wait();
 
           // Call mintDomainWithReferral function
           const tx = await contract.mintDomainWithReferral(
@@ -536,7 +543,7 @@ const LandingPage = () => {
           setDomainMinted(true);
           // await handleSignUpDomain();
         }
-      }
+      
 
     await handleSignUpDomain(hashCode);
       // signUpDomain
@@ -573,7 +580,8 @@ const LandingPage = () => {
       // }
 
       setLoader(false);
-    } catch (error: any) {
+    }
+     catch (error: any) {
       console.log("error", error);
       console.log("error code", error.code);
       console.log("error message", error.message);
@@ -594,12 +602,14 @@ const LandingPage = () => {
             "Transaction failed: Check your balance or Try with some other address."
           );
         }
-      } else if (error.code === "INSUFFICIENT_FUNDS") {
-        notifyAlert(
-          "error",
-          "You have insufficient funds to complete this transaction."
-        );
-      } else if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
+      } 
+      // else if (error.code === "INSUFFICIENT_FUNDS") {
+      //   notifyAlert(
+      //     "error",
+      //     "You have insufficient funds to complete this transaction."
+      //   );
+      // } 
+      else if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
         notifyAlert("error", "The gas limit could not be estimated.");
       } else if (error.code === "ACTION_REJECTED") {
         notifyAlert("error", "Request Rejected");
@@ -1217,12 +1227,12 @@ const LandingPage = () => {
                         </Button>
                       </div>
                     )}
-                    {activeTab === "signUp" && (
+                    {/* {activeTab === "signUp" && (
                       <div className="font-qanelas text-white capitalize text-xs mb-2 flex justify-center items-center gap-2">
                         Note: You will need 5 USDT and some ETH in Arbitrum
                         Chain to mint a domain.
                       </div>
-                    )}
+                    )} */}
                     <div
                       className={` ${
                         activeTab === "signUp" ? "w-full" : "w-[80%] mx-auto"

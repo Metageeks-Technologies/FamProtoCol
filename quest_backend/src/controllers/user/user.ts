@@ -505,18 +505,18 @@ export const isValidReferral = async (req: any, res: Response) => {
 
     console.log("free referral", freeReferrals);
 
-    const discountReferrals = await mintingReferral.find({
-      type: "discount",
-      ExpiryDate: { $gte: currentDate },
-    });
+    // const discountReferrals = await mintingReferral.find({
+    //   type: "discount",
+    //   ExpiryDate: { $gte: currentDate },
+    // });
 
-    console.log("discount", discountReferrals);
+    // console.log("discount", discountReferrals);
     const isFreeReferral = freeReferrals.some(
       (referral) => referral.referralCode === referralCode
     );
-    const isDiscountReferral = discountReferrals.some(
-      (referral) => referral.referralCode === referralCode
-    );
+    // const isDiscountReferral = discountReferrals.some(
+    //   (referral) => referral.referralCode === referralCode
+    // );
 
     if (isFreeReferral) {
       return res.send({
@@ -524,18 +524,18 @@ export const isValidReferral = async (req: any, res: Response) => {
         isFreeReferral: true,
         isDiscountReferral: false,
       });
-    }
-    if (isDiscountReferral) {
-      return res.send({
-        success: true,
-        isFreeReferral: false,
-        isDiscountReferral: true,
-      });
+    // }
+    // if (isDiscountReferral) {
+    //   return res.send({
+    //     success: true,
+    //     isFreeReferral: false,
+    //     isDiscountReferral: true,
+    //   });
     }
     return res.send({
       success: false,
       isFreeReferral: false,
-      isDiscountReferral: false,
+      // isDiscountReferral: false,
     });
   } catch (error) {
     return res.send({ success: false, message: "internal server error" });
