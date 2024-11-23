@@ -953,8 +953,9 @@ const LandingPage = () => {
                               "Invite & Earn"
                             )}
                           </button>
-                          <p className="text-[12px]">
-                            *Invite & Earn $2.5 per referral instantly
+                          <p className="text-[12px] text-center">
+                            *Invite & Earn
+                            {/* *Invite & Earn $2.5 per referral instantly */}
                           </p>
                         </div>
                       )}
