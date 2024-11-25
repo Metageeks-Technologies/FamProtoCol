@@ -9,6 +9,7 @@ export const config = getDefaultConfig({
   projectId: process.env.NEXT_PUBLIC_RAINBOW_PROJECT_ID as string,
   chains: [
     arbitrum,
+    // arbitrumSepolia,
     ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
   ],
   ssr: true,

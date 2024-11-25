@@ -41,6 +41,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+//Mainnet
 app.use(
   cors({
     origin: allowedOrigins.filter(Boolean),
@@ -49,6 +51,13 @@ app.use(
     // allowedHeaders: ['Content-Type', 'Authorization'] // Ensure these headers are allowed
   })
 );
+
+//Testnet
+// app.use(cors({
+//   origin: process.env.PUBLIC_CLIENT_URL, // Allow your frontend origin
+//   credentials: true // Allow credentials
+// }));
+
 app.use(
   session({
     secret: "sswnsnnjdsdfgd",
