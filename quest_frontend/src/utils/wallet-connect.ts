@@ -89,65 +89,68 @@ export const connectWallet = async (): Promise<{ address: string; balance: strin
 
     // Check if the user is connected to Arbitrum One
     const network = await provider.getNetwork();
-    // const targetNetwork = BigInt(0xa4b1); // Arbitrum One chain ID
-    const targetNetwork = BigInt(0x66EEE); // Arbitrum One chain ID
+    const targetNetwork = BigInt(0xa4b1); // Arbitrum One chain ID
+    // const targetNetwork = BigInt(0x66EEE); // Arbitrum Sepolia chain ID
     console.log("Network:", network)
     console.log("targetNetwork:", targetNetwork)
+
+    // Mainnet
+    if (network.chainId !== targetNetwork) {
+      try {
+        // First, attempt to add the Arbitrum One chain if it's not recognized
+        await provider.send("wallet_addEthereumChain", [
+          {
+            chainId: "0xa4b1",
+            chainName: "Arbitrum One",
+            rpcUrls: ["https://arb1.arbitrum.io/rpc"],
+            nativeCurrency: {
+              name: "Ether",
+              symbol: "ETH",
+              decimals: 18,
+            },
+            blockExplorerUrls: ["https://arbiscan.io/"],
+          },
+        ]);
+
+        // Then switch to Arbitrum One network
+        await provider.send("wallet_switchEthereumChain", [{ chainId: "0xa4b1" }]);
+        return { address: '', balance: '', switch: true };
+      } catch (addError) {
+        console.error("Failed to add or switch Arbitrum One mainnet", addError);
+        return null;
+      }
+    }
+
+    // Request the user's Ethereum accounts
+    
+    // Testnet
 
     // if (network.chainId !== targetNetwork) {
     //   try {
     //     // First, attempt to add the Arbitrum One chain if it's not recognized
     //     await provider.send("wallet_addEthereumChain", [
     //       {
-    //         chainId: "0xa4b1",
-    //         chainName: "Arbitrum One",
-    //         rpcUrls: ["https://arb1.arbitrum.io/rpc"],
+    //         chainId: "0x66EEE",
+    //         chainName: "Arbitrum Sepolia",
+    //         rpcUrls: ["https://sepolia-rollup.arbitrum.io/rpc"],
     //         nativeCurrency: {
     //           name: "Ether",
     //           symbol: "ETH",
     //           decimals: 18,
     //         },
-    //         blockExplorerUrls: ["https://arbiscan.io/"],
+    //         blockExplorerUrls: ["https://sepolia.arbiscan.io/"],
     //       },
     //     ]);
 
     //     // Then switch to Arbitrum One network
-    //     await provider.send("wallet_switchEthereumChain", [{ chainId: "0xa4b1" }]);
+    //     await provider.send("wallet_switchEthereumChain", [{ chainId: "0x66EEE" }]);
     //     return { address: '', balance: '', switch: true };
     //   } catch (addError) {
-    //     console.error("Failed to add or switch Arbitrum One mainnet", addError);
+    //     console.error("Failed to add or switch Arbitrum Sepolia Testnet", addError);
+    //     // console.error("Failed to add or switch Arbitrum One mainnet", addError);
     //     return null;
     //   }
     // }
-
-    // Request the user's Ethereum accounts
-    
-    if (network.chainId !== targetNetwork) {
-      try {
-        // First, attempt to add the Arbitrum One chain if it's not recognized
-        await provider.send("wallet_addEthereumChain", [
-          {
-            chainId: "0x66EEE",
-            chainName: "Arbitrum Sepolia",
-            rpcUrls: ["https://sepolia-rollup.arbitrum.io/rpc"],
-            nativeCurrency: {
-              name: "Ether",
-              symbol: "ETH",
-              decimals: 18,
-            },
-            blockExplorerUrls: ["https://sepolia.arbiscan.io/"],
-          },
-        ]);
-
-        // Then switch to Arbitrum One network
-        await provider.send("wallet_switchEthereumChain", [{ chainId: "0x66EEE" }]);
-        return { address: '', balance: '', switch: true };
-      } catch (addError) {
-        console.error("Failed to add or switch Arbitrum Sepolia Testnet", addError);
-        // console.error("Failed to add or switch Arbitrum One mainnet", addError);
-        return null;
-      }
-    }
     
     const accounts = await provider.send("eth_requestAccounts", []);
 

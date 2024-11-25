@@ -13,7 +13,7 @@ import axiosInstance from "@/utils/axios/axios";
 import axios from "axios";
 import { notify } from "@/utils/notify";
 import Swal from "sweetalert2";
-import upgradeableContractAbi from "@/utils/abi/upgradableContractTestnet.json";
+import upgradeableContractAbi from "@/utils/abi/upgradableContract.json";
 import usdt from "@/utils/abi/usdt.json";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -379,8 +379,10 @@ const LandingPage = () => {
     // const usdtContractAddress = process.env.NEXT_PUBLIC_USDT_CONTRACT_ADDRESS!;
 
     //Testnet ABI
-    const contractABI = upgradeableContractAbi;
     // const contractABI = upgradeableContractAbi;
+
+    //Mainnet ABI
+    const contractABI = upgradeableContractAbi;
     // const usdtABI = usdt;
 
     if (!ArbicontractAddress || !contractABI || !address) {
