@@ -960,7 +960,7 @@ const LandingPage = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="w-full flex flex-col md:flex-row justify-between items-center">
+                  <div className="w-full flex flex-col md:flex-row justify-around items-center">
 
   <div className="z-10 text-center md:text-left">
     <div className="flex justify-center md:justify-start items-center gap-3 flex-wrap mb-2">
