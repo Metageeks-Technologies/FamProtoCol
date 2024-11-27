@@ -990,7 +990,7 @@ const LandingPage = () => {
     </div>
   </div>
 
-  <div className="bg-[#0d0d0d34] p-8 w-full md:w-1/2 mt-8 md:mt-0">
+  <div className=" p-8 w-full md:w-1/2 mt-8 md:mt-0">
     {isBridgeActive ? (
       <div className="flex flex-col justify-center items-center">
         <NitroWidget />
