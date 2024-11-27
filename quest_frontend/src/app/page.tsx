@@ -187,7 +187,10 @@ const LandingPage = () => {
     setLoader(true);
     notifyAlert("clear");
     if (!isAlphanumericWithHyphen(domain)) {
-      notifyAlert("error", "Invalid Domain.Domain must contain only alphanumeric characters and hyphens. Spaces are not allowed");
+      notifyAlert(
+        "error",
+        "Invalid Domain.Domain must contain only alphanumeric characters and hyphens. Spaces are not allowed"
+      );
       setLoader(false);
       return;
     }
@@ -431,7 +434,7 @@ const LandingPage = () => {
       // console.log("referral Type", referralType);
 
       // if (isFreeMintWhitelisted && referralDiscount === "free") {
-        if (referralDiscount === "free") {
+      if (referralDiscount === "free") {
         // Call free mint function
         const tx = await contract.freeMintDomain(updatedDomain);
         // console.log("tx");
@@ -445,109 +448,107 @@ const LandingPage = () => {
         hashCode = tx.hash;
         setDomainMinted(true);
         // await handleSignUpDomain();
-      } 
+      }
       // else {
-        // Check if the user is whitelisted for discount mint
-        // const isDiscountMintWhitelisted = await contract.discountMintWhitelist(
-        //   await signer.getAddress()
+      // Check if the user is whitelisted for discount mint
+      // const isDiscountMintWhitelisted = await contract.discountMintWhitelist(
+      //   await signer.getAddress()
+      // );
+
+      // if (isDiscountMintWhitelisted && referralDiscount === "discount") {
+      // Discounted mint fee (2.5 USDT)
+      // const usdtAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDT with 6 decimals
+
+      // Initialize USDT contract instance
+      // const usdtContract = new ethers.Contract(
+      //   usdtContractAddress,
+      //   usdtABI,
+      //   signer
+      // );
+
+      // Check the user's USDT balance
+      // const usdtBalance = await usdtContract.balanceOf(
+      //   await signer.getAddress()
+      // );
+      // if (usdtBalance < usdtAmountDiscount) {
+      //   notifyAlert("error", "Insufficient USDT balance.");
+      //   setIsBridge(true);
+      //   // nitro
+      //   setLoader(false);
+      //   return;
+      // }
+
+      // Approve the discounted minting fee (2.5 usdt) for your contract
+      // const approveTxDiscount = await usdtContract.approve(
+      //   ArbicontractAddress,
+      //   usdtAmountDiscount
+      // );
+      // await approveTxDiscount.wait();
+
+      // Call discount mint function
+      // const tx = await contract.discountMintDomain(updatedDomain);
+      // await tx.wait();
+      // notifyAlert(
+      //   "success",
+      //   `Domain ${updatedDomain} minted with discount successfully`
+      // );
+      // setHash(tx.hash);
+      // hashCode = tx.hash;
+      // setDomainMinted(true);
+      // await handleSignUpDomain();
+      // }
+      else {
+        // Initialize usdt contract instance
+        // const usdtContract = new ethers.Contract(
+        //   usdtContractAddress,
+        //   usdtABI,
+        //   signer
         // );
 
-        // if (isDiscountMintWhitelisted && referralDiscount === "discount") {
-          // Discounted mint fee (2.5 USDT)
-          // const usdtAmountDiscount = ethers.parseUnits("2.5", 6); // 2.5 USDT with 6 decimals
-
-          // Initialize USDT contract instance
-          // const usdtContract = new ethers.Contract(
-          //   usdtContractAddress,
-          //   usdtABI,
-          //   signer
-          // );
-
-          // Check the user's USDT balance
-          // const usdtBalance = await usdtContract.balanceOf(
-          //   await signer.getAddress()
-          // );
-          // if (usdtBalance < usdtAmountDiscount) {
-          //   notifyAlert("error", "Insufficient USDT balance.");
-          //   setIsBridge(true);
-          //   // nitro
-          //   setLoader(false);
-          //   return;
-          // }
-
-          // Approve the discounted minting fee (2.5 usdt) for your contract
-          // const approveTxDiscount = await usdtContract.approve(
-          //   ArbicontractAddress,
-          //   usdtAmountDiscount
-          // );
-          // await approveTxDiscount.wait();
-
-          // Call discount mint function
-          // const tx = await contract.discountMintDomain(updatedDomain);
-          // await tx.wait();
-          // notifyAlert(
-          //   "success",
-          //   `Domain ${updatedDomain} minted with discount successfully`
-          // );
-          // setHash(tx.hash);
-          // hashCode = tx.hash;
-          // setDomainMinted(true);
-          // await handleSignUpDomain();
-        // }
-        
-        else {
-          // Initialize usdt contract instance
-          // const usdtContract = new ethers.Contract(
-          //   usdtContractAddress,
-          //   usdtABI,
-          //   signer
-          // );
-
-          const ownerExits = await contract.referralOwners(referralCode);
-          // console.log("referral owner",ownerExits);
-          if (ownerExits == 0x0000000000000000000000000000000000000000) {
-            notifyAlert("error", "Invalid Referral Code");
-            setLoader(false);
-            return;
-          }
-          // Check the user's usdt balance
-          // const usdtBalance = await usdtContract.balanceOf(
-          //   await signer.getAddress()
-          // );
-          // const usdtAmount = ethers.parseUnits("5", 6); // 5 usdt with 6 decimals
-
-          // if (usdtBalance < usdtAmount) {
-          //   notifyAlert("error", "Insufficient USDT balance.");
-          //   setIsBridge(true);
-          //   setLoader(false);
-          //   return;
-          // }
-
-          // Approve the minting fee (5 usdt) for your contract
-          // const approveTx = await usdtContract.approve(
-          //   ArbicontractAddress,
-          //   usdtAmount
-          // );
-          // await approveTx.wait();
-
-          // Call mintDomainWithReferral function
-          const tx = await contract.mintDomainWithReferral(
-            updatedDomain,
-            referralCode
-          );
-          await tx.wait();
-          notifyAlert(
-            "success",
-            `Domain ${updatedDomain} minted successfully with referral`
-          );
-          setHash(tx.hash);
-          hashCode = tx.hash;
-          setDomainMinted(true);
-          // await handleSignUpDomain();
+        const ownerExits = await contract.referralOwners(referralCode);
+        // console.log("referral owner",ownerExits);
+        if (ownerExits == 0x0000000000000000000000000000000000000000) {
+          notifyAlert("error", "Invalid Referral Code");
+          setLoader(false);
+          return;
         }
-      
+        // Check the user's usdt balance
+        // const usdtBalance = await usdtContract.balanceOf(
+        //   await signer.getAddress()
+        // );
+        // const usdtAmount = ethers.parseUnits("5", 6); // 5 usdt with 6 decimals
 
-    await handleSignUpDomain(hashCode);
+        // if (usdtBalance < usdtAmount) {
+        //   notifyAlert("error", "Insufficient USDT balance.");
+        //   setIsBridge(true);
+        //   setLoader(false);
+        //   return;
+        // }
+
+        // Approve the minting fee (5 usdt) for your contract
+        // const approveTx = await usdtContract.approve(
+        //   ArbicontractAddress,
+        //   usdtAmount
+        // );
+        // await approveTx.wait();
+
+        // Call mintDomainWithReferral function
+        const tx = await contract.mintDomainWithReferral(
+          updatedDomain,
+          referralCode
+        );
+        await tx.wait();
+        notifyAlert(
+          "success",
+          `Domain ${updatedDomain} minted successfully with referral`
+        );
+        setHash(tx.hash);
+        hashCode = tx.hash;
+        setDomainMinted(true);
+        // await handleSignUpDomain();
+      }
+
+      await handleSignUpDomain(hashCode);
       // signUpDomain
       // try {
       //   const uploadSuccess = await handleUpload();
@@ -582,8 +583,7 @@ const LandingPage = () => {
       // }
 
       setLoader(false);
-    }
-     catch (error: any) {
+    } catch (error: any) {
       console.log("error", error);
       console.log("error code", error.code);
       console.log("error message", error.message);
@@ -604,13 +604,13 @@ const LandingPage = () => {
             "Transaction failed: Check your balance or Try with some other address."
           );
         }
-      } 
+      }
       // else if (error.code === "INSUFFICIENT_FUNDS") {
       //   notifyAlert(
       //     "error",
       //     "You have insufficient funds to complete this transaction."
       //   );
-      // } 
+      // }
       else if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
         notifyAlert("error", "The gas limit could not be estimated.");
       } else if (error.code === "ACTION_REJECTED") {
@@ -781,13 +781,11 @@ const LandingPage = () => {
       }
     } catch (error: any) {
       console.error("Error generating referral code:", error);
-      if(error.code==="ACTION_REJECTED"){
+      if (error.code === "ACTION_REJECTED") {
         notify("error", "Request Rejected");
-      }
-      else if(error.reason){
+      } else if (error.reason) {
         notify("error", error.reason);
-      }
-      else{
+      } else {
         notify("error", "Failed to generate referral code.");
       }
     }
@@ -807,9 +805,9 @@ const LandingPage = () => {
 
   return (
     <>
-      <div className="landing-page h-screen">
+      <div className="landing-page h-full">
         <div className="w-[90%] mx-auto pt-8 h-full ">
-          <div className="flex flex-col justify-between items-center h-full">
+          <div className="w-full flex flex-col justify-between items-center h-full">
             <div className="w-full flex md:flex-row flex-col-reverse md:justify-between items-center gap-3 ">
               <div className="flex items-center gap-1">
                 <Link
@@ -862,8 +860,8 @@ const LandingPage = () => {
                 </div>
               </div>
             </div>
-            <div className="h-full flex items-center justify-center ">
-              <div className="flex items-center justify-center h-full text-white">
+            <div className="w-full h-full flex items-center justify-center ">
+              <div className="w-full flex  justify-center h-full text-white">
                 {thankYou ? (
                   <div className="flex flex-col justify-center text-white items-center ">
                     <div className="text-center mb-4 font-bold text-lg">
@@ -931,9 +929,7 @@ const LandingPage = () => {
                               target="_blank"
                               href={`${
                                 user && user.inviteCode
-                                  ? `https://twitter.com/intent/tweet?text=Internet Just got Evolved. Be a part of this revolution \n referral link: ${
-                                      baseReferralUrl
-                                    }`
+                                  ? `https://twitter.com/intent/tweet?text=Internet Just got Evolved. Be a part of this revolution \n referral link: ${baseReferralUrl}`
                                   : ""
                               }`}
                               className="rounded-lg block bg-famViolate text-white px-4 py-2 hover:bg-famViolate-light transition-colors duration-300"
@@ -964,398 +960,353 @@ const LandingPage = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="z-10 text-center max-w-3xl">
-                    <div className="flex justify-center items-center gap-3 flex-wrap mb-2">
-                      <div className="w-16 h-16">
-                        <Image
-                          className="w-full h-full object-cover "
-                          src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/websiteLogo.png"
-                          alt="fam protocol"
-                          width={100}
-                          height={100}
-                          />
-                      </div>
-                      <div className="flex flex-col justify-start items-start">
-                        <span className="text-4xl text-white font-famFont text-wrap">
-                          FAM PROTOCOL
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-center text-2xl text-gray-300 font-famFont ">
-                      Fam's Gonna Make It
-                    </div>
-                    <p className="mt-6 text-gray-400 leading-relaxed text-xl font-famFont ">
-                      Community Owned Internet Protocol
-                    </p>
-                    <div className="mt-8 flex justify-center gap-4">
-                      <Button
-                        // onClick={() => comingSoon()}
-                        onClick={() => handleOpen()}
-                        className="bg-[#5538CE] text-white font-semibold py-2 px-6 rounded-lg hover:bg-[#6243dd] transition duration-300"
-                      >
-                        Get OnBoarded
-                      </Button>
-                      {/* <Button
-                        onClick={() => comingSoon()}
-                        // onClick={() => router.push("/home")}
-                        className="bg-white text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition duration-300"
-                      >
-                        Explore
-                      </Button> */}
-                    </div>
+                  <div className="w-full flex flex-col md:flex-row justify-around items-center">
+
+  <div className="z-10 text-center md:text-left">
+    <div className="flex justify-center md:justify-start items-center gap-3 flex-wrap mb-2">
+      <div className="w-16 h-16">
+        <Image
+          className="w-full h-full object-cover"
+          src="https://clusterprotocol2024.s3.amazonaws.com/website+logo/websiteLogo.png"
+          alt="fam protocol"
+          width={100}
+          height={100}
+        />
+      </div>
+      <div className="flex flex-col justify-start items-start">
+        <span className="text-4xl md:text-5xl text-white font-famFont text-wrap">
+          FAM PROTOCOL
+        </span>
+      </div>
+    </div>
+    <div className="text-center md:text-left text-2xl text-gray-300 font-famFont">
+      Fam's Gonna Make It
+    </div>
+    <p className="mt-6 text-gray-400 leading-relaxed text-xl font-famFont">
+      Community Owned Internet Protocol
+    </p>
+
+    <div className="mt-8 flex justify-center md:justify-start gap-4">
+    </div>
+  </div>
+
+  <div className="bg-[#0d0d0d34] p-8 w-full md:w-1/2 mt-8 md:mt-0">
+    {isBridgeActive ? (
+      <div className="flex flex-col justify-center items-center">
+        <NitroWidget />
+        <div className="w-full text-sm flex justify-start items-center sm:px-6 opacity-55 mb-4">
+          Note: Bridge ETH to Arbitrum Chain
+        </div>
+        <button
+          onClick={() => handleBridge(false)}
+          className="font-qanelas rounded-lg px-4 py-2 bg-famViolate text-white"
+        >
+          Go Back
+        </button>
+      </div>
+    ) : (
+      <div className="flex flex-col justify-center items-center">
+        <div className="text-2xl font-bold font-qanelas uppercase mb-6 md:mb-4">
+          Get OnBoarded
+        </div>
+        {activeTab === "signUp" ? (
+          <div className="flex gap-4 mb-4 md:flex-row flex-col justify-between items-center rounded-lg">
+            <div className="w-full md:w-1/3 flex justify-center items-center">
+              <div
+                className="bg-zinc-950 border border-gray-600 h-36 w-36 flex items-center justify-center cursor-pointer overflow-hidden transition-all duration-300 hover:border-famViolate-light"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {logoPreview ? (
+                  <img
+                    src={logoPreview}
+                    alt="Uploaded logo"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center">
+                    <img
+                      src="https://clusterprotocol2024.s3.amazonaws.com/others/gallery-add.png"
+                      alt="upload image"
+                    />
                   </div>
+                )}
+              </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleLogoUpload}
+                accept="image/*"
+                className="hidden"
+              />
+            </div>
+            <div className="flex flex-col justify-center gap-4 w-full md:w-2/3">
+              <div className="flex gap-4 flex-row justify-between">
+                <div>
+                  <label
+                    htmlFor="domain"
+                    className="uppercase text-sm font-famFont"
+                  >
+                    Setup Domain
+                  </label>
+                  <input
+                    type="text"
+                    disabled={domainMinted}
+                    value={domain}
+                    onChange={(e) => handleDomainChange(e)}
+                    className="w-full bg-zinc-950 border-1 font-famFont border-gray-600 px-4 py-2 hover:border-famViolate-light"
+                    name="domain"
+                    placeholder="e.g. JohnDoe"
+                  />
+                  {domain &&
+                    isDomainAvailable === "false" && (
+                      <div className="text-red-600 font-famFont text-xs text-end">
+                        Domain already exists
+                      </div>
+                    )}
+                  {domain && isDomainAvailable === "true" && (
+                    <div className="text-green-600 font-famFont text-xs text-end">
+                      Domain available
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label
+                    htmlFor="inviteCode"
+                    className="uppercase text-sm font-famFont"
+                  >
+                    Invite Code
+                  </label>
+                  <input
+                    type="text"
+                    value={referralCode}
+                    onChange={(e) => setReferralCode(e.target.value)}
+                    className="w-full bg-zinc-950 border-1 border-gray-600 font-famFont px-4 py-2 hover:border-famViolate-light"
+                    name="inviteCode"
+                    placeholder="Invite Code"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="password"
+                  className="uppercase text-sm font-famFont"
+                >
+                  Password
+                </label>
+                <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between items-center hover:border-famViolate-light">
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    className="w-full bg-zinc-950 focus:border-famViolate-light px-4 py-2 font-famFont"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <span
+                    className="cursor-pointer px-4 py-2"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <i className="bi bi-eye-slash-fill"></i>
+                    ) : (
+                      <i className="bi bi-eye-fill"></i>
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="w-[80%] mx-auto mb-4">
+            <div className="w-full flex flex-col justify-center gap-4">
+              <div className="w-full">
+                <label
+                  htmlFor="domain"
+                  className="uppercase text-sm font-famFont"
+                >
+                  Domain
+                </label>
+                <input
+                  type="text"
+                  disabled={domainMinted}
+                  value={domain}
+                  onChange={(e) => handleDomainChange(e)}
+                  className="w-full bg-zinc-950 border-1 font-famFont border-gray-600 px-4 py-2 hover:border-famViolate-light"
+                  name="domain"
+                  placeholder="e.g. JohnDoe"
+                />
+              </div>
+              <div className="w-full">
+                <label
+                  htmlFor="password"
+                  className="uppercase text-sm font-famFont"
+                >
+                  Password
+                </label>
+                <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between items-center hover:border-famViolate-light">
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    className="w-full bg-zinc-950 px-4 py-2 font-famFont"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <span
+                    className="cursor-pointer px-4 py-2"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <i className="bi bi-eye-slash-fill"></i>
+                    ) : (
+                      <i className="bi bi-eye-fill"></i>
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="text-red-600 font-famFont text-small text-center mb-4">
+            {error}
+          </div>
+        )}
+        {alertMessage && (
+          <div className="text-small font-famFont text-center mb-4 text-green-600">
+            {alertMessage}
+          </div>
+        )}
+        {isBridge && (
+          <div className="flex justify-center items-center mb-4">
+            <Button
+              onClick={() => handleBridge(true)}
+              className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl text-sm text-center mb-2"
+            >
+              Bridge
+            </Button>
+          </div>
+        )}
+
+        <div
+          className={`${
+            activeTab === "signUp" ? "w-full" : "w-[80%] mx-auto"
+          } mb-4`}
+        >
+          {activeTab === "signUp" ? (
+            <>
+              {address &&
+                (domainMinted ? (
+                  <Button
+                    radius="md"
+                    disabled={loader}
+                    className="bg-[#5538CE] text-white w-full mb-2"
+                    onPress={() => handleSignUpDomain(hash)}
+                  >
+                    {loader ? (
+                      <div className="flex justify-center items-center gap-2">
+                        <span>
+                          <Spinner color="white" size="sm" />
+                        </span>
+                        <span>Signing Up...</span>
+                      </div>
+                    ) : (
+                      <span>SignUp</span>
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    radius="md"
+                    disabled={loader}
+                    className="bg-[#5538CE] text-white w-full mb-2"
+                    onPress={handleDomainMinting}
+                  >
+                    {loader ? (
+                      <div className="flex justify-center items-center gap-2">
+                        <span>
+                          <Spinner color="white" size="sm" />
+                        </span>
+                        <span>{domainMinted ? "Signing Up..." : "Minting..."}</span>
+                      </div>
+                    ) : (
+                      <span>Mint</span>
+                    )}
+                  </Button>
+                ))}
+              <div
+                className={`w-full flex justify-center items-center ${
+                  (!domain ||
+                    !password ||
+                    !logoPreview ||
+                    !referralCode) &&
+                  !address &&
+                  "disabled-button"
+                } `}
+              >
+                <WalletConnectButton />
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col">
+              <Button
+                radius="md"
+                disabled={loaders.login}
+                className="w-full text-white bg-[#5538CE]"
+                onPress={handleLoginDomain}
+              >
+                {loaders.login ? (
+                  <Spinner color="white" size="sm" />
+                ) : (
+                  <span>Login</span>
+                )}
+              </Button>
+              <div className="text-center py-2">OR</div>
+              {address && (
+                <Button
+                  radius="md"
+                  disabled={loaders.connectWallet}
+                  className="text-white bg-[#5538CE] mb-2"
+                  onPress={handleLoginWithWallet}
+                >
+                  {loaders.connectWallet ? (
+                    <Spinner color="white" size="sm" />
+                  ) : (
+                    <span>Login with Wallet</span>
+                  )}
+                </Button>
+              )}
+              <div className="w-full flex justify-center items-center">
+                <WalletConnectButton />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="font-qanelas flex justify-center items-center gap-2">
+          <span>
+            {activeTab === "signUp"
+              ? "Already have an account?"
+              : "Don't have an account yet? "}
+          </span>
+          <span
+            onClick={handleActiveTabChanged}
+            className="text-blue-700 text-md cursor-pointer font-bold"
+          >
+            {activeTab === "signUp" ? "LogIn" : "SignUp"}
+          </span>
+        </div>
+      </div>
+    )}
+  </div>
+</div>
+
                 )}
               </div>
             </div>
           </div>
         </div>
       </div>
-      <Modal
-        backdrop="blur"
-        placement="center"
-        shadow="sm"
-        isDismissable={false}
-        isKeyboardDismissDisabled={true}
-        size="xl"
-        radius="none"
-        isOpen={isOpen}
-        className=" bg-[#0d0d0d34]"
-        onClose={handleClose}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalBody className="text-white p-8 ">
-                {isBridgeActive ? (
-                  <div className="flex flex-col justify-center items-center">
-                    <NitroWidget />
-                    <div className="w-full text-sm flex justify-start items-center sm:px-6 opacity-55 mb-4">
-                      Note: Bridge ETH to Arbitrum Chain
-                    </div>
-                    <button
-                      onClick={() => {
-                        handleBridge(false);
-                      }}
-                      className="font-qanelas rounded-lg px-4 py-2 bg-famViolate text-white "
-                    >
-                      Go Back
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col justify-center items-center  ">
-                    <div className="text-2xl font-bold font-qanelas uppercase mb-6 md:mb-4 ">
-                      Get OnBoarded
-                    </div>
-                    {activeTab === "signUp" ? (
-                      <div className="flex gap-4 mb-4 md:flex-row flex-col justify-between items-center rounded-lg">
-                        <div className="w-full md:w-1/3 flex justify-center items-center">
-                          <div
-                            className="bg-zinc-950 border border-gray-600 h-36 w-36 flex items-center justify-center cursor-pointer overflow-hidden transition-all duration-300 hover:border-famViolate-light "
-                            onClick={() => {
-                              fileInputRef.current?.click();
-                            }}
-                          >
-                            {logoPreview ? (
-                              <img
-                                src={logoPreview}
-                                alt="Uploaded logo"
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="text-center">
-                                <img
-                                  src="https://clusterprotocol2024.s3.amazonaws.com/others/gallery-add.png"
-                                  alt="upload image"
-                                />
-                              </div>
-                            )}
-                          </div>
-                          <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleLogoUpload}
-                            accept="image/*"
-                            className="hidden"
-                          />
-                        </div>
-                        <div className="flex flex-col justify-center gap-4">
-                          <div className="flex gap-4 flex-row justify-between">
-                            <div>
-                              <label
-                                htmlFor="domain"
-                                className="uppercase text-sm font-famFont "
-                              >
-                                Setup Domain
-                              </label>
-                              <input
-                                type="text"
-                                disabled={domainMinted}
-                                value={domain}
-                                onChange={(e) => handleDomainChange(e)}
-                                className="w-full bg-zinc-950 border-1 font-famFont border-gray-600 px-4 py-2 hover:border-famViolate-light"
-                                name="domain"
-                                placeholder="e.g. JohnDoe"
-                              />
-                              {domain && isDomainAvailable === "false" && (
-                                <div className="text-red-600 font-famFont  text-xs text-end">
-                                  Domain already exists
-                                </div>
-                              )}
-                              {domain && isDomainAvailable === "true" && (
-                                <div className="text-green-600 font-famFont  text-xs text-end">
-                                  Domain available
-                                </div>
-                              )}
-                            </div>
-                            <div>
-                              <label
-                                htmlFor="inviteCode"
-                                className="uppercase text-sm font-famFont "
-                              >
-                                Invite Code
-                              </label>
-                              <input
-                                type="text"
-                                value={referralCode}
-                                onChange={(e) =>
-                                  setReferralCode(e.target.value)
-                                }
-                                className="w-full bg-zinc-950 border-1 border-gray-600 font-famFont px-4 py-2 hover:border-famViolate-light"
-                                name="inviteCode"
-                                placeholder="Invite Code"
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <label
-                              htmlFor="password"
-                              className="uppercase text-sm font-famFont "
-                            >
-                              Password
-                            </label>
-                            <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between items-center hover:border-famViolate-light">
-                              <input
-                                name="password"
-                                type={showPassword ? "text" : "password"}
-                                className="w-full bg-zinc-950 focus:border-famViolate-light  px-4 py-2 font-famFont  "
-                                placeholder="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                              />
-                              <span
-                                className="cursor-pointer px-4 py-2"
-                                onClick={() => setShowPassword(!showPassword)}
-                              >
-                                {showPassword ? (
-                                  <i className="bi bi-eye-slash-fill"></i>
-                                ) : (
-                                  <i className="bi bi-eye-fill"></i>
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="w-[80%] mx-auto mb-4">
-                        <div className="w-full flex flex-col justify-center gap-4">
-                          <div className="w-full">
-                            <label
-                              htmlFor="domain"
-                              className="uppercase text-sm font-famFont "
-                            >
-                            Domain
-                            </label>
-                            <input
-                              type="text"
-                              disabled={domainMinted}
-                              value={domain}
-                              onChange={(e) => handleDomainChange(e)}
-                              className="w-full bg-zinc-950 border-1 font-famFont border-gray-600 px-4 py-2 hover:border-famViolate-light"
-                              name="domain"
-                              placeholder="e.g. JohnDoe"
-                            />
-                          </div>
-                          <div className="w-full">
-                            <label
-                              htmlFor="password"
-                              className="uppercase text-sm font-famFont "
-                            >
-                              Password
-                            </label>
-                            <div className="flex mb-4 bg-zinc-950 border-1 border-gray-600 justify-between items-center hover:border-famViolate-light">
-                              <input
-                                name="password"
-                                type={showPassword ? "text" : "password"}
-                                className="w-full bg-zinc-950  px-4 py-2 font-famFont  "
-                                placeholder="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                              />
-                              <span
-                                className="cursor-pointer px-4 py-2"
-                                onClick={() => setShowPassword(!showPassword)}
-                              >
-                                {showPassword ? (
-                                  <i className="bi bi-eye-slash-fill"></i>
-                                ) : (
-                                  <i className="bi bi-eye-fill"></i>
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {error && (
-                      <div className=" text-red-600 font-famFont text-small text-center mb-4">
-                        {error}
-                      </div>
-                    )}
-                    {alertMessage && (
-                      <div className="text-small font-famFont text-center mb-4 text-green-600">
-                        {alertMessage}
-                      </div>
-                    )}
-                    {isBridge && (
-                      <div className="flex justify-center items-center mb-4">
-                        <Button
-                          onClick={() => {
-                            handleBridge(true);
-                          }}
-                          className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-xl text-sm text-center mb-2"
-                        >
-                          Bridge
-                        </Button>
-                      </div>
-                    )}
-                    {/* {activeTab === "signUp" && (
-                      <div className="font-qanelas text-white capitalize text-xs mb-2 flex justify-center items-center gap-2">
-                        Note: You will need 5 USDT and some ETH in Arbitrum
-                        Chain to mint a domain.
-                      </div>
-                    )} */}
-                    <div
-                      className={` ${
-                        activeTab === "signUp" ? "w-full" : "w-[80%] mx-auto"
-                      }  mb-4`}
-                    >
-                      {activeTab === "signUp" ? (
-                        <>
-                          {address &&
-                            (domainMinted ? (
-                              <Button
-                                radius="md"
-                                disabled={loader}
-                                className="bg-[#5538CE] text-white w-full mb-2"
-                                onPress={() => handleSignUpDomain(hash)}
-                              >
-                                {loader ? (
-                                  <div className="flex justify-center items-center gap-2">
-                                    <span>
-                                      <Spinner color="white" size="sm" />
-                                    </span>
-                                    <span>Signing Up...</span>
-                                  </div>
-                                ) : (
-                                  <span>SignUp</span>
-                                )}
-                              </Button>
-                            ) : (
-                              <Button
-                                radius="md"
-                                disabled={loader}
-                                className="bg-[#5538CE] text-white w-full mb-2"
-                                onPress={handleDomainMinting}
-                              >
-                                {loader ? (
-                                  <div className="flex justify-center items-center gap-2">
-                                    <span>
-                                      <Spinner color="white" size="sm" />
-                                    </span>
-                                    <span>
-                                      {domainMinted
-                                        ? "Signing Up..."
-                                        : "Minting..."}
-                                    </span>
-                                  </div>
-                                ) : (
-                                  <span>Mint</span>
-                                )}
-                              </Button>
-                            ))}
-                          <div
-                            className={`w-full flex justify-center items-center ${
-                              (!domain ||
-                                !password ||
-                                !logoPreview ||
-                                !referralCode) &&
-                              !address &&
-                              "disabled-button"
-                            } `}
-                          >
-                            <WalletConnectButton />
-                          </div>
-                        </>
-                      ) : (
-                        <div className="flex flex-col">
-                          <Button
-                            radius="md"
-                            disabled={loaders.login}
-                            className="w-full text-white bg-[#5538CE] "
-                            onPress={handleLoginDomain}
-                          >
-                            {loaders.login ? (
-                              <Spinner color="white" size="sm" />
-                            ) : (
-                              <span>Login</span>
-                            )}
-                          </Button>
-                          <div className="text-center py-2">OR</div>
-                          {address && (
-                            <Button
-                              radius="md"
-                              disabled={loaders.connectWallet}
-                              className="text-white bg-[#5538CE] mb-2"
-                              onPress={handleLoginWithWallet}
-                            >
-                              {loaders.connectWallet ? (
-                                <Spinner color="white" size="sm" />
-                              ) : (
-                                <span>Login with Wallet</span>
-                              )}
-                            </Button>
-                          )}
-                          {
-                            <div className="w-full flex justify-center items-center">
-                              <WalletConnectButton />
-                            </div>
-                          }
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="font-qanelas flex justify-center items-center gap-2">
-                      <span>
-                        {activeTab === "signUp"
-                          ? "Already have an account?"
-                          : "Don't have an account yet? "}
-                      </span>
-                      <span
-                        onClick={handleActiveTabChanged}
-                        className="text-blue-700 text-md cursor-pointer font-bold"
-                      >
-                        {activeTab === "signUp" ? "LogIn" : "SignUp"}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
     </>
   );
 };
