@@ -26,7 +26,7 @@ const MainLayout = ( {
       <NextUIProvider>
         { isAdminRoute ? ( <AdminNavbar /> ) : ( !isLandingRoute && <Navbar /> )}
         {!isAdminRoute && <Sidebar />}
-        <main className={`min-h-screen ${isAdminRoute?'':'md:ml-[4rem]'}`}>{ children }</main>
+        <main className={`h-screen ${isAdminRoute?'':'md:ml-[4rem]'}`}>{ children }</main>
         <ToastContainer />
       {/* {(!isLandingRoute || !isAdminRoute) &&  <Footer /> } */}
       </NextUIProvider>
