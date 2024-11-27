@@ -805,7 +805,7 @@ const LandingPage = () => {
 
   return (
     <>
-      <div className="landing-page h-full">
+      <div className="landing-page">
         <div className="w-[90%] mx-auto pt-8 h-full ">
           <div className="w-full flex flex-col justify-between items-center h-full">
             <div className="w-full flex md:flex-row flex-col-reverse md:justify-between items-center gap-3 ">
