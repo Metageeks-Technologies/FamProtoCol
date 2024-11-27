@@ -198,6 +198,7 @@ const CreateCommunity: React.FC = () => {
                   backgroundRepeat: "no-repeat",
                   backgroundPosition: "center",
                   backgroundSize: "cover",
+      
                 }}
               >
                 <div {...getRootProps()} className="text-center">
