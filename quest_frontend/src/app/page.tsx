@@ -1258,7 +1258,7 @@ const LandingPage = () => {
                 {loaders.login ? (
                   <Spinner color="white" size="sm" />
                 ) : (
-                  <span>Login</span>
+                  <span style={{ fontSize: '100%' }}>Login</span>
                 )}
               </Button>
               <div className="text-center py-2">OR</div>
