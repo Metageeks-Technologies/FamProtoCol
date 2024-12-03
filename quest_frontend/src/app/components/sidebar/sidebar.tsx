@@ -86,7 +86,7 @@ const Sidebar = () => {
         {user ? (
           <>
             {/* desktop sidebar */}
-            <div className="hidden sm:flex flex-col border-none justify-between sm:flex-row items-center m-auto md:ml-5 w-screen text-center text-white">
+            {/* <div className="hidden sm:flex flex-col border-none justify-between sm:flex-row items-center m-auto md:ml-5 w-screen text-center text-white">
               <div
                 className="justify-center items-center m-auto border-l border-r flex h-12 md:h-40 md:border-r w-[12rem] md:w-full border-r-white"
                 onClick={() => handleLinkClick("/user/profile")}
@@ -127,7 +127,7 @@ const Sidebar = () => {
                   <button>RANK KOLS</button>
                 </div>
               </div>
-            </div>
+            </div> */}
             {/* mobile sidebar */}
             <div className="sm:hidden flex flex-col gap-8 justify-center items-center w-[90%] mx-auto h-[90vh] ">
               <div className="flex flex-col gap-6 mb-4 border-none justify-between w-full items-center text-center text-white font-qanelas ">

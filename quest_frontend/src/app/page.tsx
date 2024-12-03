@@ -805,10 +805,10 @@ const LandingPage = () => {
 
   return (
     <>
-      <div className="landing-page">
-        <div className="w-[90%] mx-auto pt-8 h-full ">
-          <div className="w-full flex flex-col justify-between items-center h-full">
-            <div className="w-full flex md:flex-row flex-col-reverse md:justify-between items-center gap-3 ">
+      <div className="landing-page flex flex-col">
+        <div className="w-[90%] justify-center mx-auto pt-8 min-h-screen flex flex-col "> 
+          <div className="w-full flex flex-col justify-center items-center">
+            {/* <div className="w-full flex md:flex-row flex-col-reverse md:justify-between items-center gap-3 ">
               <div className="flex items-center gap-1">
                 <Link
                   target="_blank"
@@ -838,7 +838,6 @@ const LandingPage = () => {
                   SOCIAL MEDIA:
                 </div>
                 <div className="flex items-center gap-1">
-                  {/* twitter */}
                   <Link target="_blank" href="https://x.com/famprotocol">
                     <div className="box1 right-trapezium bg-zinc-700 p-[1px]">
                       <div className="box2 right-trapezium p-2 bg-[#111111]">
@@ -846,7 +845,6 @@ const LandingPage = () => {
                       </div>
                     </div>
                   </Link>
-                  {/* telegram */}
                   <Link target="_blank" href="https://t.me/FamProtocol">
                     <div className="box1 empty-left-trapezium bg-zinc-700 p-[1px]">
                       <div className="box2 empty-left-trapezium p-2 bg-[#111111]">
@@ -854,12 +852,9 @@ const LandingPage = () => {
                       </div>
                     </div>
                   </Link>
-                  {/* <div className="box1 left-trapezium w-[2rem] h-[2rem] bg-[#ffffff33] p-[1px]">
-                         <i className="bi bi-discord"></i>
-                      </div> */}
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className="w-full h-full flex items-center justify-center ">
               <div className="w-full flex  justify-center h-full text-white">
                 {thankYou ? (
@@ -990,7 +985,7 @@ const LandingPage = () => {
     </div>
   </div>
 
-  <div className=" p-8 w-full md:w-1/2 mt-8 md:mt-0">
+  <div className=" w-full md:w-1/2 mt-8 md:mt-0">
     {isBridgeActive ? (
       <div className="flex flex-col justify-center items-center">
         <NitroWidget />
@@ -1005,7 +1000,7 @@ const LandingPage = () => {
         </button>
       </div>
     ) : (
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center min-h-full">
         <div className="text-2xl font-bold font-qanelas uppercase mb-6 md:mb-4">
           Get OnBoarded
         </div>
@@ -1306,6 +1301,132 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
+                {/* Footer Section */}
+                <footer className="w-full transparent py-6">
+          <div className="w-[90%] mx-auto flex flex-col items-center">
+            <div className="w-full flex flex-col md:flex-row md:justify-between items-center gap-3">
+               {/* "View Documentation" and "Build on FAM" Section */}
+      <div className="flex flex-col md:flex-row items-center md:gap-6 gap-3">
+        {/* "View Documentation" */}
+        <div className="flex items-center gap-1">
+          <Link
+            target="_blank"
+            href="https://fam-protocol.notion.site/Fam-Protocol-Public-Data-Room-10f79f6230bb807d98c7f44992891959"
+            className="text-[#FA00FF] cursor-pointer font-famFont"
+          >
+            VIEW DOCUMENTATION
+          </Link>
+          <div className="mt-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="5"
+              height="8"
+              viewBox="0 0 5 8"
+              fill="none"
+            >
+              <path
+                d="M0.487305 7.48755L3.97475 4.0001L0.487305 0.512655"
+                stroke="#FA00FF"
+              />
+            </svg>
+          </div>
+        </div>
+
+        {/* "Build on FAM" */}
+        <div className="flex items-center gap-1">
+          <Link
+            target="_blank"
+            href="https://fam-protocol.notion.site/Build-on-FAM"
+            className="text-[#FA00FF] cursor-pointer font-famFont"
+          >
+            BUILD ON FAM
+          </Link>
+          <div className="mt-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="5"
+              height="8"
+              viewBox="0 0 5 8"
+              fill="none"
+            >
+              <path
+                d="M0.487305 7.48755L3.97475 4.0001L0.487305 0.512655"
+                stroke="#FA00FF"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+              {/* <div className="flex items-center gap-1">
+                <Link
+                  target="_blank"
+                  href="https://fam-protocol.notion.site/Fam-Protocol-Public-Data-Room-10f79f6230bb807d98c7f44992891959"
+                  className="text-[#FA00FF] cursor-pointer font-famFont"
+                >
+                  VIEW DOCUMENTATION
+                </Link>
+                <div className="mt-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="5"
+                    height="8"
+                    viewBox="0 0 5 8"
+                    fill="none"
+                  >
+                    <path
+                      d="M0.487305 7.48755L3.97475 4.0001L0.487305 0.512655"
+                      stroke="#FA00FF"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <Link
+                  target="_blank"
+                  href="https://fam-protocol.notion.site/Build-on-FAM"
+                  className="text-[#FA00FF] cursor-pointer font-famFont"
+                >
+                  BUILD ON FAM
+                </Link>
+                <div className="mt-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="5"
+                    height="8"
+                    viewBox="0 0 5 8"
+                    fill="none"
+                  >
+                    <path
+                      d="M0.487305 7.48755L3.97475 4.0001L0.487305 0.512655"
+                      stroke="#FA00FF"
+                    />
+                  </svg>
+                </div>
+              </div> */}
+              <div className="flex items-center gap-4">
+                <div className="text-white opacity-30 font-famFont">
+                  SOCIAL MEDIA:
+                </div>
+                <div className="flex items-center gap-1">
+                  <Link target="_blank" href="https://x.com/famprotocol">
+                    <div className="box1 right-trapezium bg-zinc-700 p-[1px]">
+                      <div className="box2 right-trapezium p-2 bg-[#111111]">
+                        <i className="bi bi-twitter-x"></i>
+                      </div>
+                    </div>
+                  </Link>
+                  <Link target="_blank" href="https://t.me/FamProtocol">
+                    <div className="box1 empty-left-trapezium bg-zinc-700 p-[1px]">
+                      <div className="box2 empty-left-trapezium p-2 bg-[#111111]">
+                        <i className="bi bi-telegram"></i>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </>
   );
