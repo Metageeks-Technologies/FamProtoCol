@@ -1335,8 +1335,7 @@ const LandingPage = () => {
         {/* "Build on FAM" */}
         <div className="flex items-center gap-1">
           <Link
-            target="_blank"
-            href="https://fam-protocol.notion.site/Build-on-FAM"
+            href="#"
             className="text-[#FA00FF] cursor-pointer font-famFont"
           >
             BUILD ON FAM
