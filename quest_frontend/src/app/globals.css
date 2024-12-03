@@ -886,10 +886,17 @@ body {
   background-image: url(https://clusterprotocol2024.s3.amazonaws.com/others/landingPageFam.jpg);
   background-position: center;
   background-repeat: no-repeat;
-  min-height: 100vh;
   background-size: cover;
+  min-height: 100vh;
   fill: rgba(0, 0, 0, 0.01);
-  /* backdrop-filter: blur(75px); */
+  height: auto; /* Allow content to grow */
+  position: relative;
+  overflow: hidden; /* Prevent overflow if you want a fixed image size */
+}
+
+.landing-page .content {
+  position: relative;
+  z-index: 10;
 }
 
 .new-amsterdam-regular {
