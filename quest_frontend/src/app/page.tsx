@@ -806,7 +806,8 @@ const LandingPage = () => {
   return (
     <>
       <div className="landing-page flex flex-col">
-        <div className="w-[90%] justify-center mx-auto pt-8 min-h-screen flex flex-col "> 
+        <div className="w-[90%] justify-between mx-auto pt-8 min-h-screen flex flex-col "> 
+          <div></div>
           <div className="w-full flex flex-col justify-center items-center">
             {/* <div className="w-full flex md:flex-row flex-col-reverse md:justify-between items-center gap-3 ">
               <div className="flex items-center gap-1">
@@ -1300,9 +1301,7 @@ const LandingPage = () => {
               </div>
             </div>
           </div>
-        </div>
-                {/* Footer Section */}
-                <footer className="w-full transparent py-6">
+          <footer className="w-full transparent py-6">
           <div className="w-[90%] mx-auto flex flex-col items-center">
             <div className="w-full flex flex-col md:flex-row md:justify-between items-center gap-3">
                {/* "View Documentation" and "Build on FAM" Section */}
@@ -1426,6 +1425,9 @@ const LandingPage = () => {
             </div>
           </div>
         </footer>
+        </div>
+               
+     
       </div>
     </>
   );
